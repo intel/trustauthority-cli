@@ -1,0 +1,13 @@
+{
+    "policy_id": "6e9e0e4b-4e39-4b50-91a2-2a8e0a98d782",
+    "policy": "default matches_sgx_policy = false \n includes_value(policy_values, quote_value) = true { \n\n policy_value := policy_values[x] \n policy_value == quote_value \n } \n matches_sgx_policy = true { \n\n quote := input.quote \n quote.isvsvn == 0 \n  isvprodidValues := [0, 2, 3] \n includes_value(isvprodidValues, quote.isvprodid) \n mrenclaveValues := [\"bab91f200038076ac25f87de0ca67472443c2ebe17ed9ba95314e609038f51ad\"] \n includes_value(mrenclaveValues, quote.mrenclave) \n mrsignerValues:= [ \"d412a4f07ef83892a5915fb2ab584be31e186e5a4f95ab5f6950fd4eb8694d7c\"] \n includes_value(mrsignerValues, quote.mrsigner) \n } \n ",
+    "tenant_id": "c719349f-552f-4f32-8153-ad540977556f",
+    "user_id": "c719349f-552f-4f32-8153-ad540977556f",
+    "version": "v1",
+    "policy_name": "Sample_Policy_Test",
+    "policy_type": "Appraisal",
+    "service_offer_id": "7ba36c8a-59b5-4f0e-a595-1c2945d5a1ce",
+    "service_offer_name": "SGX",
+    "subscription_id": "158ccbc6-0ced-4718-ae6a-813684122bf8",
+    "subscription_name": "Amber"
+}
