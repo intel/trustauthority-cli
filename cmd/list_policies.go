@@ -42,7 +42,6 @@ func init() {
 	getPoliciesCmd.Flags().StringP(constants.PolicyIdParamName, "p", "", "Path of the file containing the policy to be uploaded")
 	getPoliciesCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the policies need to be fetched")
 	getPoliciesCmd.MarkFlagRequired(constants.ApiKeyParamName)
-	getPoliciesCmd.MarkFlagRequired(constants.TenantIdParamName)
 }
 
 func getPolicies(cmd *cobra.Command) (string, error) {
@@ -63,6 +62,10 @@ func getPolicies(cmd *cobra.Command) (string, error) {
 	tenantIdString, err := cmd.Flags().GetString(constants.TenantIdParamName)
 	if err != nil {
 		return "", err
+	}
+
+	if tenantIdString == "" {
+		tenantIdString = configValues.TenantId
 	}
 
 	tenantId, err := uuid.Parse(tenantIdString)

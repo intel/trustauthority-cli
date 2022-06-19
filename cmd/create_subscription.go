@@ -45,7 +45,6 @@ func init() {
 	createSubscriptionCmd.Flags().StringP(constants.ProductIdParamName, "p", "", "Id of the Amber Product for which the subscription needs to be created")
 	createSubscriptionCmd.Flags().StringP(constants.SubscriptionParamName, "d", "", "Description of the subscription that needs to be created")
 	createSubscriptionCmd.MarkFlagRequired(constants.ApiKeyParamName)
-	createSubscriptionCmd.MarkFlagRequired(constants.TenantIdParamName)
 	createSubscriptionCmd.MarkFlagRequired(constants.ServiceIdParamName)
 	createSubscriptionCmd.MarkFlagRequired(constants.ProductIdParamName)
 	createSubscriptionCmd.MarkFlagRequired(constants.SubscriptionParamName)
@@ -68,6 +67,10 @@ func createSubscription(cmd *cobra.Command) (string, error) {
 	tenantIdString, err := cmd.Flags().GetString(constants.TenantIdParamName)
 	if err != nil {
 		return "", err
+	}
+
+	if tenantIdString == "" {
+		tenantIdString = configValues.TenantId
 	}
 
 	tenantId, err := uuid.Parse(tenantIdString)

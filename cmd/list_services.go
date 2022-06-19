@@ -38,7 +38,7 @@ var getServicesCmd = &cobra.Command{
 func init() {
 	listCmd.AddCommand(getServicesCmd)
 
-	getServicesCmd.Flags().StringP(constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
+	getServicesCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
 	getServicesCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the subscription needs to be created")
 	getServicesCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the subscription needs to be created")
 	getServicesCmd.MarkFlagRequired(constants.ApiKeyParamName)
@@ -61,6 +61,10 @@ func getServices(cmd *cobra.Command) (string, error) {
 	tenantIdString, err := cmd.Flags().GetString(constants.TenantIdParamName)
 	if err != nil {
 		return "", err
+	}
+
+	if tenantIdString == "" {
+		tenantIdString = configValues.TenantId
 	}
 
 	tenantId, err := uuid.Parse(tenantIdString)
