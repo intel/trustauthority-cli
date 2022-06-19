@@ -44,7 +44,6 @@ func init() {
 	createServiceCmd.Flags().StringP(constants.ServiceOfferIdParamName, "r", "", "Id of the Amber service offer for which the service needs to be created")
 	createServiceCmd.Flags().StringP(constants.ServiceDescriptionParamName, "d", "", "Description of the service")
 	createServiceCmd.MarkFlagRequired(constants.ApiKeyParamName)
-	createServiceCmd.MarkFlagRequired(constants.TenantIdParamName)
 	createServiceCmd.MarkFlagRequired(constants.ServiceOfferIdParamName)
 }
 
@@ -65,6 +64,10 @@ func createService(cmd *cobra.Command) (string, error) {
 	tenantIdString, err := cmd.Flags().GetString(constants.TenantIdParamName)
 	if err != nil {
 		return "", err
+	}
+
+	if tenantIdString == "" {
+		tenantIdString = configValues.TenantId
 	}
 
 	tenantId, err := uuid.Parse(tenantIdString)

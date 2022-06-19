@@ -74,6 +74,10 @@ func deletePolicy(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
+	if tenantIdString == "" {
+		tenantIdString = configValues.TenantId
+	}
+
 	tenantId, err := uuid.Parse(tenantIdString)
 	if err != nil {
 		return "", err

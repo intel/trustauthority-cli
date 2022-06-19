@@ -41,7 +41,6 @@ func init() {
 	deleteUserCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the subscription needs to be created")
 	deleteUserCmd.Flags().StringP(constants.UserIdParamName, "u", "", "Id of the specific user the details for whom needs to be fetched")
 	deleteUserCmd.MarkFlagRequired(constants.ApiKeyParamName)
-	deleteUserCmd.MarkFlagRequired(constants.TenantIdParamName)
 	deleteUserCmd.MarkFlagRequired(constants.UserIdParamName)
 }
 
@@ -62,6 +61,10 @@ func deleteUser(cmd *cobra.Command) (string, error) {
 	tenantIdString, err := cmd.Flags().GetString(constants.TenantIdParamName)
 	if err != nil {
 		return "", err
+	}
+
+	if tenantIdString == "" {
+		tenantIdString = configValues.TenantId
 	}
 
 	tenantId, err := uuid.Parse(tenantIdString)

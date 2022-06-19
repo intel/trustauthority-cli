@@ -72,21 +72,28 @@ func setupConfig() error {
 	configValues := &config.Configuration{}
 
 	configValues.AmberBaseUrl = viper.GetString(constants.AmberBaseUrl)
+	if configValues.AmberBaseUrl == "" {
+		fmt.Println("Amber base URL needs to be provided in configuration")
+		os.Exit(1)
+	}
+
 	tenantId, err := uuid.Parse(viper.GetString(constants.TenantId))
 	if err != nil {
 		return err
 	}
-	configValues.TenantId = tenantId.String()
+
+	if tenantId.String() == "" {
+		fmt.Println("Tenant Id needs to be provided in configuration")
+		os.Exit(1)
+	} else {
+		configValues.TenantId = tenantId.String()
+	}
+
 	configValues.LogLevel, err = log.ParseLevel(viper.GetString(constants.Loglevel))
 	if err != nil {
 		return err
 	}
 	configValues.HTTPClientTimeout = viper.GetInt(constants.HttpClientTimeout)
-
-	if configValues.AmberBaseUrl == "" {
-		fmt.Println("Amber base URL needs to be provided in configuration")
-		os.Exit(1)
-	}
 
 	if err = configValues.Save(constants.DefaultConfigFilePath); err != nil {
 		return err
