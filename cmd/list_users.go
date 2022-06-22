@@ -42,7 +42,6 @@ func init() {
 	getUsersCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the subscription needs to be created")
 	getUsersCmd.Flags().StringP(constants.UserIdParamName, "u", "", "Id of the specific user the details for whom needs to be fetched")
 	getUsersCmd.MarkFlagRequired(constants.ApiKeyParamName)
-	getUsersCmd.MarkFlagRequired(constants.TenantIdParamName)
 
 }
 

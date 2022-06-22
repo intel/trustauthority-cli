@@ -9,10 +9,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
 	"intel/amber/tac/v1/client/tms"
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
 	"intel/amber/tac/v1/models"
+	"intel/amber/tac/v1/validation"
 	"net/http"
 	"net/url"
 	"time"
@@ -90,6 +92,9 @@ func createService(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
+	if err = validation.ValidateStrings([]string{serviceDescription}); err != nil {
+		return "", errors.Wrap(err, "Invalid service description provided")
+	}
 	var serviceInfo = models.CreateService{
 		ServiceOfferId: serviceOfferId,
 		Description:    serviceDescription,

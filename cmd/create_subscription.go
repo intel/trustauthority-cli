@@ -9,10 +9,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
 	"intel/amber/tac/v1/client/tms"
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
 	"intel/amber/tac/v1/models"
+	"intel/amber/tac/v1/validation"
 	"net/http"
 	"net/url"
 	"time"
@@ -106,6 +108,10 @@ func createSubscription(cmd *cobra.Command) (string, error) {
 	var subscriptionInfo = models.CreateSubscription{
 		ProductId:   productId,
 		Description: subscriptionName,
+	}
+
+	if err = validation.ValidateStrings([]string{subscriptionName}); err != nil {
+		return "", errors.Wrap(err, "Invalid subscription name provided")
 	}
 
 	tmsClient := tms.NewTmsClient(client, tmsUrl, tenantId, apiKey)

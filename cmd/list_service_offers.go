@@ -26,7 +26,7 @@ var getServiceOffersCmd = &cobra.Command{
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Println("get serviceOffers called")
-		response, err := getServiceOffers(cmd)
+		response, err := getServiceOffers()
 		if err != nil {
 			return err
 		}
@@ -42,7 +42,7 @@ func init() {
 	getServiceOffersCmd.MarkFlagRequired(constants.ApiKeyParamName)
 }
 
-func getServiceOffers(cmd *cobra.Command) (string, error) {
+func getServiceOffers() (string, error) {
 	configValues, err := config.LoadConfiguration()
 	if err != nil {
 		return "", err
