@@ -8,11 +8,13 @@ package cmd
 import (
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
 	"intel/amber/tac/v1/utils"
+	"net/url"
 	"os"
 	"strings"
 
@@ -77,21 +79,25 @@ func setupConfig() error {
 		os.Exit(1)
 	}
 
+	_, err = url.Parse(configValues.AmberBaseUrl)
+	if err != nil {
+		return errors.Wrap(err, "Invalid Amber Base URL")
+	}
+
 	tenantId, err := uuid.Parse(viper.GetString(constants.TenantId))
 	if err != nil {
-		return err
+		return errors.Wrap(err, "Invalid Tenant Id provided")
 	}
 
 	if tenantId.String() == "" {
-		fmt.Println("Tenant Id needs to be provided in configuration")
-		os.Exit(1)
+		return errors.New("Tenant Id needs to be provided in configuration")
 	} else {
 		configValues.TenantId = tenantId.String()
 	}
 
 	configValues.LogLevel, err = log.ParseLevel(viper.GetString(constants.Loglevel))
 	if err != nil {
-		return err
+		return errors.Wrap(err, "Invalid log level provided")
 	}
 	configValues.HTTPClientTimeout = viper.GetInt(constants.HttpClientTimeout)
 

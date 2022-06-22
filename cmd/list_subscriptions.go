@@ -43,6 +43,7 @@ func init() {
 	getSubscriptionsCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the subscription needs to be created")
 	getSubscriptionsCmd.Flags().StringP(constants.SubscriptionIdParamName, "d", "", "Id of the subscription which needs to be fetched (optional)")
 	getSubscriptionsCmd.MarkFlagRequired(constants.ApiKeyParamName)
+	getSubscriptionsCmd.MarkFlagRequired(constants.ServiceIdParamName)
 
 }
 
