@@ -33,16 +33,28 @@ func init() {
 }
 
 func uninstall() error {
-	fmt.Println("removing : ", constants.HomeDir)
+	log.Info("removing : ", constants.HomeDir)
 	err := os.RemoveAll(constants.HomeDir)
 	if err != nil {
 		log.WithError(err).Error("Error removing home dir: ", constants.HomeDir)
 	}
 
-	fmt.Println("removing : ", constants.ConfigDir)
+	log.Info("removing : ", constants.ConfigDir)
 	err = os.RemoveAll(constants.ConfigDir)
 	if err != nil {
 		log.WithError(err).Error("Error removing config dir: ", constants.ConfigDir)
+	}
+
+	log.Info("removing : ", constants.ExecLink)
+	err = os.Remove(constants.ExecLink)
+	if err != nil {
+		log.WithError(err).Error("Error removing executable link: ", constants.ExecLink)
+	}
+
+	log.Info("removing : ", constants.LogDir)
+	err = os.RemoveAll(constants.LogDir)
+	if err != nil {
+		log.WithError(err).Error("Error removing log dir: ", constants.LogDir)
 	}
 
 	fmt.Println("Tenant CLI uninstalled successfully")

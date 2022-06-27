@@ -44,7 +44,7 @@ func SendRequest(client *http.Client, req *http.Request) ([]byte, error) {
 	}
 
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated && resp.StatusCode != http.StatusNoContent {
-		return nil, errors.Errorf("The call to %q return %q", req.URL, resp.Status)
+		return nil, errors.Errorf("The call to %q returned %q. Error: %s", req.URL, resp.Status, body)
 	}
 
 	return body, nil

@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/client/tms"
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
@@ -28,7 +29,7 @@ var createSubscriptionCmd = &cobra.Command{
 	Short: "Create a new subscription for a user",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("create subscription called")
+		log.Info("create subscription called")
 		response, err := createSubscription(cmd)
 		if err != nil {
 			return err

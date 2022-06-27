@@ -65,7 +65,7 @@ func (pc pmsClient) CreatePolicy(request *models.PolicyRequest) (*models.PolicyR
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
-		return nil, errors.Wrap(err, "Error reading response body")
+		return nil, errors.Wrap(err, "Error in response body")
 	}
 
 	// Parse response
@@ -94,7 +94,7 @@ func (pc pmsClient) DeletePolicy(policyID uuid.UUID) error {
 
 	_, err = client.SendRequest(pc.Client, req)
 	if err != nil {
-		return errors.Wrap(err, "Error reading response body")
+		return errors.Wrap(err, "Error in response body")
 	}
 
 	return nil
@@ -120,7 +120,7 @@ func (pc pmsClient) GetPolicy(policyID uuid.UUID) (*models.PolicyResponse, error
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
-		return nil, errors.Wrap(err, "Error reading response body while getting policy")
+		return nil, errors.Wrap(err, "Error in response body")
 	}
 
 	// Parse response
@@ -150,7 +150,7 @@ func (pc pmsClient) SearchPolicy() ([]models.PolicyResponse, error) {
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
-		return nil, errors.Wrap(err, "Error reading response body")
+		return nil, errors.Wrap(err, "Error in response body")
 	}
 
 	// Parse response
@@ -186,7 +186,7 @@ func (pc pmsClient) UpdatePolicy(request *models.PolicyRequest) (*models.PolicyR
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
-		return nil, errors.Wrap(err, "Error reading response body")
+		return nil, errors.Wrap(err, "Error in response body")
 	}
 
 	// Parse response

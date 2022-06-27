@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	log "github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/client/tms"
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
@@ -25,7 +26,7 @@ var getSubscriptionsCmd = &cobra.Command{
 	Short: "Get subscription(s) under a particular tenant",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("get subscriptions called")
+		log.Info("list subscriptions called")
 		response, err := getSubscriptions(cmd)
 		if err != nil {
 			return err

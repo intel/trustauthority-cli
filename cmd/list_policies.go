@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	log "github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/client/pms"
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
@@ -25,7 +26,7 @@ var getPoliciesCmd = &cobra.Command{
 	Short: "Get list of policies or specific policy user a tenant",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("get policies called")
+		log.Info("list policies called")
 		response, err := getPolicies(cmd)
 		if err != nil {
 			return err
@@ -83,6 +84,9 @@ func getPolicies(cmd *cobra.Command) (string, error) {
 	var responseBytes []byte
 	if policyIdString == "" {
 		response, err := pmsClient.SearchPolicy()
+		if err != nil {
+			return "", err
+		}
 		responseBytes, err = json.MarshalIndent(response, "", "  ")
 		if err != nil {
 			return "", err

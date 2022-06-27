@@ -75,8 +75,7 @@ func setupConfig() error {
 
 	configValues.AmberBaseUrl = viper.GetString(constants.AmberBaseUrl)
 	if configValues.AmberBaseUrl == "" {
-		fmt.Println("Amber base URL needs to be provided in configuration")
-		os.Exit(1)
+		return errors.New("Amber base URL needs to be provided in configuration")
 	}
 
 	_, err = url.Parse(configValues.AmberBaseUrl)
@@ -95,10 +94,11 @@ func setupConfig() error {
 		configValues.TenantId = tenantId.String()
 	}
 
-	configValues.LogLevel, err = log.ParseLevel(viper.GetString(constants.Loglevel))
+	logLevel, err := log.ParseLevel(viper.GetString(constants.Loglevel))
 	if err != nil {
 		return errors.Wrap(err, "Invalid log level provided")
 	}
+	configValues.LogLevel = logLevel.String()
 	configValues.HTTPClientTimeout = viper.GetInt(constants.HttpClientTimeout)
 
 	if err = configValues.Save(constants.DefaultConfigFilePath); err != nil {
