@@ -131,7 +131,7 @@ func (pc tmsClient) RetrieveSubscription(serviceId uuid.UUID, subscriptionId uui
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
-		return nil, errors.Wrap(err, "Error reading response body")
+		return nil, errors.Wrap(err, "Error in response body")
 	}
 
 	// Parse response for validation
@@ -166,7 +166,7 @@ func (pc tmsClient) CreateUser(user models.CreateTenantUser) (*models.User, erro
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
-		return nil, errors.Wrap(err, "Error reading response body")
+		return nil, errors.Wrap(err, "Error in response body")
 	}
 
 	// Parse response for validation
@@ -194,7 +194,7 @@ func (pc tmsClient) GetUsers() ([]models.User, error) {
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
-		return nil, errors.Wrap(err, "Error reading response body")
+		return nil, errors.Wrap(err, "Error in response body")
 	}
 
 	// Parse response for validation
@@ -222,7 +222,7 @@ func (pc tmsClient) RetrieveUser(id uuid.UUID) (*models.User, error) {
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
-		return nil, errors.Wrap(err, "Error reading response body")
+		return nil, errors.Wrap(err, "Error in response body")
 	}
 
 	// Parse response for validation
@@ -251,7 +251,7 @@ func (pc tmsClient) DeleteUser(userId uuid.UUID) error {
 
 	_, err = client.SendRequest(pc.Client, req)
 	if err != nil {
-		return errors.Wrap(err, "Error getting response")
+		return errors.Wrap(err, "Error reading response body")
 	}
 
 	return nil
@@ -280,7 +280,7 @@ func (pc tmsClient) CreateService(request *models.CreateService) (*models.Servic
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
-		return nil, errors.Wrap(err, "Error reading response body")
+		return nil, errors.Wrap(err, "Error in response body")
 	}
 
 	// Parse response for validation
@@ -308,7 +308,7 @@ func (pc tmsClient) GetServices() ([]models.Service, error) {
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
-		return nil, errors.Wrap(err, "Error reading response body")
+		return nil, errors.Wrap(err, "Error in response body")
 	}
 
 	// Parse response for validation
@@ -336,7 +336,7 @@ func (pc tmsClient) RetrieveService(id uuid.UUID) (*models.Service, error) {
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
-		return nil, errors.Wrap(err, "Error reading response body")
+		return nil, errors.Wrap(err, "Error in response body")
 	}
 
 	// Parse response for validation
@@ -364,7 +364,7 @@ func (pc tmsClient) GetProducts(serviceOfferId uuid.UUID) ([]models.Product, err
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
-		return nil, errors.Wrap(err, "Error reading response body")
+		return nil, errors.Wrap(err, "Error in response body")
 	}
 
 	// Parse response for validation
@@ -392,7 +392,7 @@ func (pc tmsClient) GetServiceOffers() ([]models.ServiceOffer, error) {
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
-		return nil, errors.Wrap(err, "Error reading response body")
+		return nil, errors.Wrap(err, "Error in response body")
 	}
 
 	// Parse response for validation

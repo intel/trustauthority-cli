@@ -8,6 +8,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/google/uuid"
+	log "github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/client/pms"
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
@@ -24,7 +25,7 @@ var deletePolicyCmd = &cobra.Command{
 	Short: "Deletes a policy",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("delete policy called")
+		log.Info("delete policy called")
 		policyId, err := deletePolicy(cmd)
 		if err != nil {
 			return err

@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	log "github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/client/tms"
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
@@ -26,7 +27,7 @@ var createUserCmd = &cobra.Command{
 	Short: "Creates a new user under a tenant",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("create user called")
+		log.Info("create user called")
 		response, err := createUser(cmd)
 		if err != nil {
 			return err
@@ -42,7 +43,7 @@ func init() {
 	createUserCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
 	createUserCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the subscription needs to be created")
 	createUserCmd.Flags().StringP(constants.EmailIdParamName, "e", "", "Email id of the tenant user to be created")
-	createUserCmd.Flags().StringP(constants.UserRoleParamName, "r", "", "Email id of the tenant user to be created")
+	createUserCmd.Flags().StringP(constants.UserRoleParamName, "r", "", "Role of the tenant user to be created, should be one of Tenant Admin/User")
 	createUserCmd.MarkFlagRequired(constants.ApiKeyParamName)
 	createUserCmd.MarkFlagRequired(constants.EmailIdParamName)
 }

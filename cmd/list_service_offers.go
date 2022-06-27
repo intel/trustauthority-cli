@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	log "github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/client/tms"
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
@@ -25,7 +26,7 @@ var getServiceOffersCmd = &cobra.Command{
 	Short: "List all the service offers provided by Amber",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("get serviceOffers called")
+		log.Info("list serviceOffers called")
 		response, err := getServiceOffers()
 		if err != nil {
 			return err

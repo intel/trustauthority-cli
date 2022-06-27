@@ -6,7 +6,12 @@
 package cmd
 
 import (
+	"fmt"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"intel/amber/tac/v1/config"
+	"intel/amber/tac/v1/constants"
+	"io"
 	"os"
 )
 
@@ -24,12 +29,42 @@ var tenantCmd = &cobra.Command{
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the tenantCmd.
 func Execute() {
-	err := tenantCmd.Execute()
+	logFile, err := os.OpenFile(constants.LogFilePath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, constants.DefaultFilePermission)
 	if err != nil {
+		fmt.Println("Error opening/creating log file: " + err.Error())
+		os.Exit(1)
+	}
+	tenantCmd.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
+		if err := setUpLogs(logFile); err != nil {
+			return err
+		}
+		return nil
+	}
+	err = tenantCmd.Execute()
+	if err != nil {
+		logrus.Error(err)
 		os.Exit(1)
 	}
 }
 
 func init() {
 	cobra.OnInitialize()
+}
+
+//setUpLogs set the log output ans the log level
+func setUpLogs(logFile io.Writer) error {
+	logrus.SetOutput(logFile)
+
+	configValues, err := config.LoadConfiguration()
+	if err != nil {
+		lvl, _ := logrus.ParseLevel(constants.DefaultLogLevel)
+		logrus.SetLevel(lvl)
+	} else {
+		lvl, err := logrus.ParseLevel(configValues.LogLevel)
+		if err != nil {
+			return err
+		}
+		logrus.SetLevel(lvl)
+	}
+	return nil
 }

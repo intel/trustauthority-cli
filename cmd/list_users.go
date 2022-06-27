@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	log "github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/client/tms"
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
@@ -25,7 +26,7 @@ var getUsersCmd = &cobra.Command{
 	Short: "Get user(s) under tenant",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("get users called")
+		log.Info("list users called")
 		response, err := getUsers(cmd)
 		if err != nil {
 			return err

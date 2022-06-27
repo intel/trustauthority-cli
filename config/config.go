@@ -10,10 +10,10 @@ import (
 )
 
 type Configuration struct {
-	AmberBaseUrl      string    `yaml:"amber-base-url" mapstructure:"amber-base-url"`
-	TenantId          string    `yaml:"tenant-id" mapstructure:"tenant-id"`
-	LogLevel          log.Level `yaml:"log"`
-	HTTPClientTimeout int       `yaml:"http-client-timeout" mapstructure:"http-client-timeout"`
+	AmberBaseUrl      string `yaml:"amber-base-url" mapstructure:"amber-base-url"`
+	TenantId          string `yaml:"tenant-id" mapstructure:"tenant-id"`
+	LogLevel          string `yaml:"log-level" mapstructure:"log-level"`
+	HTTPClientTimeout int    `yaml:"http-client-timeout" mapstructure:"http-client-timeout"`
 }
 
 // this function sets the configuration file name and type

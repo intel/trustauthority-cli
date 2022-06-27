@@ -8,6 +8,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/google/uuid"
+	log "github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/client/tms"
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
@@ -24,7 +25,7 @@ var deleteUserCmd = &cobra.Command{
 	Short: "Deletes a user under a tenant",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("delete user called")
+		log.Info("delete user called")
 		userId, err := deleteUser(cmd)
 		if err != nil {
 			return err

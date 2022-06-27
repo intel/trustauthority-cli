@@ -42,8 +42,9 @@ echo "Installing Tenant CLI..."
 PRODUCT_HOME=/opt/$SERVICE_USERNAME
 BIN_PATH=$PRODUCT_HOME/bin
 CONFIG_PATH=/etc/$SERVICE_USERNAME/
+LOG_PATH=/var/log/$SERVICE_USERNAME/
 
-for directory in $BIN_PATH $CONFIG_PATH; do
+for directory in $BIN_PATH $CONFIG_PATH $LOG_PATH; do
   # mkdir -p will return 0 if directory exists or is a symlink to an existing directory or directory and parents can be created
   mkdir -p $directory
   if [ $? -ne 0 ]; then
@@ -53,6 +54,8 @@ for directory in $BIN_PATH $CONFIG_PATH; do
   chown -R $SERVICE_USERNAME:$SERVICE_USERNAME $directory
   chmod 700 $directory
 done
+
+chmod 740 $LOG_PATH
 
 cp $COMPONENT_NAME $BIN_PATH/ && chown $SERVICE_USERNAME:$SERVICE_USERNAME $BIN_PATH/*
 chmod 700 $BIN_PATH/*

@@ -4,9 +4,12 @@ const (
 	ExecLink              = "/usr/bin/tenantctl"
 	HomeDir               = "/opt/tac/"
 	ConfigDir             = "/etc/tac/"
+	LogDir                = "/var/log/tac/"
 	DefaultConfigFilePath = ConfigDir + "config.yaml"
 	ConfigFileName        = "config"
 	ConfigFileExtension   = "yaml"
+	LogFilePath           = LogDir + "tac.log"
+	DefaultFilePermission = 0640
 )
 
 //Command and parameter names

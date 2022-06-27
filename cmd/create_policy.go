@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	log "github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/client/pms"
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
@@ -27,7 +28,7 @@ var createPolicyCmd = &cobra.Command{
 	Short: "Create a new policy",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("create policy called")
+		log.Info("create policy called")
 		response, err := createPolicy(cmd)
 		if err != nil {
 			return err
