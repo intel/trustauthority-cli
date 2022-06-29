@@ -319,7 +319,7 @@ func SetupMockConfiguration(serverUrl string) *config.Configuration {
 		AmberBaseUrl: serverUrl,
 		TenantId:     "f04971b7-fb41-4a9e-a06e-4bf6e71f98b3",
 	}
-	c.Save("config.yaml")
+	c.Save(constants.DefaultConfigFilePath)
 
 	return c
 }
