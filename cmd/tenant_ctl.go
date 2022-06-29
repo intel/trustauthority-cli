@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/cobra"
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
-	"io"
+	"intel/amber/tac/v1/utils"
 	"os"
 )
 
@@ -21,7 +21,7 @@ var (
 
 // tenantCmd represents the base command when called without any subcommands
 var tenantCmd = &cobra.Command{
-	Use:   "tenantctl",
+	Use:   constants.RootCmd,
 	Short: "Tenant CLI used to run the tasks for tenant admin/user",
 	Long:  ``,
 }
@@ -35,8 +35,15 @@ func Execute() {
 		os.Exit(1)
 	}
 	tenantCmd.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
-		if err := setUpLogs(logFile); err != nil {
-			return err
+		configValues, err := config.LoadConfiguration()
+		if err != nil {
+			if err := utils.SetUpLogs(logFile, constants.DefaultLogLevel); err != nil {
+				return err
+			}
+		} else {
+			if err := utils.SetUpLogs(logFile, configValues.LogLevel); err != nil {
+				return err
+			}
 		}
 		return nil
 	}
@@ -49,22 +56,4 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize()
-}
-
-//setUpLogs set the log output ans the log level
-func setUpLogs(logFile io.Writer) error {
-	logrus.SetOutput(logFile)
-
-	configValues, err := config.LoadConfiguration()
-	if err != nil {
-		lvl, _ := logrus.ParseLevel(constants.DefaultLogLevel)
-		logrus.SetLevel(lvl)
-	} else {
-		lvl, err := logrus.ParseLevel(configValues.LogLevel)
-		if err != nil {
-			return err
-		}
-		logrus.SetLevel(lvl)
-	}
-	return nil
 }

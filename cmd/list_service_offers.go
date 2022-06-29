@@ -22,7 +22,7 @@ import (
 
 // getServiceOffersCmd represents the getServiceOffers command
 var getServiceOffersCmd = &cobra.Command{
-	Use:   "serviceOffer",
+	Use:   constants.ServiceOfferCmd,
 	Short: "List all the service offers provided by Amber",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {

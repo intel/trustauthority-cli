@@ -24,7 +24,7 @@ import (
 
 // createPolicyCmd represents the createPolicy command
 var createPolicyCmd = &cobra.Command{
-	Use:   "policy",
+	Use:   constants.PolicyCmd,
 	Short: "Create a new policy",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {

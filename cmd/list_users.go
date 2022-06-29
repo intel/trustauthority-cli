@@ -22,7 +22,7 @@ import (
 
 // getUsersCmd represents the getUsers command
 var getUsersCmd = &cobra.Command{
-	Use:   "user",
+	Use:   constants.UserCmd,
 	Short: "Get user(s) under tenant",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {

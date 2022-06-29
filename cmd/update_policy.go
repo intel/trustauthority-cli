@@ -24,7 +24,7 @@ import (
 
 // updatePolicyCmd represents the updatePolicy command
 var updatePolicyCmd = &cobra.Command{
-	Use:   "policy",
+	Use:   constants.PolicyCmd,
 	Short: "Updated a specific whose ID has been provided",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {

@@ -7,29 +7,20 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/google/uuid"
-	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
+	"github.com/spf13/cobra"
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
-	"intel/amber/tac/v1/utils"
-	"net/url"
-	"os"
-	"strings"
-
-	"github.com/spf13/cobra"
 )
 
 // setupConfigCmd represents the setup command
 var (
 	setupConfigCmd = &cobra.Command{
-		Use:   "config",
+		Use:   constants.SetupConfigCmd,
 		Short: "Setup configuration for Amber CLI",
 		Long:  ``,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			fmt.Println("setup called")
-			if err := setupConfig(); err != nil {
+			if err := config.SetupConfig(envFilePath); err != nil {
 				return err
 			}
 			return nil
@@ -44,65 +35,4 @@ func init() {
 
 	setupConfigCmd.Flags().StringVarP(&envFilePath, constants.EnvFileParamName, "v", "", "Path for the env file to be used to update the configuration")
 	setupConfigCmd.MarkFlagRequired(constants.EnvFileParamName)
-}
-
-func setupConfig() error {
-	var err error
-
-	if _, err = os.Stat(constants.DefaultConfigFilePath); err != nil {
-		if os.IsNotExist(err) {
-			_, err = os.Create(constants.DefaultConfigFilePath)
-			if err != nil {
-				return err
-			}
-		} else {
-			return err
-		}
-	}
-
-	if err = utils.ReadAnswerFileToEnv(envFilePath); err != nil {
-		return err
-	}
-
-	//set default
-	viper.SetDefault(constants.Loglevel, constants.DefaultLogLevel)
-	viper.SetDefault(constants.HttpClientTimeout, constants.DefaultHttpClientTimeout)
-
-	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
-	viper.AutomaticEnv()
-
-	configValues := &config.Configuration{}
-
-	configValues.AmberBaseUrl = viper.GetString(constants.AmberBaseUrl)
-	if configValues.AmberBaseUrl == "" {
-		return errors.New("Amber base URL needs to be provided in configuration")
-	}
-
-	_, err = url.Parse(configValues.AmberBaseUrl)
-	if err != nil {
-		return errors.Wrap(err, "Invalid Amber Base URL")
-	}
-
-	tenantId, err := uuid.Parse(viper.GetString(constants.TenantId))
-	if err != nil {
-		return errors.Wrap(err, "Invalid Tenant Id provided")
-	}
-
-	if tenantId.String() == "" {
-		return errors.New("Tenant Id needs to be provided in configuration")
-	} else {
-		configValues.TenantId = tenantId.String()
-	}
-
-	logLevel, err := log.ParseLevel(viper.GetString(constants.Loglevel))
-	if err != nil {
-		return errors.Wrap(err, "Invalid log level provided")
-	}
-	configValues.LogLevel = logLevel.String()
-	configValues.HTTPClientTimeout = viper.GetInt(constants.HttpClientTimeout)
-
-	if err = configValues.Save(constants.DefaultConfigFilePath); err != nil {
-		return err
-	}
-	return nil
 }

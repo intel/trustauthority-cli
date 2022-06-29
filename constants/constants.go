@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2022 Intel Corporation
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
 package constants
 
 const (
@@ -28,6 +33,24 @@ const (
 	PolicyFileParamName         = "policy-file"
 	PolicyIdParamName           = "policy-id"
 	EnvFileParamName            = "env-file"
+
+	RootCmd        = "tenantctl"
+	CreateCmd      = "create"
+	ListCmd        = "list"
+	DeleteCmd      = "delete"
+	UpdateCmd      = "update"
+	UninstallCmd   = "uninstall"
+	SetupConfigCmd = "config"
+)
+
+//Resource names
+const (
+	PolicyCmd       = "policy"
+	UserCmd         = "user"
+	ProductCmd      = "product"
+	ServiceOfferCmd = "serviceOffer"
+	ServiceCmd      = "service"
+	SubscriptionCmd = "subscription"
 )
 
 const (

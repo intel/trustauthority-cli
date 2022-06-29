@@ -1,8 +1,16 @@
+/*
+ * Copyright (C) 2022 Intel Corporation
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
 package utils
 
 import (
 	"bufio"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
+	"intel/amber/tac/v1/constants"
+	"io"
 	"os"
 	"strings"
 )
@@ -31,6 +39,19 @@ func ReadAnswerFileToEnv(filename string) error {
 				}
 			}
 		}
+	}
+	return nil
+}
+
+//SetUpLogs set the log output and the log level
+func SetUpLogs(logFile io.Writer, logLevel string) error {
+	logrus.SetOutput(logFile)
+	lvl, err := logrus.ParseLevel(logLevel)
+	if err != nil {
+		lvl, _ = logrus.ParseLevel(constants.DefaultLogLevel)
+		logrus.SetLevel(lvl)
+	} else {
+		logrus.SetLevel(lvl)
 	}
 	return nil
 }

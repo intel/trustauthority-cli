@@ -7,11 +7,12 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
+	"intel/amber/tac/v1/constants"
 )
 
 // listCmd represents the list command
 var listCmd = &cobra.Command{
-	Use:   "list",
+	Use:   constants.ListCmd,
 	Short: "Lists a resource or group of resources",
 	Long:  ``,
 }

@@ -23,7 +23,7 @@ import (
 
 // createUserCmd represents the createUser command
 var createUserCmd = &cobra.Command{
-	Use:   "user",
+	Use:   constants.UserCmd,
 	Short: "Creates a new user under a tenant",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {

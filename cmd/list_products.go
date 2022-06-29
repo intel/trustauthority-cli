@@ -22,7 +22,7 @@ import (
 
 // getProductsCmd represents the getProducts command
 var getProductsCmd = &cobra.Command{
-	Use:   "product",
+	Use:   constants.ProductCmd,
 	Short: "Get list of products or a specific product under a specific service offer",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
