@@ -25,7 +25,7 @@ import (
 
 // createSubscriptionCmd represents the createSubscription command
 var createSubscriptionCmd = &cobra.Command{
-	Use:   "subscription",
+	Use:   constants.SubscriptionCmd,
 	Short: "Create a new subscription for a user",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -42,7 +42,7 @@ var createSubscriptionCmd = &cobra.Command{
 func init() {
 	createCmd.AddCommand(createSubscriptionCmd)
 
-	createSubscriptionCmd.Flags().StringP(constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
+	createSubscriptionCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
 	createSubscriptionCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the subscription needs to be created")
 	createSubscriptionCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the subscription needs to be created")
 	createSubscriptionCmd.Flags().StringP(constants.ProductIdParamName, "p", "", "Id of the Amber Product for which the subscription needs to be created")

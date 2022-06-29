@@ -7,11 +7,12 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
+	"intel/amber/tac/v1/constants"
 )
 
 // updateCmd represents the update command
 var updateCmd = &cobra.Command{
-	Use:   "update",
+	Use:   constants.UpdateCmd,
 	Short: "Updates a resource",
 	Long:  ``,
 }

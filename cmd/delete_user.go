@@ -21,7 +21,7 @@ import (
 
 // deleteUserCmd represents the deleteUser command
 var deleteUserCmd = &cobra.Command{
-	Use:   "user",
+	Use:   constants.UserCmd,
 	Short: "Deletes a user under a tenant",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -38,7 +38,7 @@ var deleteUserCmd = &cobra.Command{
 func init() {
 	deleteCmd.AddCommand(deleteUserCmd)
 
-	deleteUserCmd.Flags().StringP(constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
+	deleteUserCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
 	deleteUserCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the subscription needs to be created")
 	deleteUserCmd.Flags().StringP(constants.UserIdParamName, "u", "", "Id of the specific user the details for whom needs to be fetched")
 	deleteUserCmd.MarkFlagRequired(constants.ApiKeyParamName)

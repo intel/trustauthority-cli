@@ -21,7 +21,7 @@ import (
 
 // deletePolicyCmd represents the deletePolicy command
 var deletePolicyCmd = &cobra.Command{
-	Use:   "policy",
+	Use:   constants.PolicyCmd,
 	Short: "Deletes a policy",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {

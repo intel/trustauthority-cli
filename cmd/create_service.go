@@ -25,7 +25,7 @@ import (
 
 // createServiceCmd represents the createService command
 var createServiceCmd = &cobra.Command{
-	Use:   "service",
+	Use:   constants.ServiceCmd,
 	Short: "Create a new service",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -42,7 +42,7 @@ var createServiceCmd = &cobra.Command{
 func init() {
 	createCmd.AddCommand(createServiceCmd)
 
-	createServiceCmd.Flags().StringP(constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
+	createServiceCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
 	createServiceCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the subscription needs to be created")
 	createServiceCmd.Flags().StringP(constants.ServiceOfferIdParamName, "r", "", "Id of the Amber service offer for which the service needs to be created")
 	createServiceCmd.Flags().StringP(constants.ServiceDescriptionParamName, "d", "", "Description of the service")

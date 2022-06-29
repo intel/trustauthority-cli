@@ -7,10 +7,11 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
+	"intel/amber/tac/v1/constants"
 )
 
 var createCmd = &cobra.Command{
-	Use:   "create",
+	Use:   constants.CreateCmd,
 	Short: "Create a resource",
 	Long:  ``,
 }

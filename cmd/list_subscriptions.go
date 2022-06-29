@@ -22,7 +22,7 @@ import (
 
 // getSubscriptionsCmd represents the getSubscriptions command
 var getSubscriptionsCmd = &cobra.Command{
-	Use:   "subscription",
+	Use:   constants.SubscriptionCmd,
 	Short: "Get subscription(s) under a particular tenant",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {

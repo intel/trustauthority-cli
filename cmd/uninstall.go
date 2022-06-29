@@ -1,7 +1,8 @@
 /*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
+ * Copyright (C) 2022 Intel Corporation
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
 
-*/
 package cmd
 
 import (
@@ -15,7 +16,7 @@ import (
 
 // uninstallCmd represents the uninstall command
 var uninstallCmd = &cobra.Command{
-	Use:   "uninstall",
+	Use:   constants.UninstallCmd,
 	Short: "Uninstall Tenant CLI",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {

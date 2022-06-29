@@ -22,7 +22,7 @@ import (
 
 // getPoliciesCmd represents the getPolicies command
 var getPoliciesCmd = &cobra.Command{
-	Use:   "policy",
+	Use:   constants.PolicyCmd,
 	Short: "Get list of policies or specific policy user a tenant",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
