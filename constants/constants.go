@@ -69,6 +69,7 @@ const (
 
 	DefaultLogLevel          = "info"
 	DefaultHttpClientTimeout = 10
+	SubscriptionStatusActive = "Active"
 )
 
 //HTTP constants
