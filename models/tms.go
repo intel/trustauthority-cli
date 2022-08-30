@@ -12,12 +12,6 @@ import (
 
 type SubscriptionStatus string
 
-const (
-	Active    SubscriptionStatus = "Active"
-	Inactive  SubscriptionStatus = "Inactive"
-	Cancelled SubscriptionStatus = "Cancelled"
-)
-
 type (
 	Tenant struct {
 		ID       uuid.UUID `json:"id"`
@@ -25,6 +19,7 @@ type (
 		Company  string    `json:"company"`
 		Address  string    `json:"address"`
 		ParentId uuid.UUID `json:"parent_id,omitempty"`
+		Email    string    `json:"email"`
 	}
 
 	Role struct {
@@ -52,11 +47,20 @@ type (
 	}
 
 	CreateTenantUser struct {
+		ID        uuid.UUID `json:"id"`
 		Email     string    `json:"email"`
 		TenantId  uuid.UUID `json:"-"`
 		Active    bool      `json:"-"`
 		CreatedBy uuid.UUID `json:"-"`
 		Role      string    `json:"role"`
+	}
+
+	Tag struct {
+		ID         uuid.UUID `json:"id"`
+		Name       string    `json:"name"`
+		TenantId   uuid.UUID `json:"-"`
+		Predefined bool      `json:"predefined"`
+		CreatedBy  uuid.UUID `json:"-"`
 	}
 
 	UpdateTenantUserRoles struct {
@@ -87,27 +91,18 @@ type (
 		UpdatedBy uuid.UUID `json:"-"`
 	}
 
-	//ProvisionTenant used to create a tenant and a Tenant Admin in a single step
-	ProvisionTenant struct {
-		Email     string    `json:"email"`
-		Name      string    `json:"name"`
-		Company   string    `json:"company"`
-		Address   string    `json:"address"`
-		Role      string    `json:"-"`
-		CreatedBy uuid.UUID `json:"-"`
-		ParentId  uuid.UUID `json:"parent_id"`
-	}
-
 	Product struct {
-		ID             uuid.UUID `json:"id"`
-		ServiceOfferId uuid.UUID `json:"service_offer_id"`
-		Name           string    `json:"name"`
+		ID             uuid.UUID      `json:"id"`
+		ServiceOfferId uuid.UUID      `json:"service_offer_id"`
+		Name           string         `json:"name"`
+		Policy         *ProductPolicy `json:"policy"`
 	}
 
-	CreateProduct struct {
-		Name           string    `json:"name"`
-		ServiceOfferId uuid.UUID `json:"-"`
-		CreatedBy      uuid.UUID `json:"-"`
+	ProductPolicy struct {
+		Limit              int `json:"limit"`
+		Quota              int `json:"quota"`
+		LimitRenewalInSecs int `json:"limit_renewal_period"`
+		QuotaRenewalInSecs int `json:"quota_renewal_period"`
 	}
 
 	ServiceOffer struct {
@@ -115,30 +110,32 @@ type (
 		Name string    `json:"name"`
 	}
 
-	CreateServiceOffer struct {
-		Name      string    `json:"name"`
-		CreatedBy uuid.UUID `json:"-"`
-	}
-
 	Service struct {
 		ID             uuid.UUID `json:"id"`
 		TenantId       uuid.UUID `json:"tenant_id"`
 		ServiceOfferId uuid.UUID `json:"service_offer_id"`
 		Description    string    `json:"description"`
+		CreatedAt      time.Time `json:"created_at"`
+	}
+
+	UpdateService struct {
+		Id        uuid.UUID `json:"-"`
+		Name      string    `json:"name"`
+		TenantId  uuid.UUID `json:"-"`
+		UpdatedBy uuid.UUID `json:"-"`
 	}
 
 	ServiceDetail struct {
 		ID               uuid.UUID `json:"id"`
-		TenantId         uuid.UUID `json:"tenant_id"`
-		TenantName       string    `json:"tenant_name"`
 		ServiceOfferId   uuid.UUID `json:"service_offer_id"`
 		ServiceOfferName string    `json:"service_offer_name"`
 		Description      string    `json:"description"`
+		CreatedAt        time.Time `json:"created_at"`
 	}
 
 	CreateService struct {
-		TenantId       uuid.UUID `json:"_"`
 		ServiceOfferId uuid.UUID `json:"service_offer_id"`
+		TenantId       uuid.UUID `json:"-"`
 		Description    string    `json:"description"`
 		CreatedBy      uuid.UUID `json:"-"`
 	}
@@ -147,24 +144,88 @@ type (
 		ID          uuid.UUID          `json:"id"`
 		ServiceId   uuid.UUID          `json:"service_id"`
 		ProductId   uuid.UUID          `json:"product_id"`
+		ProductName string             `json:"product_name"`
 		Status      SubscriptionStatus `json:"status"`
 		Description string             `json:"description"`
+		ExpiredAt   time.Time          `json:"expired_at"`
+		CreatedAt   time.Time          `json:"created_at"`
+	}
+
+	UpdateSubscription struct {
+		Id           uuid.UUID                `json:"-"`
+		ProductId    uuid.UUID                `json:"product_id"`
+		ServiceId    uuid.UUID                `json:"-"`
+		Name         string                   `json:"name"`
+		TenantId     uuid.UUID                `json:"-"`
+		PolicyIds    []uuid.UUID              `json:"policy_ids"`
+		TagIdsValues []SubscriptionTagIdValue `json:"tagIds_values"`
+		UpdatedBy    uuid.UUID                `json:"-"`
+		Status       SubscriptionStatus       `json:"status"`
+		ExpiredAt    time.Time                `json:"expired_at"`
+	}
+
+	DeleteSubscription struct {
+		Id       uuid.UUID `json:"-"`
+		TenantId uuid.UUID `json:"-"`
 	}
 
 	SubscriptionDetail struct {
-		ID          uuid.UUID          `json:"id"`
-		ServiceId   uuid.UUID          `json:"service_id"`
-		ProductId   uuid.UUID          `json:"product_id"`
-		Status      SubscriptionStatus `json:"status"`
-		Description string             `json:"description"`
-		Keys        []string           `json:"keys"`
+		ID               uuid.UUID              `json:"id"`
+		ServiceId        uuid.UUID              `json:"service_id"`
+		ServiceOfferName string                 `json:"service_offer_name"`
+		ProductId        uuid.UUID              `json:"product_id"`
+		ProductName      string                 `json:"product_name"`
+		Status           SubscriptionStatus     `json:"status"`
+		Description      string                 `json:"description"`
+		ExpiredAt        time.Time              `json:"expired_at"`
+		Keys             []string               `json:"keys"`
+		PolicyIds        []uuid.UUID            `json:"policy_ids"`
+		TagsValues       []SubscriptionTagValue `json:"tags"`
+		CreatedAt        time.Time              `json:"created_at"`
 	}
 
 	CreateSubscription struct {
-		ServiceId   uuid.UUID `json:"_"`
-		TenantId    uuid.UUID `json:"_"`
-		ProductId   uuid.UUID `json:"product_id"`
-		Description string    `json:"description"`
-		CreatedBy   uuid.UUID `json:"-"`
+		ProductId    uuid.UUID                `json:"product_id"`
+		ServiceId    uuid.UUID                `json:"-"`
+		TenantId     uuid.UUID                `json:"-"`
+		PolicyIds    []uuid.UUID              `json:"policy_ids"`
+		TagIdsValues []SubscriptionTagIdValue `json:"tagIds_values"`
+		Description  string                   `json:"description"`
+		Status       SubscriptionStatus       `json:"status"`
+		CreatedBy    uuid.UUID                `json:"-"`
+		ExpiredAt    time.Time                `json:"expired_at"`
+	}
+
+	SubscriptionPolicies struct {
+		PolicyIds []uuid.UUID `json:"policy_ids"`
+	}
+
+	SubscriptionTagValue struct {
+		Id    uuid.UUID `json:"id"`
+		Name  string    `json:"name"`
+		Value string    `json:"value"`
+	}
+
+	SubscriptionTagsValues struct {
+		TagsValues []SubscriptionTagValue `json:"tags_values"`
+	}
+
+	SubscriptionTagIdValue struct {
+		TagId uuid.UUID `json:"tagId"`
+		Value string    `json:"value"`
+	}
+
+	SubscriptionTag struct {
+		TagId      string `json:"tag_id"`
+		Name       string `json:"name"`
+		Predefined bool   `json:"predefined"`
+	}
+
+	SubscriptionTags struct {
+		Tags []SubscriptionTag `json:"tags"`
+	}
+
+	Tags struct {
+		Tags []Tag `json:"tags"`
 	}
 )

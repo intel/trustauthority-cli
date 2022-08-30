@@ -25,13 +25,13 @@ import (
 )
 
 // createSubscriptionCmd represents the createSubscription command
-var createSubscriptionCmd = &cobra.Command{
+var updateSubscriptionCmd = &cobra.Command{
 	Use:   constants.SubscriptionCmd,
-	Short: "Create a new subscription for a user",
+	Short: "Update an existing subscription for a user",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		log.Info("create subscription called")
-		response, err := createSubscription(cmd)
+		log.Info("update subscription called")
+		response, err := updateSubscription(cmd)
 		if err != nil {
 			return err
 		}
@@ -41,23 +41,25 @@ var createSubscriptionCmd = &cobra.Command{
 }
 
 func init() {
-	createCmd.AddCommand(createSubscriptionCmd)
+	updateCmd.AddCommand(updateSubscriptionCmd)
 
-	createSubscriptionCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
-	createSubscriptionCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the subscription needs to be created")
-	createSubscriptionCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the subscription needs to be created")
-	createSubscriptionCmd.Flags().StringP(constants.ProductIdParamName, "p", "", "Id of the Amber Product for which the subscription needs to be created")
-	createSubscriptionCmd.Flags().StringP(constants.SubscriptionDescriptionParamName, "d", "", "Description of the subscription that needs to be created")
-	createSubscriptionCmd.Flags().StringSliceP(constants.PolicyIdsParamName, "i", []string{}, "List of comma separated policy IDs to be linked to the subscription")
-	createSubscriptionCmd.Flags().StringSliceP(constants.TagIdAndValuesParamName, "v", []string{}, "List of the comma separated tad Id and value pairs in the "+
+	updateSubscriptionCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
+	updateSubscriptionCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the subscription needs to be updated")
+	updateSubscriptionCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the subscription needs to be updated")
+	updateSubscriptionCmd.Flags().StringP(constants.ProductIdParamName, "p", "", "Id of the Amber Product for which the subscription needs to be updated")
+	updateSubscriptionCmd.Flags().StringP(constants.SubscriptionDescriptionParamName, "d", "", "Description of the subscription that needs to be updated")
+	updateSubscriptionCmd.Flags().StringP(constants.SubscriptionIdParamName, "u", "", "Id of the subscription that needs to be updated")
+	updateSubscriptionCmd.Flags().StringSliceP(constants.PolicyIdsParamName, "i", []string{}, "List of comma separated policy IDs to be linked to the subscription")
+	updateSubscriptionCmd.Flags().StringSliceP(constants.TagIdAndValuesParamName, "v", []string{}, "List of the comma separated tad Id and value pairs in the "+
 		"following format:\n e03582e6-0709-42c2-a164-a687a970e040:Workload-AI,051800d0-cae5-48e7-8515-9801650fcd2b:60 V etc.")
-	createSubscriptionCmd.MarkFlagRequired(constants.ApiKeyParamName)
-	createSubscriptionCmd.MarkFlagRequired(constants.ServiceIdParamName)
-	createSubscriptionCmd.MarkFlagRequired(constants.ProductIdParamName)
-	createSubscriptionCmd.MarkFlagRequired(constants.SubscriptionDescriptionParamName)
+	updateSubscriptionCmd.Flags().StringP(constants.ActivationStatus, "s", "", "Add activation status for subscription, should be \"active\" or \"inactive\"")
+	updateSubscriptionCmd.MarkFlagRequired(constants.ApiKeyParamName)
+	updateSubscriptionCmd.MarkFlagRequired(constants.ServiceIdParamName)
+	updateSubscriptionCmd.MarkFlagRequired(constants.ProductIdParamName)
+	updateSubscriptionCmd.MarkFlagRequired(constants.SubscriptionDescriptionParamName)
 }
 
-func createSubscription(cmd *cobra.Command) (string, error) {
+func updateSubscription(cmd *cobra.Command) (string, error) {
 	configValues, err := config.LoadConfiguration()
 	if err != nil {
 		return "", err
@@ -110,6 +112,22 @@ func createSubscription(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
+	subscriptionIdString, err := cmd.Flags().GetString(constants.SubscriptionIdParamName)
+	if err != nil {
+		return "", err
+	}
+	subscriptionId, err := uuid.Parse(subscriptionIdString)
+	if err != nil {
+		return "", errors.Wrap(err, "Invalid subscription Id provided")
+	}
+
+	activationStatus, err := cmd.Flags().GetString(constants.ActivationStatus)
+	if err != nil {
+		return "", err
+	} else if activationStatus != "active" && activationStatus != "inactive" {
+		return "", errors.New("Activation status should be one of active or inactive")
+	}
+
 	policyIdsString, err := cmd.Flags().GetStringSlice(constants.PolicyIdsParamName)
 	if err != nil {
 		return "", err
@@ -125,9 +143,6 @@ func createSubscription(cmd *cobra.Command) (string, error) {
 	}
 
 	tagIdValuesString, err := cmd.Flags().GetStringSlice(constants.TagIdAndValuesParamName)
-	if err != nil {
-		return "", err
-	}
 
 	var tagIdValues []models.SubscriptionTagIdValue
 	for _, tagIdValue := range tagIdValuesString {
@@ -137,20 +152,18 @@ func createSubscription(cmd *cobra.Command) (string, error) {
 		}
 		tagId, err := uuid.Parse(splitTag[0])
 		if err != nil {
-			return "", errors.Wrap(err, "Tag Id is not in proper format, should be UUID: "+splitTag[0])
+			return "", errors.Wrap(err, "Tag Id is not in proper format, should be UUID: "+tagId.String())
 		}
 		tagIdValues = append(tagIdValues, models.SubscriptionTagIdValue{TagId: tagId, Value: splitTag[1]})
 	}
 
-	var subscriptionInfo = models.CreateSubscription{
+	var subscriptionInfo = models.UpdateSubscription{
 		ProductId:    productId,
-		Description:  subscriptionDescription,
-		ExpiredAt:    time.Now().AddDate(1, 0, 0),
+		Name:         subscriptionDescription,
 		PolicyIds:    policyIds,
 		TagIdsValues: tagIdValues,
-		CreatedBy:    tenantId,
 		ServiceId:    serviceId,
-		Status:       constants.SubscriptionStatusActive,
+		Status:       models.SubscriptionStatus(activationStatus),
 	}
 
 	if err = validation.ValidateStrings([]string{subscriptionDescription}); err != nil {
@@ -158,7 +171,7 @@ func createSubscription(cmd *cobra.Command) (string, error) {
 	}
 
 	tmsClient := tms.NewTmsClient(client, tmsUrl, tenantId, apiKey)
-	response, err := tmsClient.CreateSubscription(&subscriptionInfo)
+	response, err := tmsClient.UpdateSubscription(&subscriptionInfo, subscriptionId)
 	if err != nil {
 		return "", err
 	}

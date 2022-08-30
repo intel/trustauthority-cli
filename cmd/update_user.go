@@ -6,12 +6,14 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/client/tms"
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
+	"intel/amber/tac/v1/models"
 	"net/http"
 	"net/url"
 	"time"
@@ -19,33 +21,34 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// deleteUserCmd represents the deleteUser command
-var deleteUserCmd = &cobra.Command{
+var updateUserCmd = &cobra.Command{
 	Use:   constants.UserCmd,
-	Short: "Deletes a user under a tenant",
+	Short: "Updates a user under a tenant",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		log.Info("delete user called")
-		userId, err := deleteUser(cmd)
+		log.Info("update user called")
+		userId, err := updateUser(cmd)
 		if err != nil {
 			return err
 		}
-		fmt.Printf("\nUser %s deleted \n", userId)
+		fmt.Printf("\nUpdated User: %s \n\n", userId)
 		return nil
 	},
 }
 
 func init() {
-	deleteCmd.AddCommand(deleteUserCmd)
+	updateCmd.AddCommand(updateUserCmd)
 
-	deleteUserCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
-	deleteUserCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the subscription needs to be created")
-	deleteUserCmd.Flags().StringP(constants.UserIdParamName, "u", "", "Id of the specific user the details for whom needs to be fetched")
-	deleteUserCmd.MarkFlagRequired(constants.ApiKeyParamName)
-	deleteUserCmd.MarkFlagRequired(constants.UserIdParamName)
+	updateUserCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
+	updateUserCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the user needs to be created")
+	updateUserCmd.Flags().StringP(constants.UserIdParamName, "u", "", "Id of the specific user")
+	updateUserCmd.Flags().StringP(constants.EmailIdParamName, "e", "", "Email Id of the specific user to be updated")
+	updateUserCmd.MarkFlagRequired(constants.ApiKeyParamName)
+	updateUserCmd.MarkFlagRequired(constants.UserIdParamName)
+	updateUserCmd.MarkFlagRequired(constants.UserRoleParamName)
 }
 
-func deleteUser(cmd *cobra.Command) (string, error) {
+func updateUser(cmd *cobra.Command) (string, error) {
 	configValues, err := config.LoadConfiguration()
 	if err != nil {
 		return "", err
@@ -83,12 +86,27 @@ func deleteUser(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
-	tmsClient := tms.NewTmsClient(client, tmsUrl, tenantId, apiKey)
-
-	err = tmsClient.DeleteUser(userId)
+	emailId, err := cmd.Flags().GetString(constants.EmailIdParamName)
 	if err != nil {
 		return "", err
 	}
 
-	return userIdString, nil
+	updateUserRoleReq := &models.UpdateUser{
+		Id:    userId,
+		Email: emailId,
+	}
+
+	tmsClient := tms.NewTmsClient(client, tmsUrl, tenantId, apiKey)
+
+	response, err := tmsClient.UpdateUser(updateUserRoleReq)
+	if err != nil {
+		return "", err
+	}
+
+	responseBytes, err := json.MarshalIndent(response, "", "  ")
+	if err != nil {
+		return "", err
+	}
+
+	return string(responseBytes), nil
 }

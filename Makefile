@@ -1,6 +1,6 @@
 GITCOMMIT := $(shell git describe --always)
 BUILDDATE := $(shell TZ=UTC date +%Y-%m-%dT%H:%M:%S%z)
-VERSION := "v0.3.0"
+VERSION := "v0.2.0"
 PROXY_EXISTS := $(shell if [[ "${https_proxy}" || "${http_proxy}" || "${no_proxy}" ]]; then echo 1; else echo 0; fi)
 DOCKER_PROXY_FLAGS := ""
 ifeq ($(PROXY_EXISTS),1)
@@ -11,7 +11,9 @@ endif
 
 tenantctl:
 	mkdir -p out/
-	env GOOS=linux GOSUMDB=off GOPROXY=direct go mod tidy && env GOOS=linux GOSUMDB=off GOPROXY=direct go build -o out/tenantctl
+	env GOOS=linux GOSUMDB=off GOPROXY=direct go mod tidy && env GOOS=linux GOSUMDB=off GOPROXY=direct go build \
+    -ldflags "-X intel/amber/tac/v1/utils.BuildDate=${BUILDDATE} -X intel/amber/tac/v1/utils.Version=${VERSION} -X intel/amber/tac/v1/utils.GitHash=${GITCOMMIT}" \
+    -o out/tenantctl
 
 installer: tenantctl
 	mkdir -p out/installer

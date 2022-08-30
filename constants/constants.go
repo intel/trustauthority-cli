@@ -15,24 +15,29 @@ const (
 	ConfigFileExtension   = "yaml"
 	LogFilePath           = LogDir + "tac.log"
 	DefaultFilePermission = 0640
+	ExplicitCLIName       = "Tenant CLI"
 )
 
 //Command and parameter names
 const (
-	ApiKeyParamName             = "api-key"
-	TenantIdParamName           = "tenant-id"
-	UserIdParamName             = "user-id"
-	ServiceIdParamName          = "service-id"
-	ServiceOfferIdParamName     = "service-offer-id"
-	ProductIdParamName          = "product-id"
-	SubscriptionIdParamName     = "subscription-id"
-	SubscriptionParamName       = "subscription"
-	ServiceDescriptionParamName = "service-description"
-	EmailIdParamName            = "email-id"
-	UserRoleParamName           = "user-role"
-	PolicyFileParamName         = "policy-file"
-	PolicyIdParamName           = "policy-id"
-	EnvFileParamName            = "env-file"
+	ApiKeyParamName                  = "api-key"
+	TenantIdParamName                = "tenant-id"
+	UserIdParamName                  = "user-id"
+	ServiceIdParamName               = "service-id"
+	ServiceOfferIdParamName          = "service-offer-id"
+	ProductIdParamName               = "product-id"
+	SubscriptionIdParamName          = "subscription-id"
+	ActivationStatus                 = "status"
+	PolicyIdsParamName               = "policy-ids"
+	SubscriptionDescriptionParamName = "subscription-description"
+	ServiceNameParamName             = "service-name"
+	EmailIdParamName                 = "email-id"
+	UserRoleParamName                = "user-role"
+	PolicyFileParamName              = "policy-file"
+	PolicyIdParamName                = "policy-id"
+	TagNameParamName                 = "tag-name"
+	TagIdAndValuesParamName          = "tag-id-value"
+	EnvFileParamName                 = "env-file"
 
 	RootCmd        = "tenantctl"
 	CreateCmd      = "create"
@@ -40,6 +45,7 @@ const (
 	DeleteCmd      = "delete"
 	UpdateCmd      = "update"
 	UninstallCmd   = "uninstall"
+	VersionCmd     = "version"
 	SetupConfigCmd = "config"
 )
 
@@ -51,6 +57,8 @@ const (
 	ServiceOfferCmd = "serviceOffer"
 	ServiceCmd      = "service"
 	SubscriptionCmd = "subscription"
+	TagCmd          = "tag"
+	RoleCmd         = "role"
 )
 
 const (
@@ -85,4 +93,6 @@ const (
 	SubscriptionApiEndpoint = "/subscriptions"
 	UserApiEndpoint         = "/users"
 	ProductApiEndpoint      = "/products"
+	TagApiEndpoint          = "/tags"
+	TagsValuesEndpoint      = "/tags-values"
 )

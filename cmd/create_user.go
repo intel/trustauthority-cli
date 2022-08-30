@@ -86,7 +86,7 @@ func createUser(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
-	var createUserInfo = models.CreateTenantUser{
+	var createUserInfo = &models.CreateTenantUser{
 		Email: emailId,
 		Role:  role,
 	}

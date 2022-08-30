@@ -89,7 +89,6 @@ func (pc pmsClient) DeletePolicy(policyID uuid.UUID) error {
 	if err != nil {
 		return errors.Wrap(err, " Error forming request")
 	}
-	req.Header.Add(constants.HTTPHeaderKeyTenantId, pc.TenantId.String())
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
 
 	_, err = client.SendRequest(pc.Client, req)
@@ -115,7 +114,6 @@ func (pc pmsClient) GetPolicy(policyID uuid.UUID) (*models.PolicyResponse, error
 		return nil, errors.Wrap(err, " Error forming request")
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
-	req.Header.Add(constants.HTTPHeaderKeyTenantId, pc.TenantId.String())
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
 
 	response, err := client.SendRequest(pc.Client, req)
@@ -145,7 +143,6 @@ func (pc pmsClient) SearchPolicy() ([]models.PolicyResponse, error) {
 		return nil, errors.Wrap(err, " Error forming request")
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
-	req.Header.Add(constants.HTTPHeaderKeyTenantId, pc.TenantId.String())
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
 
 	response, err := client.SendRequest(pc.Client, req)
