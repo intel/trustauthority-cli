@@ -40,7 +40,6 @@ func init() {
 	listCmd.AddCommand(getUsersCmd)
 
 	getUsersCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
-	getUsersCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the subscription needs to be created")
 	getUsersCmd.Flags().StringP(constants.UserIdParamName, "u", "", "Id of the specific user the details for whom needs to be fetched")
 	getUsersCmd.MarkFlagRequired(constants.ApiKeyParamName)
 
@@ -60,26 +59,12 @@ func getUsers(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
-	tenantIdString, err := cmd.Flags().GetString(constants.TenantIdParamName)
-	if err != nil {
-		return "", err
-	}
-
-	if tenantIdString == "" {
-		tenantIdString = configValues.TenantId
-	}
-
-	tenantId, err := uuid.Parse(tenantIdString)
-	if err != nil {
-		return "", err
-	}
-
 	userIdString, err := cmd.Flags().GetString(constants.UserIdParamName)
 	if err != nil {
 		return "", err
 	}
 
-	tmsClient := tms.NewTmsClient(client, tmsUrl, tenantId, apiKey)
+	tmsClient := tms.NewTmsClient(client, tmsUrl, uuid.Nil, apiKey)
 
 	var responseBytes []byte
 	if userIdString == "" {
