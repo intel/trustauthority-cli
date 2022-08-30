@@ -6,8 +6,8 @@ Ubuntu LTS 20.04
 
 ### Build
 
-- git clone https://github.com/intel-innersource/applications.security.amber.core-services.git core-services
-- cd core-services/cli and run "make installer"
+- git clone https://github.com/intel-innersource/applications.security.amber.cli.git cli
+- cd cli and run "make installer"
 - copy the binary installer tenantctl-{version}.bin to the system where it needs to be deployed
 - create an env file tac.env and add the following mandatory contents:<br>
   a. AMBER_BASE_URL=< URL of API Gateway > <br>
