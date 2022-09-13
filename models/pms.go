@@ -12,21 +12,12 @@ import (
 
 // PolicyRequest struct defines the policy
 type PolicyRequest struct {
-	PolicyId         uuid.UUID `json:"policy_id"`
-	Policy           string    `json:"policy"`
-	TenantId         uuid.UUID `json:"tenant_id"`
-	UserId           uuid.UUID `json:"user_id,omitempty"`
-	Version          string    `json:"version"`
-	PolicyName       string    `json:"policy_name"`
-	PolicyType       string    `json:"policy_type"`
-	ServiceOfferId   uuid.UUID `json:"service_offer_id"`
-	ServiceOfferName string    `json:"service_offer_name"`
-	SubscriptionId   uuid.UUID `json:"subscription_id"`
-	SubscriptionName string    `json:"subscription_name"`
+	CommonPolicy
+	UserId uuid.UUID `json:"user_id"`
 }
 
 type PolicyResponse struct {
-	PolicyRequest
+	CommonPolicy
 	CreatorId       uuid.UUID `json:"creator_id"`
 	UpdaterId       uuid.UUID `json:"updater_id"`
 	Deleted         bool      `json:"deleted"`
@@ -34,4 +25,14 @@ type PolicyResponse struct {
 	UpdatedAt       time.Time `json:"modified_time"`
 	PolicyHash      string    `json:"policy_hash"`
 	PolicySignature string    `json:"policy_signature"`
+}
+
+type CommonPolicy struct {
+	PolicyId         uuid.UUID `json:"policy_id"`
+	Policy           string    `json:"policy"`
+	TenantId         uuid.UUID `json:"-"`
+	PolicyName       string    `json:"policy_name"`
+	PolicyType       string    `json:"policy_type"`
+	ServiceOfferId   uuid.UUID `json:"service_offer_id"`
+	ServiceOfferName string    `json:"service_offer_name"`
 }

@@ -124,7 +124,7 @@ func updateSubscription(cmd *cobra.Command) (string, error) {
 	activationStatus, err := cmd.Flags().GetString(constants.ActivationStatus)
 	if err != nil {
 		return "", err
-	} else if activationStatus != "active" && activationStatus != "inactive" {
+	} else if activationStatus != "" && activationStatus != "active" && activationStatus != "inactive" {
 		return "", errors.New("Activation status should be one of active or inactive")
 	}
 
