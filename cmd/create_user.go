@@ -46,6 +46,7 @@ func init() {
 	createUserCmd.Flags().StringP(constants.UserRoleParamName, "r", "", "Role of the tenant user to be created, should be one of Tenant Admin/User")
 	createUserCmd.MarkFlagRequired(constants.ApiKeyParamName)
 	createUserCmd.MarkFlagRequired(constants.EmailIdParamName)
+	createUserCmd.MarkFlagRequired(constants.UserRoleParamName)
 }
 
 func createUser(cmd *cobra.Command) (string, error) {

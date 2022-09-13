@@ -114,7 +114,7 @@ func (pc tmsClient) UpdateSubscription(request *models.UpdateSubscription, subsc
 	}
 
 	// Create a new request using http
-	req, err := http.NewRequest(http.MethodPost, reqURL.String(), bytes.NewBuffer(reqBytes))
+	req, err := http.NewRequest(http.MethodPut, reqURL.String(), bytes.NewBuffer(reqBytes))
 	if err != nil {
 		return nil, errors.Wrap(err, " Error forming request")
 	}

@@ -54,7 +54,7 @@ func deleteService(cmd *cobra.Command) (string, error) {
 		Timeout: time.Duration(configValues.HTTPClientTimeout) * time.Second,
 	}
 
-	pmsUrl, err := url.Parse(configValues.AmberBaseUrl + constants.PmsBaseUrl)
+	tmsUrl, err := url.Parse(configValues.AmberBaseUrl + constants.TmsBaseUrl)
 	if err != nil {
 		return "", err
 	}
@@ -69,7 +69,7 @@ func deleteService(cmd *cobra.Command) (string, error) {
 		return "", errors.Wrap(err, "Invalid service Id provided")
 	}
 
-	tmsClient := tms.NewTmsClient(client, pmsUrl, uuid.Nil, apiKey)
+	tmsClient := tms.NewTmsClient(client, tmsUrl, uuid.Nil, apiKey)
 	err = tmsClient.DeleteService(serviceId)
 	if err != nil {
 		return "", err
