@@ -12,7 +12,7 @@ import (
 	"testing"
 )
 
-func TestListServicesCmd(t *testing.T) {
+func TestUpdateUserRoleCmd(t *testing.T) {
 	server := test.MockServer(t)
 	defer server.Close()
 	test.SetupMockConfiguration(server.URL, tempConfigFile)
@@ -23,17 +23,15 @@ func TestListServicesCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args:    []string{constants.ListCmd, constants.ServiceCmd, "-a", "abc"},
-			wantErr: false,
-		},
-		{
-			args:    []string{constants.ListCmd, constants.ServiceCmd, "-a", "abc", "-r", "ae3d7720-08ab-421c-b8d4-1725c358f03e"},
+			args: []string{constants.UpdateCmd, constants.UserCmd, constants.RoleCmd, "-a", "abc",
+				"-r", "User", "-u", "23011406-6f3b-4431-9363-4e1af9af6b13"},
 			wantErr: false,
 		},
 	}
 
-	listCmd.AddCommand(getServicesCmd)
-	tenantCmd.AddCommand(listCmd)
+	updateUserCmd.AddCommand(updateUserRoleCmd)
+	updateCmd.AddCommand(updateUserCmd)
+	tenantCmd.AddCommand(updateCmd)
 
 	for _, tc := range tt {
 		_, err := execute(t, tenantCmd, tc.args)

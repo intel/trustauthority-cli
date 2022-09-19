@@ -13,9 +13,9 @@ import (
 )
 
 func TestCreateServiceCmd(t *testing.T) {
-	server := test.MockTmsServer(t)
+	server := test.MockServer(t)
 	defer server.Close()
-	test.SetupMockConfiguration(server.URL)
+	test.SetupMockConfiguration(server.URL, tempConfigFile)
 
 	tt := []struct {
 		args        []string
@@ -23,7 +23,7 @@ func TestCreateServiceCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args: []string{constants.CreateCmd, constants.ServiceCmd, "-a", "abc", "-d", "Test", "-r",
+			args: []string{constants.CreateCmd, constants.ServiceCmd, "-a", "abc", "-n", "Test", "-r",
 				"ae3d7720-08ab-421c-b8d4-1725c358f03e"},
 			wantErr: false,
 		},
@@ -33,7 +33,7 @@ func TestCreateServiceCmd(t *testing.T) {
 	tenantCmd.AddCommand(createCmd)
 
 	for _, tc := range tt {
-		_, err := execute(t, tenantCmd, tc.args...)
+		_, err := execute(t, tenantCmd, tc.args)
 
 		if tc.wantErr == true {
 			assert.Error(t, err)

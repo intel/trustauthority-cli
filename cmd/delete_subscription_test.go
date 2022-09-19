@@ -12,7 +12,7 @@ import (
 	"testing"
 )
 
-func TestListServicesCmd(t *testing.T) {
+func TestDeleteSubscriptionCmd(t *testing.T) {
 	server := test.MockServer(t)
 	defer server.Close()
 	test.SetupMockConfiguration(server.URL, tempConfigFile)
@@ -23,17 +23,14 @@ func TestListServicesCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args:    []string{constants.ListCmd, constants.ServiceCmd, "-a", "abc"},
-			wantErr: false,
-		},
-		{
-			args:    []string{constants.ListCmd, constants.ServiceCmd, "-a", "abc", "-r", "ae3d7720-08ab-421c-b8d4-1725c358f03e"},
+			args: []string{constants.DeleteCmd, constants.SubscriptionCmd, "-a", "abc", "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777", "-d",
+				"3780cc39-cce2-4ec2-a47f-03e55b12e259"},
 			wantErr: false,
 		},
 	}
 
-	listCmd.AddCommand(getServicesCmd)
-	tenantCmd.AddCommand(listCmd)
+	deleteCmd.AddCommand(deleteSubscriptionCmd)
+	tenantCmd.AddCommand(deleteCmd)
 
 	for _, tc := range tt {
 		_, err := execute(t, tenantCmd, tc.args)

@@ -13,9 +13,9 @@ import (
 )
 
 func TestListPoliciesCmd(t *testing.T) {
-	server := test.MockPmsServer(t)
+	server := test.MockServer(t)
 	defer server.Close()
-	test.SetupMockConfiguration(server.URL)
+	test.SetupMockConfiguration(server.URL, tempConfigFile)
 
 	tt := []struct {
 		args        []string
@@ -37,7 +37,7 @@ func TestListPoliciesCmd(t *testing.T) {
 	tenantCmd.AddCommand(listCmd)
 
 	for _, tc := range tt {
-		_, err := execute(t, tenantCmd, tc.args...)
+		_, err := execute(t, tenantCmd, tc.args)
 
 		if tc.wantErr == true {
 			assert.Error(t, err)
