@@ -8,14 +8,10 @@ package cmd
 import (
 	"github.com/stretchr/testify/assert"
 	"intel/amber/tac/v1/constants"
-	"intel/amber/tac/v1/test"
 	"testing"
 )
 
-func TestListServicesCmd(t *testing.T) {
-	server := test.MockServer(t)
-	defer server.Close()
-	test.SetupMockConfiguration(server.URL, tempConfigFile)
+func TestVersionCmd(t *testing.T) {
 
 	tt := []struct {
 		args        []string
@@ -23,17 +19,12 @@ func TestListServicesCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args:    []string{constants.ListCmd, constants.ServiceCmd, "-a", "abc"},
-			wantErr: false,
-		},
-		{
-			args:    []string{constants.ListCmd, constants.ServiceCmd, "-a", "abc", "-r", "ae3d7720-08ab-421c-b8d4-1725c358f03e"},
+			args:    []string{constants.VersionCmd},
 			wantErr: false,
 		},
 	}
 
-	listCmd.AddCommand(getServicesCmd)
-	tenantCmd.AddCommand(listCmd)
+	tenantCmd.AddCommand(versionCmd)
 
 	for _, tc := range tt {
 		_, err := execute(t, tenantCmd, tc.args)

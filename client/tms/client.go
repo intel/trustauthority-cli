@@ -367,7 +367,7 @@ func (pc tmsClient) UpdateTenantUserRole(request *models.UpdateTenantUserRoles) 
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyContentType, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
-	req.Header.Add(constants.HTTPHeaderKeyCreatedBy, pc.TenantId.String())
+	req.Header.Add(constants.HTTPHeaderKeyUpdatedBy, pc.TenantId.String())
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
@@ -375,12 +375,12 @@ func (pc tmsClient) UpdateTenantUserRole(request *models.UpdateTenantUserRoles) 
 	}
 
 	// Parse response for validation
-	var createUserRes models.User
-	err = json.Unmarshal(response, &createUserRes)
+	var updateUserRes models.User
+	err = json.Unmarshal(response, &updateUserRes)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
-	return &createUserRes, nil
+	return &updateUserRes, nil
 }
 
 func (pc tmsClient) GetUsers() ([]models.User, error) {

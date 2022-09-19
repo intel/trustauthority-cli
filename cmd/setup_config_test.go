@@ -9,13 +9,15 @@ import (
 	"github.com/stretchr/testify/assert"
 	"intel/amber/tac/v1/constants"
 	"intel/amber/tac/v1/test"
+	"os"
 	"testing"
 )
 
-func TestListServicesCmd(t *testing.T) {
+func TestConfigCmd(t *testing.T) {
+
 	server := test.MockServer(t)
-	defer server.Close()
-	test.SetupMockConfiguration(server.URL, tempConfigFile)
+	os.Setenv("AMBER_BASE_URL", server.URL)
+	os.Setenv("TENANT_ID", "f04971b7-fb41-4a9e-a06e-4bf6e71f98b3")
 
 	tt := []struct {
 		args        []string
@@ -23,17 +25,16 @@ func TestListServicesCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args:    []string{constants.ListCmd, constants.ServiceCmd, "-a", "abc"},
+			args:    []string{constants.SetupConfigCmd, "-v", tempConfigFile.Name()},
 			wantErr: false,
 		},
 		{
-			args:    []string{constants.ListCmd, constants.ServiceCmd, "-a", "abc", "-r", "ae3d7720-08ab-421c-b8d4-1725c358f03e"},
-			wantErr: false,
+			args:    []string{constants.SetupConfigCmd, "-v"},
+			wantErr: true,
 		},
 	}
 
-	listCmd.AddCommand(getServicesCmd)
-	tenantCmd.AddCommand(listCmd)
+	tenantCmd.AddCommand(setupConfigCmd)
 
 	for _, tc := range tt {
 		_, err := execute(t, tenantCmd, tc.args)

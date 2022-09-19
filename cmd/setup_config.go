@@ -33,6 +33,5 @@ var (
 func init() {
 	tenantCmd.AddCommand(setupConfigCmd)
 
-	setupConfigCmd.Flags().StringVarP(&envFilePath, constants.EnvFileParamName, "v", "", "Path for the env file to be used to update the configuration")
-	setupConfigCmd.MarkFlagRequired(constants.EnvFileParamName)
+	setupConfigCmd.Flags().StringVarP(&envFilePath, constants.EnvFileParamName, "v", constants.DefaultConfigFilePath, "Path for the env file to be used to update the configuration")
 }

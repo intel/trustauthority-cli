@@ -133,7 +133,7 @@ func createSubscription(cmd *cobra.Command) (string, error) {
 	for _, tagIdValue := range tagIdValuesString {
 		splitTag := strings.Split(tagIdValue, ":")
 		if len(splitTag) != 2 {
-			return "", errors.Wrap(err, "Tag Id value pairs are not provided in proper format, please check hel section for more details")
+			return "", errors.New("Tag Id value pairs are not provided in proper format, please check help section for more details")
 		}
 		tagId, err := uuid.Parse(splitTag[0])
 		if err != nil {
