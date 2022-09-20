@@ -82,7 +82,7 @@ func createSubscription(cmd *cobra.Command) (string, error) {
 
 	tenantId, err := uuid.Parse(tenantIdString)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "Invalid tenant id provided")
 	}
 
 	serviceIdString, err := cmd.Flags().GetString(constants.ServiceIdParamName)
@@ -92,7 +92,7 @@ func createSubscription(cmd *cobra.Command) (string, error) {
 
 	serviceId, err := uuid.Parse(serviceIdString)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "Invalid service id provided")
 	}
 
 	productIdString, err := cmd.Flags().GetString(constants.ProductIdParamName)
@@ -102,7 +102,7 @@ func createSubscription(cmd *cobra.Command) (string, error) {
 
 	productId, err := uuid.Parse(productIdString)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "Invalid product id provided")
 	}
 
 	subscriptionDescription, err := cmd.Flags().GetString(constants.SubscriptionDescriptionParamName)

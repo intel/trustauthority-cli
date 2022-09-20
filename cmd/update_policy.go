@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/client/pms"
 	"intel/amber/tac/v1/config"
@@ -42,10 +43,8 @@ func init() {
 	updateCmd.AddCommand(updatePolicyCmd)
 
 	updatePolicyCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
-	updatePolicyCmd.Flags().StringP(constants.PolicyIdParamName, "p", "", "Id of the policy to be updated")
 	updatePolicyCmd.Flags().StringP(constants.PolicyFileParamName, "f", "", "Path of the file containing the policy to be uploaded")
 	updatePolicyCmd.MarkFlagRequired(constants.ApiKeyParamName)
-	updatePolicyCmd.MarkFlagRequired(constants.PolicyIdParamName)
 	updatePolicyCmd.MarkFlagRequired(constants.PolicyFileParamName)
 }
 
@@ -73,14 +72,18 @@ func updatePolicy(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
-	var policyCreateReq models.PolicyRequest
-	err = json.Unmarshal(policyBytes, &policyCreateReq)
+	var policyUpdateReq models.PolicyRequest
+	err = json.Unmarshal(policyBytes, &policyUpdateReq)
 	if err != nil {
 		return "", err
 	}
 
+	if policyUpdateReq.PolicyId == uuid.Nil {
+		return "", errors.Errorf("Please add the policy_id to the JSON request in policy file %s", policyFilePath)
+	}
+
 	pmsClient := pms.NewPmsClient(client, pmsUrl, uuid.Nil, apiKey)
-	response, err := pmsClient.UpdatePolicy(&policyCreateReq)
+	response, err := pmsClient.UpdatePolicy(&policyUpdateReq)
 	if err != nil {
 		return "", err
 	}

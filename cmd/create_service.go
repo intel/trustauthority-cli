@@ -75,7 +75,7 @@ func createService(cmd *cobra.Command) (string, error) {
 
 	tenantId, err := uuid.Parse(tenantIdString)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "Invalid tenant id provided")
 	}
 
 	serviceOfferIdString, err := cmd.Flags().GetString(constants.ServiceOfferIdParamName)
@@ -85,7 +85,7 @@ func createService(cmd *cobra.Command) (string, error) {
 
 	serviceOfferId, err := uuid.Parse(serviceOfferIdString)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "Invalid service offer id provided")
 	}
 
 	serviceDescription, err := cmd.Flags().GetString(constants.ServiceNameParamName)

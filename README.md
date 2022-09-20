@@ -1,5 +1,5 @@
 # applications.security.amber.cli
-A CLI tool for Tenants to use to access Amber Services
+A CLI tool for Tenants to use and access Amber Services
 
 ### OS Supported
 Ubuntu LTS 20.04
@@ -15,8 +15,19 @@ Ubuntu LTS 20.04
 - run "./tenantctl-{version}.bin". This will install the CLI to your system.
 - use the CLI: tenantctl < command > < resource >
 
+Note: If behind a proxy, add the Amber FQDN to NO_PROXY environment variable.
+
 ### Uninstall 
 - run "tenantctl uninstall"
+
+### Setup configuration
+- tenantctl config -v <config file path (optional)>
+
+### Bash Completion
+- tenantctl completion
+
+### Version
+- tenantctl version
 
 ### Commands Usage examples (please see help for more details ):
 
@@ -51,13 +62,16 @@ tenantctl create service -a < api key > -r < service offer id > -n < service nam
 tenantctl list service -a < api key >
 
 ##### Delete Service:
-tenantctl update service -a < api key > -s < service id >
+tenantctl delete service -a < api key > -s < service id >
 
 ##### Update Service:
 tenantctl update service -a < api key > -s < service id > -n < service name >
 
 ##### Create Subscription:
-tenantctl create subscription -a < api key > -r < service offer id > -p < product id > -d 'Arijit with tags Subscription' -i 095567af-75e0-4ed3-baa9-74b5242e3061,d40a9a17-8dab-4aed-a465-b7a404ad0ac5 -v "4f3cdd0d-4a2b-445f-9277-07bed3cea808:Workload,42501785-4234-42a3-9ea6-bf3c58244cad:AI"
+tenantctl create subscription -a < api key > -r < service offer id > -p < product id > -d < subscription name > -i "comma separated policy Ids" -v "tag-id1:tag-name1,tag-id2:tag-name2"
+
+##### Update Subscription
+tenantctl update subscription -a < api key > -r < service offer id > -p < product id > -u < subscription id > -d < subscription name > -i "comma separated policy Ids" -v "tag-id1:tag-name1,tag-id2:tag-name2" -s < active/inactive >
 
 ##### Get Subscriptions:
 tenantctl list subscription -a < api key > -r < service offer id >
@@ -65,8 +79,11 @@ tenantctl list subscription -a < api key > -r < service offer id >
 ##### Get Subscription by id:
 tenantctl list subscription -a < api key > -r < service offer id > -d < subscription id >
 
+##### Delete a subscription:
+tenantctl delete subscription -a < api key > -r < service offer id > -d < subscription id >
+
 ##### Create tag:
-tenantctl create tag -a < api key > -n "Arijit tag" -t 5aeb5c92-a6c7-4741-86c1-c8ec8849ed36
+tenantctl create tag -a < api key > -n < tag name > -t < tenant Id >
 
 ##### List tags:
 tenantctl list tag -a < api key >
@@ -78,7 +95,20 @@ tenantctl list subscription policy -a < api key > -r < service offer id > -s < s
 tenantctl list subscription tag -a < api key > -r < service offer id > -s < subscription id >
 
 ##### Create Policy:
-tenantctl create policy -a < api key > -f sample/policy.json
+tenantctl create policy -a < api key > -f < policy file path >
+
+-  Sample policy for policy create command:
+
+```json
+{
+  "policy": "default matches_sgx_policy = false \n\n matches_sgx_policy = true { \n input.amber_sgx_is_debuggable == false \n input.amber_sgx_isvsvn == 0 \n input.amber_sgx_isvprodid == 0 \n input.amber_sgx_mrsigner ==  \"d412a4f07ef83892a5915fb2ab584be31e186e5a4f95ab5f6950fd4eb8694d7b\" \n  \n input.amber_sgx_mrenclave == \"bab91f200038076ac25f87de0ca67472443c2ebe17ed9ba95314e609038f51ab\" \n }",
+  "user_id": "f04971b7-fb41-4a9e-a06e-4bf6e71f98b3",
+  "policy_name": "Sample_Policy_SGX",
+  "policy_type": "Appraisal policy",
+  "service_offer_name": "SGX Attestation",
+  "service_offer_id": "b04971b7-fb41-4a9e-a06e-4bf6e71f98bd"
+}
+```
 
 ##### Get policies:
 tenantctl list policies -a < api key >
@@ -90,4 +120,18 @@ tenantctl list policies -a < api key > -p < policy id >
 tenantctl delete policy -a < api key > -p < policy id >
 
 ##### Update policy:
-tenantctl update policy -a < api key > -p < policy id > -f sample/policy.json
+tenantctl update policy -a < api key > -f < policy file path >
+
+- Sample policy for policy update command:
+
+```json
+{
+  "policy_id": "e48dabc5-9608-4ff3-aaed-f25909ab9de1",
+  "policy": "default matches_sgx_policy = false \n\n matches_sgx_policy = true { \n input.amber_sgx_is_debuggable == false \n input.amber_sgx_isvsvn == 0 \n input.amber_sgx_isvprodid == 0 \n input.amber_sgx_mrsigner ==  \"d412a4f07ef83892a5915fb2ab584be31e186e5a4f95ab5f6950fd4eb8694d7b\" \n  \n input.amber_sgx_mrenclave == \"bab91f200038076ac25f87de0ca67472443c2ebe17ed9ba95314e609038f51ab\" \n }",
+  "user_id": "f04971b7-fb41-4a9e-a06e-4bf6e71f98b3",
+  "policy_name": "Sample_Policy_SGX",
+  "policy_type": "Appraisal policy",
+  "service_offer_name": "SGX Attestation",
+  "service_offer_id": "b04971b7-fb41-4a9e-a06e-4bf6e71f98bd"
+}
+```

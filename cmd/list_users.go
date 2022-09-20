@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/client/tms"
 	"intel/amber/tac/v1/config"
@@ -80,7 +81,7 @@ func getUsers(cmd *cobra.Command) (string, error) {
 	} else {
 		userId, err := uuid.Parse(userIdString)
 		if err != nil {
-			return "", err
+			return "", errors.Wrap(err, "Invalid user id provided")
 		}
 
 		response, err := tmsClient.RetrieveUser(userId)

@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/client/tms"
 	"intel/amber/tac/v1/config"
@@ -66,7 +67,7 @@ func getSubscriptionPolicies(cmd *cobra.Command) (string, error) {
 	}
 	serviceId, err := uuid.Parse(serviceIdString)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "Invalid service id provided")
 	}
 
 	subscriptionIdString, err := cmd.Flags().GetString(constants.SubscriptionIdParamName)
@@ -75,7 +76,7 @@ func getSubscriptionPolicies(cmd *cobra.Command) (string, error) {
 	}
 	subscriptionId, err := uuid.Parse(subscriptionIdString)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "Invalid subscription id provided")
 	}
 
 	tmsClient := tms.NewTmsClient(client, tmsUrl, uuid.Nil, apiKey)

@@ -30,7 +30,7 @@ type TmsClient interface {
 	CreateService(request *models.CreateService) (*models.Service, error)
 	UpdateService(request *models.UpdateService) (*models.Service, error)
 	GetServices() ([]models.Service, error)
-	RetrieveService(serviceId uuid.UUID) (*models.Service, error)
+	RetrieveService(serviceId uuid.UUID) (*models.ServiceDetail, error)
 	DeleteService(serviceId uuid.UUID) error
 
 	GetProducts(serviceOfferId uuid.UUID) ([]models.Product, error)
@@ -584,7 +584,7 @@ func (pc tmsClient) GetServices() ([]models.Service, error) {
 	return searchServiceRes, nil
 }
 
-func (pc tmsClient) RetrieveService(id uuid.UUID) (*models.Service, error) {
+func (pc tmsClient) RetrieveService(id uuid.UUID) (*models.ServiceDetail, error) {
 	reqURL, err := url.Parse(pc.BaseURL.String() + constants.TenantApiEndpoint + constants.ServiceApiEndpoint + "/" + id.String())
 	if err != nil {
 		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
@@ -604,7 +604,7 @@ func (pc tmsClient) RetrieveService(id uuid.UUID) (*models.Service, error) {
 	}
 
 	// Parse response for validation
-	var retrieveServiceRes *models.Service
+	var retrieveServiceRes *models.ServiceDetail
 	err = json.Unmarshal(response, &retrieveServiceRes)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
