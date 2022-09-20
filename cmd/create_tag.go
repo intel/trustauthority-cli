@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"intel/amber/tac/v1/client/tms"
@@ -75,7 +76,7 @@ func createTag(cmd *cobra.Command) (string, error) {
 
 	tenantId, err := uuid.Parse(tenantIdString)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "Invalid tenant id provided")
 	}
 
 	tmsClient := tms.NewTmsClient(client, tmsUrl, tenantId, apiKey)

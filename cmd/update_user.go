@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/client/tms"
 	"intel/amber/tac/v1/config"
@@ -73,7 +74,7 @@ func updateUser(cmd *cobra.Command) (string, error) {
 
 	tenantId, err := uuid.Parse(tenantIdString)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "Invalid tenant id provided")
 	}
 
 	userIdString, err := cmd.Flags().GetString(constants.UserIdParamName)
@@ -83,7 +84,7 @@ func updateUser(cmd *cobra.Command) (string, error) {
 
 	userId, err := uuid.Parse(userIdString)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "Invalid user id provided")
 	}
 
 	emailId, err := cmd.Flags().GetString(constants.EmailIdParamName)

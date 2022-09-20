@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/client/pms"
 	"intel/amber/tac/v1/config"
@@ -41,7 +42,6 @@ func init() {
 
 	getPoliciesCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
 	getPoliciesCmd.Flags().StringP(constants.PolicyIdParamName, "p", "", "Path of the file containing the policy to be uploaded")
-	getPoliciesCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the policies need to be fetched")
 	getPoliciesCmd.MarkFlagRequired(constants.ApiKeyParamName)
 }
 
@@ -60,26 +60,12 @@ func getPolicies(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
-	tenantIdString, err := cmd.Flags().GetString(constants.TenantIdParamName)
-	if err != nil {
-		return "", err
-	}
-
-	if tenantIdString == "" {
-		tenantIdString = configValues.TenantId
-	}
-
-	tenantId, err := uuid.Parse(tenantIdString)
-	if err != nil {
-		return "", err
-	}
-
 	policyIdString, err := cmd.Flags().GetString(constants.PolicyIdParamName)
 	if err != nil {
 		return "", err
 	}
 
-	pmsClient := pms.NewPmsClient(client, pmsUrl, tenantId, apiKey)
+	pmsClient := pms.NewPmsClient(client, pmsUrl, uuid.Nil, apiKey)
 
 	var responseBytes []byte
 	if policyIdString == "" {
@@ -94,7 +80,7 @@ func getPolicies(cmd *cobra.Command) (string, error) {
 	} else {
 		policyId, err := uuid.Parse(policyIdString)
 		if err != nil {
-			return "", err
+			return "", errors.Wrap(err, "Invalid policy id provided")
 		}
 		response, err := pmsClient.GetPolicy(policyId)
 		if err != nil {

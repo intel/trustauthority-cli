@@ -68,7 +68,7 @@ type (
 		TenantId  uuid.UUID   `json:"-"`
 		Roles     []string    `json:"roles"`
 		RoleIds   []uuid.UUID `json:"-"`
-		CreatedBy uuid.UUID   `json:"-"`
+		UpdatedBy uuid.UUID   `json:"-"`
 	}
 
 	CreateUser struct {
@@ -201,9 +201,10 @@ type (
 	}
 
 	SubscriptionTagValue struct {
-		Id    uuid.UUID `json:"id"`
-		Name  string    `json:"name"`
-		Value string    `json:"value"`
+		Id         uuid.UUID `json:"id"`
+		Name       string    `json:"name"`
+		Value      string    `json:"value"`
+		Predefined bool      `json:"predefined"`
 	}
 
 	SubscriptionTagsValues struct {
@@ -213,16 +214,6 @@ type (
 	SubscriptionTagIdValue struct {
 		TagId uuid.UUID `json:"tagId"`
 		Value string    `json:"value"`
-	}
-
-	SubscriptionTag struct {
-		TagId      string `json:"tag_id"`
-		Name       string `json:"name"`
-		Predefined bool   `json:"predefined"`
-	}
-
-	SubscriptionTags struct {
-		Tags []SubscriptionTag `json:"tags"`
 	}
 
 	Tags struct {

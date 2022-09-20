@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/client/tms"
 	"intel/amber/tac/v1/config"
@@ -68,7 +69,7 @@ func getProducts(cmd *cobra.Command) (string, error) {
 
 	serviceOfferId, err := uuid.Parse(serviceOfferIdString)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "Invalid service offer id provided")
 	}
 
 	tmsClient := tms.NewTmsClient(client, tmsUrl, uuid.Nil, apiKey)

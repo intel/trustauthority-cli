@@ -8,6 +8,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/client/pms"
 	"intel/amber/tac/v1/config"
@@ -67,7 +68,7 @@ func deletePolicy(cmd *cobra.Command) (string, error) {
 
 	policyId, err := uuid.Parse(policyIdString)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "Invalid policy id provided")
 	}
 
 	tenantIdString, err := cmd.Flags().GetString(constants.TenantIdParamName)
@@ -81,7 +82,7 @@ func deletePolicy(cmd *cobra.Command) (string, error) {
 
 	tenantId, err := uuid.Parse(tenantIdString)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "Invalid tenant id provided")
 	}
 
 	pmsClient := pms.NewPmsClient(client, pmsUrl, tenantId, apiKey)
