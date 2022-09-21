@@ -70,19 +70,18 @@ func (c *Configuration) Save(filename string) error {
 func SetupConfig(envFilePath string) error {
 	var err error
 
-	if envFilePath == "" {
-		if _, err = os.Stat(constants.DefaultConfigFilePath); err != nil {
-			if os.IsNotExist(err) {
-				_, err = os.Create(constants.DefaultConfigFilePath)
-				envFilePath = constants.DefaultConfigFilePath
-				if err != nil {
-					return err
-				}
-			} else {
+	if _, err = os.Stat(constants.DefaultConfigFilePath); err != nil {
+		if os.IsNotExist(err) {
+			_, err = os.Create(constants.DefaultConfigFilePath)
+			if err != nil {
 				return err
 			}
+		} else {
+			return err
 		}
-	} else if err = utils.ReadAnswerFileToEnv(envFilePath); err != nil {
+	}
+
+	if err = utils.ReadAnswerFileToEnv(envFilePath); err != nil {
 		return err
 	}
 
@@ -125,7 +124,7 @@ func SetupConfig(envFilePath string) error {
 
 	configValues.HTTPClientTimeout = viper.GetInt(constants.HttpClientTimeout)
 
-	if err = configValues.Save(envFilePath); err != nil {
+	if err = configValues.Save(constants.DefaultConfigFilePath); err != nil {
 		return err
 	}
 	return nil
