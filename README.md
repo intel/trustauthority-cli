@@ -21,7 +21,7 @@ Note: If behind a proxy, add the Amber FQDN to NO_PROXY environment variable.
 - run "tenantctl uninstall"
 
 ### Setup configuration
-- tenantctl config -v <config file path (optional)>
+- tenantctl config -v < env file path >
 
 ### Bash Completion
 - tenantctl completion
