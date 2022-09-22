@@ -56,6 +56,7 @@ func init() {
 	updateSubscriptionCmd.MarkFlagRequired(constants.ServiceIdParamName)
 	updateSubscriptionCmd.MarkFlagRequired(constants.ProductIdParamName)
 	updateSubscriptionCmd.MarkFlagRequired(constants.SubscriptionDescriptionParamName)
+	updateSubscriptionCmd.MarkFlagRequired(constants.SubscriptionIdParamName)
 }
 
 func updateSubscription(cmd *cobra.Command) (string, error) {
