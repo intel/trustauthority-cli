@@ -37,6 +37,7 @@ const (
 	PolicyIdParamName                = "policy-id"
 	TagNameParamName                 = "tag-name"
 	TagIdAndValuesParamName          = "tag-id-value"
+	SetExpiryDateParamName           = "set-expiry"
 	EnvFileParamName                 = "env-file"
 
 	RootCmd        = "tenantctl"
@@ -67,15 +68,17 @@ const (
 	HttpClientTimeout = "http-client-timeout"
 	Loglevel          = "log-level"
 
-	DefaultLogLevel          = "info"
-	DefaultHttpClientTimeout = 10
-	SubscriptionStatusActive = "Active"
+	DefaultLogLevel             = "info"
+	DefaultHttpClientTimeout    = 10
+	SubscriptionStatusActive    = "Active"
+	SubscriptionStatusInactive  = "Inactive"
+	SubscriptionStatusCancelled = "Cancelled"
+	ExpiryDateInputFormat       = "2006-01-02"
 )
 
 //HTTP constants
 const (
 	HTTPMediaTypeJson        = "application/json"
-	HTTPHeaderKeyTenantId    = "TenantId"
 	HTTPHeaderKeyContentType = "Content-Type"
 	HTTPHeaderKeyAccept      = "Accept"
 	HTTPHeaderKeyApiKey      = "X-API-KEY"

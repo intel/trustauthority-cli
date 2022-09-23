@@ -51,7 +51,8 @@ func init() {
 	updateSubscriptionCmd.Flags().StringSliceP(constants.PolicyIdsParamName, "i", []string{}, "List of comma separated policy IDs to be linked to the subscription")
 	updateSubscriptionCmd.Flags().StringSliceP(constants.TagIdAndValuesParamName, "v", []string{}, "List of the comma separated tad Id and value pairs in the "+
 		"following format:\n e03582e6-0709-42c2-a164-a687a970e040:Workload-AI,051800d0-cae5-48e7-8515-9801650fcd2b:60 V etc.")
-	updateSubscriptionCmd.Flags().StringP(constants.ActivationStatus, "s", "", "Add activation status for subscription, should be \"active\" or \"inactive\"")
+	updateSubscriptionCmd.Flags().StringP(constants.SetExpiryDateParamName, "e", "", "Update the expiry date in the format yyyy-mm-dd for the new subscription")
+	updateSubscriptionCmd.Flags().StringP(constants.ActivationStatus, "s", "", "Add activation status for subscription, should be one of \"Active\", \"Inactive\" or \"Cancelled\"")
 	updateSubscriptionCmd.MarkFlagRequired(constants.ApiKeyParamName)
 	updateSubscriptionCmd.MarkFlagRequired(constants.ServiceIdParamName)
 	updateSubscriptionCmd.MarkFlagRequired(constants.ProductIdParamName)
@@ -60,6 +61,7 @@ func init() {
 }
 
 func updateSubscription(cmd *cobra.Command) (string, error) {
+
 	configValues, err := config.LoadConfiguration()
 	if err != nil {
 		return "", err
@@ -124,8 +126,10 @@ func updateSubscription(cmd *cobra.Command) (string, error) {
 	activationStatus, err := cmd.Flags().GetString(constants.ActivationStatus)
 	if err != nil {
 		return "", err
-	} else if activationStatus != "" && activationStatus != "active" && activationStatus != "inactive" {
-		return "", errors.New("Activation status should be one of active or inactive")
+	} else if activationStatus != "" && activationStatus != constants.SubscriptionStatusActive &&
+		activationStatus != constants.SubscriptionStatusInactive && activationStatus != constants.SubscriptionStatusCancelled {
+		return "", errors.Errorf("Activation status should be one of %s, %s or %s", constants.SubscriptionStatusActive,
+			constants.SubscriptionStatusInactive, constants.SubscriptionStatusCancelled)
 	}
 
 	policyIdsString, err := cmd.Flags().GetStringSlice(constants.PolicyIdsParamName)
@@ -157,6 +161,11 @@ func updateSubscription(cmd *cobra.Command) (string, error) {
 		tagIdValues = append(tagIdValues, models.SubscriptionTagIdValue{TagId: tagId, Value: splitTag[1]})
 	}
 
+	expiryDateString, err := cmd.Flags().GetString(constants.SetExpiryDateParamName)
+	if err != nil {
+		return "", err
+	}
+
 	var subscriptionInfo = models.UpdateSubscription{
 		ProductId:    productId,
 		Name:         subscriptionDescription,
@@ -164,6 +173,15 @@ func updateSubscription(cmd *cobra.Command) (string, error) {
 		TagIdsValues: tagIdValues,
 		ServiceId:    serviceId,
 		Status:       models.SubscriptionStatus(activationStatus),
+	}
+
+	if expiryDateString != "" {
+		date, err := time.Parse(constants.ExpiryDateInputFormat, expiryDateString)
+		if err != nil {
+			log.WithError(err).Error("Incorrect expiry date format provided")
+			return "", errors.New("Incorrect expiry date provided. Date should be of the form yyyy-mm-dd")
+		}
+		subscriptionInfo.ExpiredAt = date
 	}
 
 	if err = validation.ValidateStrings([]string{subscriptionDescription}); err != nil {

@@ -51,6 +51,7 @@ func init() {
 	createSubscriptionCmd.Flags().StringSliceP(constants.PolicyIdsParamName, "i", []string{}, "List of comma separated policy IDs to be linked to the subscription")
 	createSubscriptionCmd.Flags().StringSliceP(constants.TagIdAndValuesParamName, "v", []string{}, "List of the comma separated tad Id and value pairs in the "+
 		"following format:\n e03582e6-0709-42c2-a164-a687a970e040:Workload-AI,051800d0-cae5-48e7-8515-9801650fcd2b:60 V etc.")
+	createSubscriptionCmd.Flags().StringP(constants.SetExpiryDateParamName, "e", "", "Set the expiry date in the format yyyy-mm-dd for the new subscription (default is 1 month)")
 	createSubscriptionCmd.MarkFlagRequired(constants.ApiKeyParamName)
 	createSubscriptionCmd.MarkFlagRequired(constants.ServiceIdParamName)
 	createSubscriptionCmd.MarkFlagRequired(constants.ProductIdParamName)
@@ -58,6 +59,7 @@ func init() {
 }
 
 func createSubscription(cmd *cobra.Command) (string, error) {
+
 	configValues, err := config.LoadConfiguration()
 	if err != nil {
 		return "", err
@@ -142,15 +144,31 @@ func createSubscription(cmd *cobra.Command) (string, error) {
 		tagIdValues = append(tagIdValues, models.SubscriptionTagIdValue{TagId: tagId, Value: splitTag[1]})
 	}
 
+	expiryDateString, err := cmd.Flags().GetString(constants.SetExpiryDateParamName)
+	if err != nil {
+		return "", err
+	}
+
 	var subscriptionInfo = models.CreateSubscription{
 		ProductId:    productId,
 		Description:  subscriptionDescription,
-		ExpiredAt:    time.Now().AddDate(1, 0, 0),
 		PolicyIds:    policyIds,
 		TagIdsValues: tagIdValues,
 		CreatedBy:    tenantId,
 		ServiceId:    serviceId,
 		Status:       constants.SubscriptionStatusActive,
+	}
+
+	if expiryDateString == "" {
+		fmt.Println("No expiry date provided. Setting subscription expiry date to 1 month from now")
+		subscriptionInfo.ExpiredAt = time.Now().AddDate(0, 1, 0).UTC()
+	} else {
+		date, err := time.Parse(constants.ExpiryDateInputFormat, expiryDateString)
+		if err != nil {
+			log.WithError(err).Error("Incorrect expiry date format provided")
+			return "", errors.New("Incorrect expiry date provided. Date should be of the form yyyy-mm-dd")
+		}
+		subscriptionInfo.ExpiredAt = date.UTC()
 	}
 
 	if err = validation.ValidateStrings([]string{subscriptionDescription}); err != nil {
