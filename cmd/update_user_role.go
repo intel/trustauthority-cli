@@ -43,7 +43,7 @@ func init() {
 	updateUserRoleCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
 	updateUserRoleCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the user needs to be created")
 	updateUserRoleCmd.Flags().StringP(constants.UserIdParamName, "u", "", "Id of the specific user")
-	updateUserRoleCmd.Flags().StringSliceP(constants.UserRoleParamName, "r", []string{}, "Comma separated roles of the specific user to be updated")
+	updateUserRoleCmd.Flags().StringSliceP(constants.UserRoleParamName, "r", []string{}, "Comma separated roles of the specific user to be updated. Should be either Tenant Admin or User")
 	updateUserRoleCmd.MarkFlagRequired(constants.ApiKeyParamName)
 	updateUserRoleCmd.MarkFlagRequired(constants.UserIdParamName)
 	updateUserRoleCmd.MarkFlagRequired(constants.UserRoleParamName)
@@ -87,14 +87,25 @@ func updateUserRole(cmd *cobra.Command) (string, error) {
 		return "", errors.Wrap(err, "Invalid user id provided")
 	}
 
-	userRole, err := cmd.Flags().GetStringSlice(constants.UserRoleParamName)
+	userRoles, err := cmd.Flags().GetStringSlice(constants.UserRoleParamName)
 	if err != nil {
 		return "", err
 	}
 
+	if len(userRoles) == 0 {
+		return "", errors.New("User role cannot be empty")
+	}
+
+	for _, role := range userRoles {
+		if role != constants.TenantAdminRole && role != constants.UserRole {
+			return "", errors.Errorf("%s is not a valid user role. Roles should be either %s or %s", role,
+				constants.TenantAdminRole, constants.UserRole)
+		}
+	}
+
 	updateUserRoleReq := &models.UpdateTenantUserRoles{
 		UserId: userId,
-		Roles:  userRole,
+		Roles:  userRoles,
 	}
 
 	tmsClient := tms.NewTmsClient(client, tmsUrl, tenantId, apiKey)
