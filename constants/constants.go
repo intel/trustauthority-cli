@@ -73,6 +73,8 @@ const (
 	SubscriptionStatusActive    = "Active"
 	SubscriptionStatusInactive  = "Inactive"
 	SubscriptionStatusCancelled = "Cancelled"
+	TenantAdminRole             = "Tenant Admin"
+	UserRole                    = "User"
 	ExpiryDateInputFormat       = "2006-01-02"
 )
 
