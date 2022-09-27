@@ -37,12 +37,6 @@ tenantctl create user -a < api key > -e < email Id> -r < Role (Tenant Admin/User
 ##### Get Users:               
 tenantctl list user -a < api key >
 
-##### Get User by id:          
-tenantctl list user -a < api key > -u < user id >
-
-##### Update User:
-tenantctl update user -a < api key > -u < user id >
-
 ##### Update User Role:
 tenantctl update user role -a < api key > -u < user id > -r "Tenant Admin,User"
 

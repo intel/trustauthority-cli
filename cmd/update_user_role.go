@@ -22,22 +22,31 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var updateUserRoleCmd = &cobra.Command{
-	Use:   constants.RoleCmd,
-	Short: "Updates role of a user under a tenant",
-	Long:  ``,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		log.Info("update user role called")
-		userId, err := updateUserRole(cmd)
-		if err != nil {
-			return err
-		}
-		fmt.Printf("\nUpdated User: %s \n\n", userId)
-		return nil
-	},
-}
+var (
+	updateUserCmd = &cobra.Command{
+		Use:   constants.UserCmd,
+		Short: "Updates a user under a tenant",
+		Long:  ``,
+	}
+
+	updateUserRoleCmd = &cobra.Command{
+		Use:   constants.RoleCmd,
+		Short: "Updates role of a user under a tenant",
+		Long:  ``,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			log.Info("update user role called")
+			userId, err := updateUserRole(cmd)
+			if err != nil {
+				return err
+			}
+			fmt.Printf("\nUpdated User: %s \n\n", userId)
+			return nil
+		},
+	}
+)
 
 func init() {
+	updateCmd.AddCommand(updateUserCmd)
 	updateUserCmd.AddCommand(updateUserRoleCmd)
 
 	updateUserRoleCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")

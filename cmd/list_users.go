@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
-	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/client/tms"
 	"intel/amber/tac/v1/config"
@@ -41,7 +40,6 @@ func init() {
 	listCmd.AddCommand(getUsersCmd)
 
 	getUsersCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
-	getUsersCmd.Flags().StringP(constants.UserIdParamName, "u", "", "Id of the specific user the details for whom needs to be fetched")
 	getUsersCmd.MarkFlagRequired(constants.ApiKeyParamName)
 
 }
@@ -60,39 +58,18 @@ func getUsers(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
-	userIdString, err := cmd.Flags().GetString(constants.UserIdParamName)
+	tmsClient := tms.NewTmsClient(client, tmsUrl, uuid.Nil, apiKey)
+
+	var responseBytes []byte
+
+	response, err := tmsClient.GetUsers()
 	if err != nil {
 		return "", err
 	}
 
-	tmsClient := tms.NewTmsClient(client, tmsUrl, uuid.Nil, apiKey)
-
-	var responseBytes []byte
-	if userIdString == "" {
-		response, err := tmsClient.GetUsers()
-		if err != nil {
-			return "", err
-		}
-
-		responseBytes, err = json.MarshalIndent(response, "", "  ")
-		if err != nil {
-			return "", err
-		}
-	} else {
-		userId, err := uuid.Parse(userIdString)
-		if err != nil {
-			return "", errors.Wrap(err, "Invalid user id provided")
-		}
-
-		response, err := tmsClient.RetrieveUser(userId)
-		if err != nil {
-			return "", err
-		}
-
-		responseBytes, err = json.MarshalIndent(response, "", "  ")
-		if err != nil {
-			return "", err
-		}
+	responseBytes, err = json.MarshalIndent(response, "", "  ")
+	if err != nil {
+		return "", err
 	}
 
 	return string(responseBytes), nil
