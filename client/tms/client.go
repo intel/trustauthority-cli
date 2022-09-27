@@ -39,9 +39,7 @@ type TmsClient interface {
 
 	CreateUser(user *models.CreateTenantUser) (*models.User, error)
 	UpdateTenantUserRole(user *models.UpdateTenantUserRoles) (*models.User, error)
-	UpdateUser(user *models.UpdateUser) (*models.User, error)
 	GetUsers() ([]models.User, error)
-	RetrieveUser(userId uuid.UUID) (*models.User, error)
 	DeleteUser(userId uuid.UUID) error
 
 	CreateTenantTag(request *models.Tag) (*models.Tag, error)
@@ -312,41 +310,6 @@ func (pc tmsClient) CreateUser(user *models.CreateTenantUser) (*models.User, err
 	return &createUserRes, nil
 }
 
-func (pc tmsClient) UpdateUser(user *models.UpdateUser) (*models.User, error) {
-	reqBytes, err := json.Marshal(user)
-	if err != nil {
-		return nil, errors.Wrap(err, " Error marshalling request")
-	}
-
-	reqURL, err := url.Parse(pc.BaseURL.String() + constants.UserApiEndpoint + "/" + user.Id.String())
-	if err != nil {
-		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
-	}
-
-	// Create a new request using http
-	req, err := http.NewRequest(http.MethodPut, reqURL.String(), bytes.NewBuffer(reqBytes))
-	if err != nil {
-		return nil, errors.Wrap(err, " Error forming request")
-	}
-	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
-	req.Header.Add(constants.HTTPHeaderKeyContentType, constants.HTTPMediaTypeJson)
-	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
-	req.Header.Add(constants.HTTPHeaderKeyUpdatedBy, pc.TenantId.String())
-
-	response, err := client.SendRequest(pc.Client, req)
-	if err != nil {
-		return nil, errors.Wrap(err, "Error in response body")
-	}
-
-	// Parse response for validation
-	var createUserRes models.User
-	err = json.Unmarshal(response, &createUserRes)
-	if err != nil {
-		return nil, errors.Wrap(err, "Error unmarshalling response")
-	}
-	return &createUserRes, nil
-}
-
 func (pc tmsClient) UpdateTenantUserRole(request *models.UpdateTenantUserRoles) (*models.User, error) {
 	reqBytes, err := json.Marshal(request)
 	if err != nil {
@@ -409,34 +372,6 @@ func (pc tmsClient) GetUsers() ([]models.User, error) {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
 	return searchUserRes, nil
-}
-
-func (pc tmsClient) RetrieveUser(id uuid.UUID) (*models.User, error) {
-	reqURL, err := url.Parse(pc.BaseURL.String() + constants.UserApiEndpoint + "/" + id.String())
-	if err != nil {
-		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
-	}
-
-	// Create a new request using http
-	req, err := http.NewRequest(http.MethodGet, reqURL.String(), nil)
-	if err != nil {
-		return nil, errors.Wrap(err, " Error forming request")
-	}
-	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
-	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
-
-	response, err := client.SendRequest(pc.Client, req)
-	if err != nil {
-		return nil, errors.Wrap(err, "Error in response body")
-	}
-
-	// Parse response for validation
-	var retrieveUserRes *models.User
-	err = json.Unmarshal(response, &retrieveUserRes)
-	if err != nil {
-		return nil, errors.Wrap(err, "Error unmarshalling response")
-	}
-	return retrieveUserRes, nil
 }
 
 func (pc tmsClient) DeleteUser(userId uuid.UUID) error {
