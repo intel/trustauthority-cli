@@ -26,10 +26,6 @@ func TestListUsersCmd(t *testing.T) {
 			args:    []string{constants.ListCmd, constants.UserCmd, "-a", "abc"},
 			wantErr: false,
 		},
-		{
-			args:    []string{constants.ListCmd, constants.UserCmd, "-a", "abc", "-u", "23011406-6f3b-4431-9363-4e1af9af6b13"},
-			wantErr: false,
-		},
 	}
 
 	listCmd.AddCommand(getUsersCmd)
