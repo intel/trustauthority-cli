@@ -23,7 +23,7 @@ var err error
 
 func init() {
 	tempDir := os.TempDir()
-	tempConfigFile, err = os.Create(tempDir + "\\" + constants.ConfigFileName + "." + constants.ConfigFileExtension)
+	tempConfigFile, err = os.Create(tempDir + "/" + constants.ConfigFileName + "." + constants.ConfigFileExtension)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
