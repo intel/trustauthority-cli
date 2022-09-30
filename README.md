@@ -1,4 +1,4 @@
-# applications.security.amber.cli
+# Amber CLI
 A CLI tool for Tenants to use and access Amber Services
 
 ### OS Supported
@@ -6,7 +6,7 @@ Ubuntu LTS 20.04
 
 ### Build
 
-- git clone https://github.com/intel-innersource/applications.security.amber.cli.git cli
+- git clone https://github.com/intel/amber-cli.git cli
 - cd cli and run "make installer"
 - copy the binary installer tenantctl-{version}.bin to the system where it needs to be deployed
 - create an env file tac.env and add the following mandatory contents:<br>
