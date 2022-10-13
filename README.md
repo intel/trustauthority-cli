@@ -1,4 +1,4 @@
-# applications.security.amber.cli
+# Amber CLI
 A CLI tool for Tenants to use and access Amber Services
 
 ### OS Supported
@@ -6,7 +6,7 @@ Ubuntu LTS 20.04
 
 ### Build
 
-- git clone https://github.com/intel-innersource/applications.security.amber.cli.git cli
+- git clone https://github.com/intel/amber-cli.git cli
 - cd cli and run "make installer"
 - copy the binary installer tenantctl-{version}.bin to the system where it needs to be deployed
 - create an env file tac.env and add the following mandatory contents:<br>
@@ -38,7 +38,7 @@ tenantctl create user -a < api key > -e < email Id> -r < Role (Tenant Admin/User
 tenantctl list user -a < api key >
 
 ##### Update User Role:
-tenantctl update user role -a < api key > -u < user id > -r "Tenant Admin,User"
+tenantctl update user role -a < api key > -u < user id > -r < Role (Tenant Admin/User) >
 
 ##### Delete User:
 tenantctl delete user -a < api key > -u < user id >
@@ -55,6 +55,9 @@ tenantctl create service -a < api key > -r < service offer id > -n < service nam
 ##### Get Services:
 tenantctl list service -a < api key >
 
+##### Get Service By Id:
+tenantctl list service -a < api key > -r < service Id >
+
 ##### Delete Service:
 tenantctl delete service -a < api key > -s < service id >
 
@@ -62,19 +65,19 @@ tenantctl delete service -a < api key > -s < service id >
 tenantctl update service -a < api key > -s < service id > -n < service name >
 
 ##### Create Subscription:
-tenantctl create subscription -a < api key > -r < service offer id > -p < product id > -d < subscription name > -i "comma separated policy Ids" -v "tag-id1:tag-name1,tag-id2:tag-name2"
+tenantctl create subscription -a < api key > -r < service id > -p < product id > -d < subscription name > -i "comma separated policy Ids" -v "tag-id1:tag-name1,tag-id2:tag-name2"
 
 ##### Update Subscription
-tenantctl update subscription -a < api key > -r < service offer id > -p < product id > -u < subscription id > -d < subscription name > -i "comma separated policy Ids" -v "tag-id1:tag-name1,tag-id2:tag-name2" -s < active/inactive >
+tenantctl update subscription -a < api key > -r < service id > -p < product id > -u < subscription id > -d < subscription name > -i "comma separated policy Ids" -v "tag-id1:tag-name1,tag-id2:tag-name2" -s < active/inactive >
 
 ##### Get Subscriptions:
-tenantctl list subscription -a < api key > -r < service offer id >
+tenantctl list subscription -a < api key > -r < service id >
 
 ##### Get Subscription by id:
-tenantctl list subscription -a < api key > -r < service offer id > -d < subscription id >
+tenantctl list subscription -a < api key > -r < service id > -d < subscription id >
 
 ##### Delete a subscription:
-tenantctl delete subscription -a < api key > -r < service offer id > -d < subscription id >
+tenantctl delete subscription -a < api key > -r < service id > -d < subscription id >
 
 ##### Create tag:
 tenantctl create tag -a < api key > -n < tag name > -t < tenant Id >
