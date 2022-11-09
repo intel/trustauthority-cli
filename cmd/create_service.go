@@ -98,7 +98,7 @@ func createService(cmd *cobra.Command) (string, error) {
 	}
 	var serviceInfo = models.CreateService{
 		ServiceOfferId: serviceOfferId,
-		Description:    serviceDescription,
+		Name:           serviceDescription,
 	}
 
 	tmsClient := tms.NewTmsClient(client, tmsUrl, tenantId, apiKey)

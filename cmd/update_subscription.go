@@ -46,17 +46,17 @@ func init() {
 	updateSubscriptionCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the subscription needs to be updated")
 	updateSubscriptionCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the subscription needs to be updated")
 	updateSubscriptionCmd.Flags().StringP(constants.ProductIdParamName, "p", "", "Id of the Amber Product for which the subscription needs to be updated")
-	updateSubscriptionCmd.Flags().StringP(constants.SubscriptionDescriptionParamName, "d", "", "Description of the subscription that needs to be updated")
+	updateSubscriptionCmd.Flags().StringP(constants.SubscriptionNameParamName, "n", "", "Description of the subscription that needs to be updated")
 	updateSubscriptionCmd.Flags().StringP(constants.SubscriptionIdParamName, "u", "", "Id of the subscription that needs to be updated")
 	updateSubscriptionCmd.Flags().StringSliceP(constants.PolicyIdsParamName, "i", []string{}, "List of comma separated policy IDs to be linked to the subscription")
-	updateSubscriptionCmd.Flags().StringSliceP(constants.TagIdAndValuesParamName, "v", []string{}, "List of the comma separated tad Id and value pairs in the "+
-		"following format:\n e03582e6-0709-42c2-a164-a687a970e040:Workload-AI,051800d0-cae5-48e7-8515-9801650fcd2b:60 V etc.")
+	updateSubscriptionCmd.Flags().StringSliceP(constants.TagKeyAndValuesParamName, "v", []string{}, "List of the comma separated tad Id and value pairs in the "+
+		"following format:\n Workload:WorkloadAI,Workload:WorkloadEXE etc.")
 	updateSubscriptionCmd.Flags().StringP(constants.SetExpiryDateParamName, "e", "", "Update the expiry date in the format yyyy-mm-dd for the new subscription")
 	updateSubscriptionCmd.Flags().StringP(constants.ActivationStatus, "s", "", "Add activation status for subscription, should be one of \"Active\", \"Inactive\" or \"Cancelled\"")
 	updateSubscriptionCmd.MarkFlagRequired(constants.ApiKeyParamName)
 	updateSubscriptionCmd.MarkFlagRequired(constants.ServiceIdParamName)
 	updateSubscriptionCmd.MarkFlagRequired(constants.ProductIdParamName)
-	updateSubscriptionCmd.MarkFlagRequired(constants.SubscriptionDescriptionParamName)
+	updateSubscriptionCmd.MarkFlagRequired(constants.SubscriptionNameParamName)
 	updateSubscriptionCmd.MarkFlagRequired(constants.SubscriptionIdParamName)
 }
 
@@ -109,7 +109,7 @@ func updateSubscription(cmd *cobra.Command) (string, error) {
 		return "", errors.Wrap(err, "Invalid product id provided")
 	}
 
-	subscriptionDescription, err := cmd.Flags().GetString(constants.SubscriptionDescriptionParamName)
+	subscriptionName, err := cmd.Flags().GetString(constants.SubscriptionNameParamName)
 	if err != nil {
 		return "", err
 	}
@@ -146,19 +146,15 @@ func updateSubscription(cmd *cobra.Command) (string, error) {
 		policyIds = append(policyIds, policyUUID)
 	}
 
-	tagIdValuesString, err := cmd.Flags().GetStringSlice(constants.TagIdAndValuesParamName)
+	tagKeyValuesString, err := cmd.Flags().GetStringSlice(constants.TagKeyAndValuesParamName)
 
 	var tagIdValues []models.SubscriptionTagIdValue
-	for _, tagIdValue := range tagIdValuesString {
+	for _, tagIdValue := range tagKeyValuesString {
 		splitTag := strings.Split(tagIdValue, ":")
 		if len(splitTag) != 2 {
 			return "", errors.New("Tag Id value pairs are not provided in proper format, please check hel section for more details")
 		}
-		tagId, err := uuid.Parse(splitTag[0])
-		if err != nil {
-			return "", errors.Wrap(err, "Tag Id is not in proper format, should be UUID: "+tagId.String())
-		}
-		tagIdValues = append(tagIdValues, models.SubscriptionTagIdValue{TagId: tagId, Value: splitTag[1]})
+		tagIdValues = append(tagIdValues, models.SubscriptionTagIdValue{Key: splitTag[0], Value: splitTag[1]})
 	}
 
 	expiryDateString, err := cmd.Flags().GetString(constants.SetExpiryDateParamName)
@@ -168,7 +164,7 @@ func updateSubscription(cmd *cobra.Command) (string, error) {
 
 	var subscriptionInfo = models.UpdateSubscription{
 		ProductId:    productId,
-		Name:         subscriptionDescription,
+		Name:         subscriptionName,
 		PolicyIds:    policyIds,
 		TagIdsValues: tagIdValues,
 		ServiceId:    serviceId,
@@ -184,7 +180,7 @@ func updateSubscription(cmd *cobra.Command) (string, error) {
 		subscriptionInfo.ExpiredAt = date
 	}
 
-	if err = validation.ValidateStrings([]string{subscriptionDescription}); err != nil {
+	if err = validation.ValidateStrings([]string{subscriptionName}); err != nil {
 		return "", errors.Wrap(err, "Invalid subscription name provided")
 	}
 

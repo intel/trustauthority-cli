@@ -30,7 +30,6 @@ type PolicyResponse struct {
 type CommonPolicy struct {
 	PolicyId         uuid.UUID `json:"policy_id"`
 	Policy           string    `json:"policy"`
-	TenantId         uuid.UUID `json:"-"`
 	PolicyName       string    `json:"policy_name"`
 	PolicyType       string    `json:"policy_type"`
 	ServiceOfferId   uuid.UUID `json:"service_offer_id"`

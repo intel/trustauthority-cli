@@ -24,20 +24,20 @@ func TestCreateSubscriptionCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args: []string{constants.CreateCmd, constants.SubscriptionCmd, "-a", "abc", "-d", "Test Subs", "-p",
+			args: []string{constants.CreateCmd, constants.SubscriptionCmd, "-a", "abc", "-n", "Test Subs", "-p",
 				"e169d34f-58ce-4717-9b3a-5c66abd33417", "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777", "-e", "2022-09-24"},
 			wantErr:     false,
 			description: "Test Create Subscription",
 		},
 		{
-			args: []string{constants.CreateCmd, constants.SubscriptionCmd, "-a", "abc", "-d", "Test Subs", "-p",
+			args: []string{constants.CreateCmd, constants.SubscriptionCmd, "-a", "abc", "-n", "Test Subs", "-p",
 				"e169d34f-58ce-4717-9b3a-5c66abd33417", "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777",
 				"-v", "5cfb6af4-59ac-4a14-8b83-bd65b1e11779"},
 			wantErr:     true,
 			description: "Test Create Subscription With Incorrect Tag Format",
 		},
 		{
-			args: []string{constants.CreateCmd, constants.SubscriptionCmd, "-a", "abc", "-d", "Test Subs", "-p",
+			args: []string{constants.CreateCmd, constants.SubscriptionCmd, "-a", "abc", "-n", "Test Subs", "-p",
 				"e169d34f-58ce-4717-9b3a-5c66abd33417", "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777", "-v", "invalid-UUID:tag1"},
 			wantErr:     true,
 			description: "Test Create Subscription With Incorrect Tag UUID",

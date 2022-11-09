@@ -65,10 +65,10 @@ tenantctl delete service -a < api key > -s < service id >
 tenantctl update service -a < api key > -s < service id > -n < service name >
 
 ##### Create Subscription:
-tenantctl create subscription -a < api key > -r < service id > -p < product id > -d < subscription name > -i "comma separated policy Ids" -v "tag-id1:tag-name1,tag-id2:tag-name2"
+tenantctl create subscription -a < api key > -r < service id > -p < product id > -n < subscription name > -i "comma separated policy Ids" -v "tag-key1:tag-value1,tag-key2:tag-value2" -e "date in format yyyy-mm-dd"
 
 ##### Update Subscription
-tenantctl update subscription -a < api key > -r < service id > -p < product id > -u < subscription id > -d < subscription name > -i "comma separated policy Ids" -v "tag-id1:tag-name1,tag-id2:tag-name2" -s < active/inactive >
+tenantctl update subscription -a < api key > -r < service id > -p < product id > -u < subscription id > -n < subscription name > -i "comma separated policy Ids" -v "tag-key1:tag-value1,tag-key2:tag-value2" -s < Active/Inactive/Cancelled > -e "date in format yyyy-mm-dd"
 
 ##### Get Subscriptions:
 tenantctl list subscription -a < api key > -r < service id >
@@ -86,10 +86,10 @@ tenantctl create tag -a < api key > -n < tag name > -t < tenant Id >
 tenantctl list tag -a < api key >
 
 ##### List Subscription Policies:
-tenantctl list subscription policy -a < api key > -r < service offer id > -s < subscription id >
+tenantctl list subscription policy -a < api key > -r < service id > -s < subscription id >
 
 ##### List Subscription Tags:
-tenantctl list subscription tag -a < api key > -r < service offer id > -s < subscription id >
+tenantctl list subscription tag -a < api key > -r < service id > -s < subscription id >
 
 ##### Create Policy:
 tenantctl create policy -a < api key > -f < policy file path >
@@ -108,10 +108,10 @@ tenantctl create policy -a < api key > -f < policy file path >
 ```
 
 ##### Get policies:
-tenantctl list policies -a < api key >
+tenantctl list policy -a < api key >
 
 ##### Get policy by id:
-tenantctl list policies -a < api key > -p < policy id >
+tenantctl list policy -a < api key > -p < policy id >
 
 ##### Delete policy:
 tenantctl delete policy -a < api key > -p < policy id >

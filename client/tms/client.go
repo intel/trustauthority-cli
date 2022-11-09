@@ -37,9 +37,9 @@ type TmsClient interface {
 
 	GetServiceOffers() ([]models.ServiceOffer, error)
 
-	CreateUser(user *models.CreateTenantUser) (*models.User, error)
-	UpdateTenantUserRole(user *models.UpdateTenantUserRoles) (*models.User, error)
-	GetUsers() ([]models.User, error)
+	CreateUser(user *models.CreateTenantUser) (*models.TenantUser, error)
+	UpdateTenantUserRole(user *models.UpdateTenantUserRoles) (*models.TenantUser, error)
+	GetUsers() ([]models.TenantUser, error)
 	DeleteUser(userId uuid.UUID) error
 
 	CreateTenantTag(request *models.Tag) (*models.Tag, error)
@@ -69,7 +69,7 @@ func (pc tmsClient) CreateSubscription(request *models.CreateSubscription) (*mod
 		return nil, errors.Wrap(err, " Error marshalling request")
 	}
 
-	reqURL, err := url.Parse(pc.BaseURL.String() + constants.TenantApiEndpoint + constants.ServiceApiEndpoint + "/" +
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceApiEndpoint + "/" +
 		request.ServiceId.String() + constants.SubscriptionApiEndpoint)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
@@ -105,7 +105,7 @@ func (pc tmsClient) UpdateSubscription(request *models.UpdateSubscription, subsc
 		return nil, errors.Wrap(err, " Error marshalling request")
 	}
 
-	reqURL, err := url.Parse(pc.BaseURL.String() + constants.TenantApiEndpoint + constants.ServiceApiEndpoint + "/" +
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceApiEndpoint + "/" +
 		request.ServiceId.String() + constants.SubscriptionApiEndpoint + "/" + subscriptionId.String())
 	if err != nil {
 		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
@@ -136,7 +136,7 @@ func (pc tmsClient) UpdateSubscription(request *models.UpdateSubscription, subsc
 }
 
 func (pc tmsClient) GetSubscriptions(serviceId uuid.UUID) ([]models.Subscription, error) {
-	reqURL, err := url.Parse(pc.BaseURL.String() + constants.TenantApiEndpoint + constants.ServiceApiEndpoint + "/" +
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceApiEndpoint + "/" +
 		serviceId.String() + constants.SubscriptionApiEndpoint)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
@@ -165,7 +165,7 @@ func (pc tmsClient) GetSubscriptions(serviceId uuid.UUID) ([]models.Subscription
 }
 
 func (pc tmsClient) RetrieveSubscription(serviceId uuid.UUID, subscriptionId uuid.UUID) (*models.SubscriptionDetail, error) {
-	reqURL, err := url.Parse(pc.BaseURL.String() + constants.TenantApiEndpoint + constants.ServiceApiEndpoint + "/" +
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceApiEndpoint + "/" +
 		serviceId.String() + constants.SubscriptionApiEndpoint + "/" + subscriptionId.String())
 	if err != nil {
 		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
@@ -194,7 +194,7 @@ func (pc tmsClient) RetrieveSubscription(serviceId uuid.UUID, subscriptionId uui
 }
 
 func (pc tmsClient) GetSubscriptionPolicies(serviceId, subscriptionId uuid.UUID) (*models.SubscriptionPolicies, error) {
-	reqURL, err := url.Parse(pc.BaseURL.String() + constants.TenantApiEndpoint + constants.ServiceApiEndpoint + "/" +
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceApiEndpoint + "/" +
 		serviceId.String() + constants.SubscriptionApiEndpoint + "/" + subscriptionId.String() + constants.PolicyApiEndpoint)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
@@ -223,8 +223,8 @@ func (pc tmsClient) GetSubscriptionPolicies(serviceId, subscriptionId uuid.UUID)
 }
 
 func (pc tmsClient) GetSubscriptionTagValues(serviceId, subscriptionId uuid.UUID) (*models.SubscriptionTagsValues, error) {
-	reqURL, err := url.Parse(pc.BaseURL.String() + constants.TenantApiEndpoint + constants.ServiceApiEndpoint + "/" +
-		serviceId.String() + constants.SubscriptionApiEndpoint + "/" + subscriptionId.String() + constants.TagsValuesEndpoint)
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceApiEndpoint + "/" +
+		serviceId.String() + constants.SubscriptionApiEndpoint + "/" + subscriptionId.String() + constants.TagApiEndpoint)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
 	}
@@ -252,7 +252,7 @@ func (pc tmsClient) GetSubscriptionTagValues(serviceId, subscriptionId uuid.UUID
 }
 
 func (pc tmsClient) DeleteSubscription(serviceId, subscriptionId uuid.UUID) error {
-	reqURL, err := url.Parse(pc.BaseURL.String() + constants.TenantApiEndpoint + constants.ServiceApiEndpoint + "/" +
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceApiEndpoint + "/" +
 		serviceId.String() + constants.SubscriptionApiEndpoint + "/" + subscriptionId.String())
 	if err != nil {
 		return errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
@@ -275,13 +275,13 @@ func (pc tmsClient) DeleteSubscription(serviceId, subscriptionId uuid.UUID) erro
 	return nil
 }
 
-func (pc tmsClient) CreateUser(user *models.CreateTenantUser) (*models.User, error) {
+func (pc tmsClient) CreateUser(user *models.CreateTenantUser) (*models.TenantUser, error) {
 	reqBytes, err := json.Marshal(user)
 	if err != nil {
 		return nil, errors.Wrap(err, " Error marshalling request")
 	}
 
-	reqURL, err := url.Parse(pc.BaseURL.String() + constants.TenantApiEndpoint + constants.UserApiEndpoint)
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.UserApiEndpoint)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
 	}
@@ -302,7 +302,7 @@ func (pc tmsClient) CreateUser(user *models.CreateTenantUser) (*models.User, err
 	}
 
 	// Parse response for validation
-	var createUserRes models.User
+	var createUserRes models.TenantUser
 	err = json.Unmarshal(response, &createUserRes)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
@@ -310,13 +310,13 @@ func (pc tmsClient) CreateUser(user *models.CreateTenantUser) (*models.User, err
 	return &createUserRes, nil
 }
 
-func (pc tmsClient) UpdateTenantUserRole(request *models.UpdateTenantUserRoles) (*models.User, error) {
+func (pc tmsClient) UpdateTenantUserRole(request *models.UpdateTenantUserRoles) (*models.TenantUser, error) {
 	reqBytes, err := json.Marshal(request)
 	if err != nil {
 		return nil, errors.Wrap(err, " Error marshalling request")
 	}
 
-	reqURL, err := url.Parse(pc.BaseURL.String() + constants.TenantApiEndpoint + constants.UserApiEndpoint +
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.UserApiEndpoint +
 		"/" + request.UserId.String())
 	if err != nil {
 		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
@@ -338,7 +338,7 @@ func (pc tmsClient) UpdateTenantUserRole(request *models.UpdateTenantUserRoles) 
 	}
 
 	// Parse response for validation
-	var updateUserRes models.User
+	var updateUserRes models.TenantUser
 	err = json.Unmarshal(response, &updateUserRes)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
@@ -346,8 +346,8 @@ func (pc tmsClient) UpdateTenantUserRole(request *models.UpdateTenantUserRoles) 
 	return &updateUserRes, nil
 }
 
-func (pc tmsClient) GetUsers() ([]models.User, error) {
-	reqURL, err := url.Parse(pc.BaseURL.String() + constants.TenantApiEndpoint + constants.UserApiEndpoint)
+func (pc tmsClient) GetUsers() ([]models.TenantUser, error) {
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.UserApiEndpoint)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
 	}
@@ -366,7 +366,7 @@ func (pc tmsClient) GetUsers() ([]models.User, error) {
 	}
 
 	// Parse response for validation
-	var searchUserRes []models.User
+	var searchUserRes []models.TenantUser
 	err = json.Unmarshal(response, &searchUserRes)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
@@ -375,7 +375,7 @@ func (pc tmsClient) GetUsers() ([]models.User, error) {
 }
 
 func (pc tmsClient) DeleteUser(userId uuid.UUID) error {
-	reqURL, err := url.Parse(pc.BaseURL.String() + constants.TenantApiEndpoint + constants.UserApiEndpoint + "/" + userId.String())
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.UserApiEndpoint + "/" + userId.String())
 	if err != nil {
 		return errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
 	}
@@ -402,7 +402,7 @@ func (pc tmsClient) CreateService(request *models.CreateService) (*models.Servic
 		return nil, errors.Wrap(err, " Error marshalling request")
 	}
 
-	reqURL, err := url.Parse(pc.BaseURL.String() + constants.TenantApiEndpoint + constants.ServiceApiEndpoint)
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceApiEndpoint)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
 	}
@@ -437,7 +437,7 @@ func (pc tmsClient) UpdateService(request *models.UpdateService) (*models.Servic
 		return nil, errors.Wrap(err, " Error marshalling request")
 	}
 
-	reqURL, err := url.Parse(pc.BaseURL.String() + constants.TenantApiEndpoint + constants.ServiceApiEndpoint + "/" + request.Id.String())
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceApiEndpoint + "/" + request.Id.String())
 	if err != nil {
 		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
 	}
@@ -468,7 +468,7 @@ func (pc tmsClient) UpdateService(request *models.UpdateService) (*models.Servic
 
 func (pc tmsClient) DeleteService(serviceId uuid.UUID) error {
 
-	reqURL, err := url.Parse(pc.BaseURL.String() + constants.TenantApiEndpoint + constants.ServiceApiEndpoint + "/" + serviceId.String())
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceApiEndpoint + "/" + serviceId.String())
 	if err != nil {
 		return errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
 	}
@@ -492,7 +492,7 @@ func (pc tmsClient) DeleteService(serviceId uuid.UUID) error {
 }
 
 func (pc tmsClient) GetServices() ([]models.Service, error) {
-	reqURL, err := url.Parse(pc.BaseURL.String() + constants.TenantApiEndpoint + constants.ServiceApiEndpoint)
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceApiEndpoint)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
 	}
@@ -520,7 +520,7 @@ func (pc tmsClient) GetServices() ([]models.Service, error) {
 }
 
 func (pc tmsClient) RetrieveService(id uuid.UUID) (*models.ServiceDetail, error) {
-	reqURL, err := url.Parse(pc.BaseURL.String() + constants.TenantApiEndpoint + constants.ServiceApiEndpoint + "/" + id.String())
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceApiEndpoint + "/" + id.String())
 	if err != nil {
 		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
 	}
@@ -604,7 +604,7 @@ func (pc tmsClient) GetServiceOffers() ([]models.ServiceOffer, error) {
 }
 
 func (pc tmsClient) CreateTenantTag(request *models.Tag) (*models.Tag, error) {
-	reqURL, err := url.Parse(pc.BaseURL.String() + constants.TenantApiEndpoint + constants.TagApiEndpoint)
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.TagApiEndpoint)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
 	}
@@ -641,7 +641,7 @@ func (pc tmsClient) CreateTenantTag(request *models.Tag) (*models.Tag, error) {
 }
 
 func (pc tmsClient) GetTenantTags() (*models.Tags, error) {
-	reqURL, err := url.Parse(pc.BaseURL.String() + constants.TenantApiEndpoint + constants.TagApiEndpoint)
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.TagApiEndpoint)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
 	}

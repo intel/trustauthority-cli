@@ -82,7 +82,6 @@ func createTag(cmd *cobra.Command) (string, error) {
 	tmsClient := tms.NewTmsClient(client, tmsUrl, tenantId, apiKey)
 
 	createTagReq := &models.Tag{
-		ID:         uuid.UUID{},
 		Name:       tagName,
 		TenantId:   tenantId,
 		Predefined: false,

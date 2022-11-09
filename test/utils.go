@@ -61,17 +61,11 @@ var (
     {
         "id": "23011406-6f3b-4431-9363-4e1af9af6b13",
         "email": "arijitgh@gmail.com",
-        "tenant_roles": [
-            {
-                "tenant_id": "89120415-6fbc-41c7-b9f2-3b4ba10e87c9",
-                "roles": [
-                    {
-                        "id": "66ec2e33-8cd3-42b1-8963-c7765205446e",
-                        "name": "Tenant Admin"
-                    }
-                ]
-            }
-        ],
+			"roles": [
+			{
+				"id": "66ec2e33-8cd3-42b1-8963-c7765205446e",
+				"name": "Tenant Admin"
+			}],
         "active": false,
         "created_at": "2022-06-19T20:02:55.157679Z"
     }]`
@@ -110,7 +104,7 @@ var (
         "service_id": "5cfb6af4-59ac-4a14-8b83-bd65b1e11777",
         "product_id": "e169d34f-58ce-4717-9b3a-5c66abd33417",
         "status": "",
-        "description": "Test Subscription",
+        "name": "Test Subscription",
 		"keys": [
 			"9dca50986c414304a4b1ffe202dcf2b0",
 			"996a9a6e67814f1784eadb5405bdabf3"
@@ -168,29 +162,27 @@ var idReg = fmt.Sprintf("{id:%s}", "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3
 
 // MockServer for CLI unit testing
 func MockServer(t *testing.T) *httptest.Server {
-	policyIdExpr := fmt.Sprintf("%s%s", "/ps/v1/policies/", idReg)
+	policyIdExpr := fmt.Sprintf("%s%s", "/management/v1/policies/", idReg)
+	tenantUserExpr := fmt.Sprintf("%s", "/management/v1/users")
+	tenantUserIdExpr := fmt.Sprintf("%s%s", "/management/v1/users/", idReg)
 
-	userIdExpr := fmt.Sprintf("%s%s", "/tms/v1/users/", idReg)
-	tenantUserExpr := fmt.Sprintf("%s", "/tms/v1/tenants/users")
-	tenantUserIdExpr := fmt.Sprintf("%s%s", "/tms/v1/tenants/users/", idReg)
+	serviceExpr := fmt.Sprintf("%s", "/management/v1/services")
+	serviceIdExpr := fmt.Sprintf("%s%s", "/management/v1/services/", idReg)
 
-	serviceExpr := fmt.Sprintf("%s", "/tms/v1/tenants/services")
-	serviceIdExpr := fmt.Sprintf("%s%s", "/tms/v1/tenants/services/", idReg)
+	subscriptionExpr := fmt.Sprintf("%s%s%s", "/management/v1/services/", idReg, "/api-clients")
+	subscriptionIdExpr := fmt.Sprintf("%s%s%s%s", "/management/v1/services/", idReg, "/api-clients/", idReg)
+	subscriptionPolicyExpr := fmt.Sprintf("%s%s%s%s%s", "/management/v1/services/", idReg, "/api-clients/", idReg, "/policies")
+	subscriptionTagExpr := fmt.Sprintf("%s%s%s%s%s", "/management/v1/services/", idReg, "/api-clients/", idReg, "/tags")
 
-	subscriptionExpr := fmt.Sprintf("%s%s%s", "/tms/v1/tenants/services/", idReg, "/subscriptions")
-	subscriptionIdExpr := fmt.Sprintf("%s%s%s%s", "/tms/v1/tenants/services/", idReg, "/subscriptions/", idReg)
-	subscriptionPolicyExpr := fmt.Sprintf("%s%s%s%s%s%s", "/tms/v1/tenants", "/services/", idReg, "/subscriptions/", idReg, "/policies")
-	subscriptionTagExpr := fmt.Sprintf("%s%s%s%s%s%s", "/tms/v1/tenants", "/services/", idReg, "/subscriptions/", idReg, "/tags-values")
+	serviceOfferExpr := fmt.Sprintf("/management/v1/service-offers")
 
-	serviceOfferExpr := fmt.Sprintf("/tms/v1/serviceOffers")
+	productExpr := fmt.Sprintf("%s%s%s", "/management/v1/service-offers/", idReg, "/products")
 
-	productExpr := fmt.Sprintf("%s%s%s", "/tms/v1/serviceOffers/", idReg, "/products")
-
-	tenantTagsExpr := fmt.Sprintf("%s%s", "/tms/v1/tenants", "/tags")
+	tenantTagsExpr := fmt.Sprintf("%s", "/management/v1/tags")
 
 	r := mux.NewRouter()
 
-	r.HandleFunc("/ps/v1/policies", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/management/v1/policies", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
 		_, err := w.Write([]byte(policy))
@@ -199,7 +191,7 @@ func MockServer(t *testing.T) *httptest.Server {
 		}
 	}).Methods(http.MethodPost)
 
-	r.HandleFunc("/ps/v1/policies", func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc("/management/v1/policies", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
 		_, err := w.Write([]byte(policyList))
@@ -244,15 +236,6 @@ func MockServer(t *testing.T) *httptest.Server {
 		}
 	}).Methods(http.MethodPost)
 
-	r.HandleFunc(userIdExpr, func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(user))
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
-	}).Methods(http.MethodPut)
-
 	r.HandleFunc(tenantUserExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
@@ -262,7 +245,7 @@ func MockServer(t *testing.T) *httptest.Server {
 		}
 	}).Methods(http.MethodGet)
 
-	r.HandleFunc(userIdExpr, func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc(tenantUserIdExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
 		_, err := w.Write([]byte(user))
