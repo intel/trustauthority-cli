@@ -19,13 +19,13 @@ import (
 )
 
 type TmsClient interface {
-	CreateSubscription(request *models.CreateSubscription) (*models.SubscriptionDetail, error)
-	UpdateSubscription(request *models.UpdateSubscription, subscriptionid uuid.UUID) (*models.Subscription, error)
-	GetSubscriptions(serviceId uuid.UUID) ([]models.Subscription, error)
-	RetrieveSubscription(serviceId uuid.UUID, subscriptionId uuid.UUID) (*models.SubscriptionDetail, error)
-	GetSubscriptionPolicies(serviceId, subscriptionId uuid.UUID) (*models.SubscriptionPolicies, error)
-	GetSubscriptionTagValues(serviceId, subscriptionId uuid.UUID) (*models.SubscriptionTagsValues, error)
-	DeleteSubscription(serviceId, subscriptionId uuid.UUID) error
+	CreateApiClient(request *models.CreateApiClient) (*models.ApiClientDetail, error)
+	UpdateApiClient(request *models.UpdateApiClient, apiClientid uuid.UUID) (*models.ApiClient, error)
+	GetApiClient(serviceId uuid.UUID) ([]models.ApiClient, error)
+	RetrieveApiClient(serviceId uuid.UUID, apiClientId uuid.UUID) (*models.ApiClientDetail, error)
+	GetApiClientPolicies(serviceId, apiClientId uuid.UUID) (*models.ApiClientPolicies, error)
+	GetApiClientTagValues(serviceId, apiClientId uuid.UUID) (*models.ApiClientTagsValues, error)
+	DeleteApiClient(serviceId, apiClientId uuid.UUID) error
 
 	CreateService(request *models.CreateService) (*models.Service, error)
 	UpdateService(request *models.UpdateService) (*models.Service, error)
@@ -63,14 +63,14 @@ func NewTmsClient(client *http.Client, qvsURL *url.URL, tenantId uuid.UUID, apiK
 	}
 }
 
-func (pc tmsClient) CreateSubscription(request *models.CreateSubscription) (*models.SubscriptionDetail, error) {
+func (pc tmsClient) CreateApiClient(request *models.CreateApiClient) (*models.ApiClientDetail, error) {
 	reqBytes, err := json.Marshal(request)
 	if err != nil {
 		return nil, errors.Wrap(err, " Error marshalling request")
 	}
 
 	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceApiEndpoint + "/" +
-		request.ServiceId.String() + constants.SubscriptionApiEndpoint)
+		request.ServiceId.String() + constants.ApiClientResourceEndpoint)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
 	}
@@ -91,22 +91,22 @@ func (pc tmsClient) CreateSubscription(request *models.CreateSubscription) (*mod
 	}
 
 	// Parse response for validation
-	var subscriptionDetail models.SubscriptionDetail
-	err = json.Unmarshal(response, &subscriptionDetail)
+	var apiClientDetail models.ApiClientDetail
+	err = json.Unmarshal(response, &apiClientDetail)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
-	return &subscriptionDetail, nil
+	return &apiClientDetail, nil
 }
 
-func (pc tmsClient) UpdateSubscription(request *models.UpdateSubscription, subscriptionId uuid.UUID) (*models.Subscription, error) {
+func (pc tmsClient) UpdateApiClient(request *models.UpdateApiClient, apiClientId uuid.UUID) (*models.ApiClient, error) {
 	reqBytes, err := json.Marshal(request)
 	if err != nil {
 		return nil, errors.Wrap(err, " Error marshalling request")
 	}
 
 	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceApiEndpoint + "/" +
-		request.ServiceId.String() + constants.SubscriptionApiEndpoint + "/" + subscriptionId.String())
+		request.ServiceId.String() + constants.ApiClientResourceEndpoint + "/" + apiClientId.String())
 	if err != nil {
 		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
 	}
@@ -127,17 +127,17 @@ func (pc tmsClient) UpdateSubscription(request *models.UpdateSubscription, subsc
 	}
 
 	// Parse response for validation
-	var subscriptionDetail models.Subscription
-	err = json.Unmarshal(response, &subscriptionDetail)
+	var apiClientDetail models.ApiClient
+	err = json.Unmarshal(response, &apiClientDetail)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
-	return &subscriptionDetail, nil
+	return &apiClientDetail, nil
 }
 
-func (pc tmsClient) GetSubscriptions(serviceId uuid.UUID) ([]models.Subscription, error) {
+func (pc tmsClient) GetApiClient(serviceId uuid.UUID) ([]models.ApiClient, error) {
 	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceApiEndpoint + "/" +
-		serviceId.String() + constants.SubscriptionApiEndpoint)
+		serviceId.String() + constants.ApiClientResourceEndpoint)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
 	}
@@ -156,17 +156,17 @@ func (pc tmsClient) GetSubscriptions(serviceId uuid.UUID) ([]models.Subscription
 	}
 
 	// Parse response for validation
-	var subscriptions []models.Subscription
-	err = json.Unmarshal(response, &subscriptions)
+	var apiClients []models.ApiClient
+	err = json.Unmarshal(response, &apiClients)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
-	return subscriptions, nil
+	return apiClients, nil
 }
 
-func (pc tmsClient) RetrieveSubscription(serviceId uuid.UUID, subscriptionId uuid.UUID) (*models.SubscriptionDetail, error) {
+func (pc tmsClient) RetrieveApiClient(serviceId uuid.UUID, apiClientId uuid.UUID) (*models.ApiClientDetail, error) {
 	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceApiEndpoint + "/" +
-		serviceId.String() + constants.SubscriptionApiEndpoint + "/" + subscriptionId.String())
+		serviceId.String() + constants.ApiClientResourceEndpoint + "/" + apiClientId.String())
 	if err != nil {
 		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
 	}
@@ -185,17 +185,17 @@ func (pc tmsClient) RetrieveSubscription(serviceId uuid.UUID, subscriptionId uui
 	}
 
 	// Parse response for validation
-	var subscriptions models.SubscriptionDetail
-	err = json.Unmarshal(response, &subscriptions)
+	var apiClients models.ApiClientDetail
+	err = json.Unmarshal(response, &apiClients)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
-	return &subscriptions, nil
+	return &apiClients, nil
 }
 
-func (pc tmsClient) GetSubscriptionPolicies(serviceId, subscriptionId uuid.UUID) (*models.SubscriptionPolicies, error) {
+func (pc tmsClient) GetApiClientPolicies(serviceId, apiClientId uuid.UUID) (*models.ApiClientPolicies, error) {
 	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceApiEndpoint + "/" +
-		serviceId.String() + constants.SubscriptionApiEndpoint + "/" + subscriptionId.String() + constants.PolicyApiEndpoint)
+		serviceId.String() + constants.ApiClientResourceEndpoint + "/" + apiClientId.String() + constants.PolicyApiEndpoint)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
 	}
@@ -214,17 +214,17 @@ func (pc tmsClient) GetSubscriptionPolicies(serviceId, subscriptionId uuid.UUID)
 	}
 
 	// Parse response for validation
-	var subscriptions models.SubscriptionPolicies
-	err = json.Unmarshal(response, &subscriptions)
+	var apiClientPolicies models.ApiClientPolicies
+	err = json.Unmarshal(response, &apiClientPolicies)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
-	return &subscriptions, nil
+	return &apiClientPolicies, nil
 }
 
-func (pc tmsClient) GetSubscriptionTagValues(serviceId, subscriptionId uuid.UUID) (*models.SubscriptionTagsValues, error) {
+func (pc tmsClient) GetApiClientTagValues(serviceId, apiClientId uuid.UUID) (*models.ApiClientTagsValues, error) {
 	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceApiEndpoint + "/" +
-		serviceId.String() + constants.SubscriptionApiEndpoint + "/" + subscriptionId.String() + constants.TagApiEndpoint)
+		serviceId.String() + constants.ApiClientResourceEndpoint + "/" + apiClientId.String() + constants.TagApiEndpoint)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
 	}
@@ -243,17 +243,17 @@ func (pc tmsClient) GetSubscriptionTagValues(serviceId, subscriptionId uuid.UUID
 	}
 
 	// Parse response for validation
-	var subscriptions models.SubscriptionTagsValues
-	err = json.Unmarshal(response, &subscriptions)
+	var apiClientTagsValues models.ApiClientTagsValues
+	err = json.Unmarshal(response, &apiClientTagsValues)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
-	return &subscriptions, nil
+	return &apiClientTagsValues, nil
 }
 
-func (pc tmsClient) DeleteSubscription(serviceId, subscriptionId uuid.UUID) error {
+func (pc tmsClient) DeleteApiClient(serviceId, apiClientId uuid.UUID) error {
 	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceApiEndpoint + "/" +
-		serviceId.String() + constants.SubscriptionApiEndpoint + "/" + subscriptionId.String())
+		serviceId.String() + constants.ApiClientResourceEndpoint + "/" + apiClientId.String())
 	if err != nil {
 		return errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
 	}

@@ -24,43 +24,43 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var updateSubscriptionCmd = &cobra.Command{
-	Use:   constants.SubscriptionCmd,
-	Short: "Update an existing subscription for a user",
+var updateApiClientCmd = &cobra.Command{
+	Use:   constants.ApiClientCmd,
+	Short: "Update an existing api client for a user",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		log.Info("update subscription called")
-		response, err := updateSubscription(cmd)
+		log.Info("update apiClient called")
+		response, err := updateApiClient(cmd)
 		if err != nil {
 			return err
 		}
-		fmt.Println("Subscription: \n\n", response)
+		fmt.Println("ApiClient: \n\n", response)
 		return nil
 	},
 }
 
 func init() {
-	updateCmd.AddCommand(updateSubscriptionCmd)
+	updateCmd.AddCommand(updateApiClientCmd)
 
-	updateSubscriptionCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
-	updateSubscriptionCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the subscription needs to be updated")
-	updateSubscriptionCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the subscription needs to be updated")
-	updateSubscriptionCmd.Flags().StringP(constants.ProductIdParamName, "p", "", "Id of the Amber Product for which the subscription needs to be updated")
-	updateSubscriptionCmd.Flags().StringP(constants.SubscriptionNameParamName, "n", "", "Description of the subscription that needs to be updated")
-	updateSubscriptionCmd.Flags().StringP(constants.SubscriptionIdParamName, "u", "", "Id of the subscription that needs to be updated")
-	updateSubscriptionCmd.Flags().StringSliceP(constants.PolicyIdsParamName, "i", []string{}, "List of comma separated policy IDs to be linked to the subscription")
-	updateSubscriptionCmd.Flags().StringSliceP(constants.TagKeyAndValuesParamName, "v", []string{}, "List of the comma separated tad Id and value pairs in the "+
+	updateApiClientCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
+	updateApiClientCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the api client needs to be updated")
+	updateApiClientCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the api client needs to be updated")
+	updateApiClientCmd.Flags().StringP(constants.ProductIdParamName, "p", "", "Id of the Amber Product for which the api client needs to be updated")
+	updateApiClientCmd.Flags().StringP(constants.ApiClientNameParamName, "n", "", "Description of the api client that needs to be updated")
+	updateApiClientCmd.Flags().StringP(constants.ApiClientIdParamName, "u", "", "Id of the api client that needs to be updated")
+	updateApiClientCmd.Flags().StringSliceP(constants.PolicyIdsParamName, "i", []string{}, "List of comma separated policy IDs to be linked to the api client")
+	updateApiClientCmd.Flags().StringSliceP(constants.TagKeyAndValuesParamName, "v", []string{}, "List of the comma separated tad Id and value pairs in the "+
 		"following format:\n Workload:WorkloadAI,Workload:WorkloadEXE etc.")
-	updateSubscriptionCmd.Flags().StringP(constants.SetExpiryDateParamName, "e", "", "Update the expiry date in the format yyyy-mm-dd for the new subscription")
-	updateSubscriptionCmd.Flags().StringP(constants.ActivationStatus, "s", "", "Add activation status for subscription, should be one of \"Active\", \"Inactive\" or \"Cancelled\"")
-	updateSubscriptionCmd.MarkFlagRequired(constants.ApiKeyParamName)
-	updateSubscriptionCmd.MarkFlagRequired(constants.ServiceIdParamName)
-	updateSubscriptionCmd.MarkFlagRequired(constants.ProductIdParamName)
-	updateSubscriptionCmd.MarkFlagRequired(constants.SubscriptionNameParamName)
-	updateSubscriptionCmd.MarkFlagRequired(constants.SubscriptionIdParamName)
+	updateApiClientCmd.Flags().StringP(constants.SetExpiryDateParamName, "e", "", "Update the expiry date in the format yyyy-mm-dd for the new api client")
+	updateApiClientCmd.Flags().StringP(constants.ActivationStatus, "s", "", "Add activation status for api client, should be one of \"Active\", \"Inactive\" or \"Cancelled\"")
+	updateApiClientCmd.MarkFlagRequired(constants.ApiKeyParamName)
+	updateApiClientCmd.MarkFlagRequired(constants.ServiceIdParamName)
+	updateApiClientCmd.MarkFlagRequired(constants.ProductIdParamName)
+	updateApiClientCmd.MarkFlagRequired(constants.ApiClientNameParamName)
+	updateApiClientCmd.MarkFlagRequired(constants.ApiClientIdParamName)
 }
 
-func updateSubscription(cmd *cobra.Command) (string, error) {
+func updateApiClient(cmd *cobra.Command) (string, error) {
 
 	configValues, err := config.LoadConfiguration()
 	if err != nil {
@@ -109,27 +109,27 @@ func updateSubscription(cmd *cobra.Command) (string, error) {
 		return "", errors.Wrap(err, "Invalid product id provided")
 	}
 
-	subscriptionName, err := cmd.Flags().GetString(constants.SubscriptionNameParamName)
+	apiClientName, err := cmd.Flags().GetString(constants.ApiClientNameParamName)
 	if err != nil {
 		return "", err
 	}
 
-	subscriptionIdString, err := cmd.Flags().GetString(constants.SubscriptionIdParamName)
+	apiClientIdString, err := cmd.Flags().GetString(constants.ApiClientIdParamName)
 	if err != nil {
 		return "", err
 	}
-	subscriptionId, err := uuid.Parse(subscriptionIdString)
+	apiClientId, err := uuid.Parse(apiClientIdString)
 	if err != nil {
-		return "", errors.Wrap(err, "Invalid subscription Id provided")
+		return "", errors.Wrap(err, "Invalid api client Id provided")
 	}
 
 	activationStatus, err := cmd.Flags().GetString(constants.ActivationStatus)
 	if err != nil {
 		return "", err
-	} else if activationStatus != "" && activationStatus != constants.SubscriptionStatusActive &&
-		activationStatus != constants.SubscriptionStatusInactive && activationStatus != constants.SubscriptionStatusCancelled {
-		return "", errors.Errorf("Activation status should be one of %s, %s or %s", constants.SubscriptionStatusActive,
-			constants.SubscriptionStatusInactive, constants.SubscriptionStatusCancelled)
+	} else if activationStatus != "" && activationStatus != constants.ApiClientStatusActive &&
+		activationStatus != constants.ApiClientStatusInactive && activationStatus != constants.ApiClientStatusCancelled {
+		return "", errors.Errorf("Activation status should be one of %s, %s or %s", constants.ApiClientStatusActive,
+			constants.ApiClientStatusInactive, constants.ApiClientStatusCancelled)
 	}
 
 	policyIdsString, err := cmd.Flags().GetStringSlice(constants.PolicyIdsParamName)
@@ -148,13 +148,13 @@ func updateSubscription(cmd *cobra.Command) (string, error) {
 
 	tagKeyValuesString, err := cmd.Flags().GetStringSlice(constants.TagKeyAndValuesParamName)
 
-	var tagIdValues []models.SubscriptionTagIdValue
+	var tagIdValues []models.ApiClientTagIdValue
 	for _, tagIdValue := range tagKeyValuesString {
 		splitTag := strings.Split(tagIdValue, ":")
 		if len(splitTag) != 2 {
 			return "", errors.New("Tag Id value pairs are not provided in proper format, please check hel section for more details")
 		}
-		tagIdValues = append(tagIdValues, models.SubscriptionTagIdValue{Key: splitTag[0], Value: splitTag[1]})
+		tagIdValues = append(tagIdValues, models.ApiClientTagIdValue{Key: splitTag[0], Value: splitTag[1]})
 	}
 
 	expiryDateString, err := cmd.Flags().GetString(constants.SetExpiryDateParamName)
@@ -162,13 +162,13 @@ func updateSubscription(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
-	var subscriptionInfo = models.UpdateSubscription{
+	var apiClientInfo = models.UpdateApiClient{
 		ProductId:    productId,
-		Name:         subscriptionName,
+		Name:         apiClientName,
 		PolicyIds:    policyIds,
 		TagIdsValues: tagIdValues,
 		ServiceId:    serviceId,
-		Status:       models.SubscriptionStatus(activationStatus),
+		Status:       models.ApiClientStatus(activationStatus),
 	}
 
 	if expiryDateString != "" {
@@ -177,15 +177,15 @@ func updateSubscription(cmd *cobra.Command) (string, error) {
 			log.WithError(err).Error("Incorrect expiry date format provided")
 			return "", errors.New("Incorrect expiry date provided. Date should be of the form yyyy-mm-dd")
 		}
-		subscriptionInfo.ExpiredAt = date
+		apiClientInfo.ExpiredAt = date
 	}
 
-	if err = validation.ValidateStrings([]string{subscriptionName}); err != nil {
-		return "", errors.Wrap(err, "Invalid subscription name provided")
+	if err = validation.ValidateStrings([]string{apiClientName}); err != nil {
+		return "", errors.Wrap(err, "Invalid api client name provided")
 	}
 
 	tmsClient := tms.NewTmsClient(client, tmsUrl, tenantId, apiKey)
-	response, err := tmsClient.UpdateSubscription(&subscriptionInfo, subscriptionId)
+	response, err := tmsClient.UpdateApiClient(&apiClientInfo, apiClientId)
 	if err != nil {
 		return "", err
 	}

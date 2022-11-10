@@ -26,7 +26,7 @@ var (
     "policy_name": "Sample_Policy_SGX",
     "policy_type": "Appraisal policy",
     "service_offer_name": "SGX Attestation",
-    "subscription_id": "e8a72b7e-c4b1-4bdc-bf40-68f23c68a2aa" }`
+    "service_offer_id": "e8a72b7e-c4b1-4bdc-bf40-68f23c68a2aa" }`
 
 	policyList = `[{
     "policy_id": "e48dabc5-9608-4ff3-aaed-f25909ab9de1",
@@ -37,7 +37,7 @@ var (
     "policy_name": "Sample_Policy_SGX",
     "policy_type": "Appraisal",
     "service_offer_name": "SGX",
-    "subscription_id": "e8a72b7e-c4b1-4bdc-bf40-68f23c68a2aa" }]`
+    "service_offer_id": "e8a72b7e-c4b1-4bdc-bf40-68f23c68a2aa" }]`
 
 	user = `{
         "id": "23011406-6f3b-4431-9363-4e1af9af6b13",
@@ -45,12 +45,10 @@ var (
         "tenant_roles": [
             {
                 "tenant_id": "89120415-6fbc-41c7-b9f2-3b4ba10e87c9",
-                "roles": [
-                    {
+                "role": {
                         "id": "66ec2e33-8cd3-42b1-8963-c7765205446e",
                         "name": "Tenant Admin"
                     }
-                ]
             }
         ],
         "active": false,
@@ -61,11 +59,10 @@ var (
     {
         "id": "23011406-6f3b-4431-9363-4e1af9af6b13",
         "email": "arijitgh@gmail.com",
-			"roles": [
-			{
+			"role": {
 				"id": "66ec2e33-8cd3-42b1-8963-c7765205446e",
 				"name": "Tenant Admin"
-			}],
+			},
         "active": false,
         "created_at": "2022-06-19T20:02:55.157679Z"
     }]`
@@ -90,21 +87,21 @@ var (
         "description": "Test Service"
     }`
 
-	subscriptionList = `[
+	apiClientList = `[
     {
         "id": "3780cc39-cce2-4ec2-a47f-03e55b12e259",
         "service_id": "5cfb6af4-59ac-4a14-8b83-bd65b1e11777",
         "product_id": "e169d34f-58ce-4717-9b3a-5c66abd33417",
         "status": "",
-        "description": "Test Subscription"
+        "description": "Test apiClient"
     }]`
 
-	subscription = `{
+	apiClient = `{
         "id": "3780cc39-cce2-4ec2-a47f-03e55b12e259",
         "service_id": "5cfb6af4-59ac-4a14-8b83-bd65b1e11777",
         "product_id": "e169d34f-58ce-4717-9b3a-5c66abd33417",
         "status": "",
-        "name": "Test Subscription",
+        "name": "Test apiClient",
 		"keys": [
 			"9dca50986c414304a4b1ffe202dcf2b0",
 			"996a9a6e67814f1784eadb5405bdabf3"
@@ -169,10 +166,10 @@ func MockServer(t *testing.T) *httptest.Server {
 	serviceExpr := fmt.Sprintf("%s", "/management/v1/services")
 	serviceIdExpr := fmt.Sprintf("%s%s", "/management/v1/services/", idReg)
 
-	subscriptionExpr := fmt.Sprintf("%s%s%s", "/management/v1/services/", idReg, "/api-clients")
-	subscriptionIdExpr := fmt.Sprintf("%s%s%s%s", "/management/v1/services/", idReg, "/api-clients/", idReg)
-	subscriptionPolicyExpr := fmt.Sprintf("%s%s%s%s%s", "/management/v1/services/", idReg, "/api-clients/", idReg, "/policies")
-	subscriptionTagExpr := fmt.Sprintf("%s%s%s%s%s", "/management/v1/services/", idReg, "/api-clients/", idReg, "/tags")
+	apiClientExpr := fmt.Sprintf("%s%s%s", "/management/v1/services/", idReg, "/api-clients")
+	apiClientIdExpr := fmt.Sprintf("%s%s%s%s", "/management/v1/services/", idReg, "/api-clients/", idReg)
+	apiClientPolicyExpr := fmt.Sprintf("%s%s%s%s%s", "/management/v1/services/", idReg, "/api-clients/", idReg, "/policies")
+	apiClientTagExpr := fmt.Sprintf("%s%s%s%s%s", "/management/v1/services/", idReg, "/api-clients/", idReg, "/tags")
 
 	serviceOfferExpr := fmt.Sprintf("/management/v1/service-offers")
 
@@ -272,52 +269,52 @@ func MockServer(t *testing.T) *httptest.Server {
 		}
 	}).Methods(http.MethodPut)
 
-	r.HandleFunc(subscriptionExpr, func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc(apiClientExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(subscription))
+		_, err := w.Write([]byte(apiClient))
 		if err != nil {
 			t.Log("test/test_utility:mockServer(): Unable to write data")
 		}
 	}).Methods(http.MethodPost)
 
-	r.HandleFunc(subscriptionIdExpr, func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc(apiClientIdExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(subscription))
+		_, err := w.Write([]byte(apiClient))
 		if err != nil {
 			t.Log("test/test_utility:mockServer(): Unable to write data")
 		}
 	}).Methods(http.MethodPut)
 
-	r.HandleFunc(subscriptionExpr, func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc(apiClientExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(subscriptionList))
+		_, err := w.Write([]byte(apiClientList))
 		if err != nil {
 			t.Log("test/test_utility:mockServer(): Unable to write data")
 		}
 	}).Methods(http.MethodGet)
 
-	r.HandleFunc(subscriptionIdExpr, func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc(apiClientIdExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(subscription))
+		_, err := w.Write([]byte(apiClient))
 		if err != nil {
 			t.Log("test/test_utility:mockServer(): Unable to write data")
 		}
 	}).Methods(http.MethodGet)
 
-	r.HandleFunc(subscriptionIdExpr, func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc(apiClientIdExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(subscription))
+		_, err := w.Write([]byte(apiClient))
 		if err != nil {
 			t.Log("test/test_utility:mockServer(): Unable to write data")
 		}
 	}).Methods(http.MethodDelete)
 
-	r.HandleFunc(subscriptionPolicyExpr, func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc(apiClientPolicyExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
 		_, err := w.Write([]byte(policyIds))
@@ -326,7 +323,7 @@ func MockServer(t *testing.T) *httptest.Server {
 		}
 	}).Methods(http.MethodGet)
 
-	r.HandleFunc(subscriptionTagExpr, func(w http.ResponseWriter, r *http.Request) {
+	r.HandleFunc(apiClientTagExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
 		_, err := w.Write([]byte(tagsValues))

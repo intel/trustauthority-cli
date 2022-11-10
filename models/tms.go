@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-type SubscriptionStatus string
+type ApiClientStatus string
 
 type (
 	Tenant struct {
@@ -18,7 +18,7 @@ type (
 		Name     string    `json:"name"`
 		Company  string    `json:"company"`
 		Address  string    `json:"address"`
-		ParentId uuid.UUID `json:"parent_id,omitempty"`
+		ParentId uuid.UUID `json:"-"`
 		Email    string    `json:"email"`
 	}
 
@@ -33,19 +33,21 @@ type (
 	}
 
 	User struct {
-		ID          uuid.UUID     `json:"id"`
-		Email       string        `json:"email"`
-		TenantRoles []TenantRoles `json:"tenant_roles"`
-		Active      bool          `json:"active"`
-		CreatedAt   time.Time     `json:"created_at"`
+		ID                     uuid.UUID     `json:"id"`
+		Email                  string        `json:"email"`
+		TenantRoles            []TenantRoles `json:"tenant_roles"`
+		Active                 bool          `json:"active"`
+		CreatedAt              time.Time     `json:"created_at"`
+		PrivacyAcknowledgement bool          `json:"privacy_acknowledgement"`
 	}
 
 	TenantUser struct {
-		ID        uuid.UUID `json:"id"`
-		Email     string    `json:"email"`
-		Roles     []Role    `json:"roles"`
-		Active    bool      `json:"active"`
-		CreatedAt time.Time `json:"created_at"`
+		ID                     uuid.UUID `json:"id"`
+		Email                  string    `json:"email"`
+		Role                   Role      `json:"role"`
+		Active                 bool      `json:"active"`
+		CreatedAt              time.Time `json:"created_at"`
+		PrivacyAcknowledgement bool      `json:"privacy_acknowledgement"`
 	}
 
 	UserRole struct {
@@ -74,7 +76,7 @@ type (
 	UpdateTenantUserRoles struct {
 		UserId    uuid.UUID   `json:"-"`
 		TenantId  uuid.UUID   `json:"-"`
-		Roles     []string    `json:"roles"`
+		Role      string      `json:"role"`
 		RoleIds   []uuid.UUID `json:"-"`
 		UpdatedBy uuid.UUID   `json:"-"`
 	}
@@ -128,72 +130,72 @@ type (
 		CreatedBy      uuid.UUID `json:"-"`
 	}
 
-	Subscription struct {
-		ID          uuid.UUID          `json:"id"`
-		ServiceId   uuid.UUID          `json:"service_id"`
-		ProductId   uuid.UUID          `json:"product_id"`
-		ProductName string             `json:"product_name"`
-		Status      SubscriptionStatus `json:"status"`
-		Name        string             `json:"name"`
-		ExpiredAt   time.Time          `json:"expired_at"`
-		CreatedAt   time.Time          `json:"created_at"`
+	ApiClient struct {
+		ID          uuid.UUID       `json:"id"`
+		ServiceId   uuid.UUID       `json:"service_id"`
+		ProductId   uuid.UUID       `json:"product_id"`
+		ProductName string          `json:"product_name"`
+		Status      ApiClientStatus `json:"status"`
+		Name        string          `json:"name"`
+		ExpiredAt   time.Time       `json:"expired_at"`
+		CreatedAt   time.Time       `json:"created_at"`
 	}
 
-	UpdateSubscription struct {
-		Id           uuid.UUID                `json:"-"`
-		ProductId    uuid.UUID                `json:"product_id"`
-		ServiceId    uuid.UUID                `json:"-"`
-		Name         string                   `json:"name"`
-		TenantId     uuid.UUID                `json:"-"`
-		PolicyIds    []uuid.UUID              `json:"policy_ids"`
-		TagIdsValues []SubscriptionTagIdValue `json:"tags"`
-		UpdatedBy    uuid.UUID                `json:"-"`
-		Status       SubscriptionStatus       `json:"status"`
-		ExpiredAt    time.Time                `json:"expired_at"`
+	UpdateApiClient struct {
+		Id           uuid.UUID             `json:"-"`
+		ProductId    uuid.UUID             `json:"product_id"`
+		ServiceId    uuid.UUID             `json:"-"`
+		Name         string                `json:"name"`
+		TenantId     uuid.UUID             `json:"-"`
+		PolicyIds    []uuid.UUID           `json:"policy_ids"`
+		TagIdsValues []ApiClientTagIdValue `json:"tags"`
+		UpdatedBy    uuid.UUID             `json:"-"`
+		Status       ApiClientStatus       `json:"status"`
+		ExpiredAt    time.Time             `json:"expired_at"`
 	}
 
-	SubscriptionDetail struct {
-		ID               uuid.UUID              `json:"id"`
-		ServiceId        uuid.UUID              `json:"service_id"`
-		ServiceOfferName string                 `json:"service_offer_name"`
-		ProductId        uuid.UUID              `json:"product_id"`
-		ProductName      string                 `json:"product_name"`
-		Status           SubscriptionStatus     `json:"status"`
-		Name             string                 `json:"name"`
-		ExpiredAt        time.Time              `json:"expired_at"`
-		Keys             []string               `json:"keys"`
-		PolicyIds        []uuid.UUID            `json:"policy_ids"`
-		TagsValues       []SubscriptionTagValue `json:"tags"`
-		CreatedAt        time.Time              `json:"created_at"`
+	ApiClientDetail struct {
+		ID               uuid.UUID           `json:"id"`
+		ServiceId        uuid.UUID           `json:"service_id"`
+		ServiceOfferName string              `json:"service_offer_name"`
+		ProductId        uuid.UUID           `json:"product_id"`
+		ProductName      string              `json:"product_name"`
+		Status           ApiClientStatus     `json:"status"`
+		Name             string              `json:"name"`
+		ExpiredAt        time.Time           `json:"expired_at"`
+		Keys             []string            `json:"keys"`
+		PolicyIds        []uuid.UUID         `json:"policy_ids"`
+		TagsValues       []ApiClientTagValue `json:"tags"`
+		CreatedAt        time.Time           `json:"created_at"`
 	}
 
-	CreateSubscription struct {
-		ProductId    uuid.UUID                `json:"product_id"`
-		ServiceId    uuid.UUID                `json:"-"`
-		TenantId     uuid.UUID                `json:"-"`
-		PolicyIds    []uuid.UUID              `json:"policy_ids"`
-		TagIdsValues []SubscriptionTagIdValue `json:"tags"`
-		Name         string                   `json:"name"`
-		Status       SubscriptionStatus       `json:"status"`
-		CreatedBy    uuid.UUID                `json:"-"`
-		ExpiredAt    time.Time                `json:"expired_at"`
+	CreateApiClient struct {
+		ProductId    uuid.UUID             `json:"product_id"`
+		ServiceId    uuid.UUID             `json:"-"`
+		TenantId     uuid.UUID             `json:"-"`
+		PolicyIds    []uuid.UUID           `json:"policy_ids"`
+		TagIdsValues []ApiClientTagIdValue `json:"tags"`
+		Name         string                `json:"name"`
+		Status       ApiClientStatus       `json:"status"`
+		CreatedBy    uuid.UUID             `json:"-"`
+		ExpiredAt    time.Time             `json:"expired_at"`
 	}
 
-	SubscriptionPolicies struct {
+	ApiClientPolicies struct {
 		PolicyIds []uuid.UUID `json:"policy_ids"`
 	}
 
-	SubscriptionTagValue struct {
+	ApiClientTagValue struct {
 		Name       string `json:"key"`
 		Value      string `json:"value"`
 		Predefined bool   `json:"predefined"`
 	}
 
-	SubscriptionTagsValues struct {
-		TagsValues []SubscriptionTagValue `json:"tags"`
+	ApiClientTagsValues struct {
+		TagsValues []ApiClientTagValue `json:"tags"`
 	}
 
-	SubscriptionTagIdValue struct {
+	ApiClientTagIdValue struct {
 		Key   string `json:"key"`
 		Value string `json:"value"`
 	}

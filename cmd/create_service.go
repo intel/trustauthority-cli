@@ -43,7 +43,7 @@ func init() {
 	createCmd.AddCommand(createServiceCmd)
 
 	createServiceCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
-	createServiceCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the subscription needs to be created")
+	createServiceCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the service needs to be created")
 	createServiceCmd.Flags().StringP(constants.ServiceOfferIdParamName, "r", "", "Id of the Amber service offer for which the service needs to be created")
 	createServiceCmd.Flags().StringP(constants.ServiceNameParamName, "n", "", "Description of the service")
 	createServiceCmd.MarkFlagRequired(constants.ApiKeyParamName)

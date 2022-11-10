@@ -64,20 +64,20 @@ tenantctl delete service -a < api key > -s < service id >
 ##### Update Service:
 tenantctl update service -a < api key > -s < service id > -n < service name >
 
-##### Create Subscription:
-tenantctl create subscription -a < api key > -r < service id > -p < product id > -n < subscription name > -i "comma separated policy Ids" -v "tag-key1:tag-value1,tag-key2:tag-value2" -e "date in format yyyy-mm-dd"
+##### Create Api Client:
+tenantctl create apiClient -a < api key > -r < service id > -p < product id > -n < api client name > -i "comma separated policy Ids" -v "tag-key1:tag-value1,tag-key2:tag-value2" -e "date in format yyyy-mm-dd"
 
-##### Update Subscription
-tenantctl update subscription -a < api key > -r < service id > -p < product id > -u < subscription id > -n < subscription name > -i "comma separated policy Ids" -v "tag-key1:tag-value1,tag-key2:tag-value2" -s < Active/Inactive/Cancelled > -e "date in format yyyy-mm-dd"
+##### Update Api Client:
+tenantctl update apiClient -a < api key > -r < service id > -p < product id > -u < api client id > -n < api client name > -i "comma separated policy Ids" -v "tag-key1:tag-value1,tag-key2:tag-value2" -s < Active/Inactive/Cancelled > -e "date in format yyyy-mm-dd"
 
-##### Get Subscriptions:
-tenantctl list subscription -a < api key > -r < service id >
+##### Get Api Clients:
+tenantctl list apiClient -a < api key > -r < service id >
 
-##### Get Subscription by id:
-tenantctl list subscription -a < api key > -r < service id > -d < subscription id >
+##### Get Api Client by id:
+tenantctl list apiClient -a < api key > -r < service id > -d < api client id >
 
-##### Delete a subscription:
-tenantctl delete subscription -a < api key > -r < service id > -d < subscription id >
+##### Delete an Api Client:
+tenantctl delete apiClient -a < api key > -r < service id > -d < api client id >
 
 ##### Create tag:
 tenantctl create tag -a < api key > -n < tag name > -t < tenant Id >
@@ -85,11 +85,11 @@ tenantctl create tag -a < api key > -n < tag name > -t < tenant Id >
 ##### List tags:
 tenantctl list tag -a < api key >
 
-##### List Subscription Policies:
-tenantctl list subscription policy -a < api key > -r < service id > -s < subscription id >
+##### List Api Client Policies:
+tenantctl list apiClient policy -a < api key > -r < service id > -s < api client id >
 
-##### List Subscription Tags:
-tenantctl list subscription tag -a < api key > -r < service id > -s < subscription id >
+##### List Api Client Tags:
+tenantctl list apiClient tag -a < api key > -r < service id > -s < api client id >
 
 ##### Create Policy:
 tenantctl create policy -a < api key > -f < policy file path >

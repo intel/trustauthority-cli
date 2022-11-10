@@ -24,41 +24,41 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// createSubscriptionCmd represents the createSubscription command
-var createSubscriptionCmd = &cobra.Command{
-	Use:   constants.SubscriptionCmd,
-	Short: "Create a new subscription for a user",
+// createApiClientCmd represents the createApiClient command
+var createApiClientCmd = &cobra.Command{
+	Use:   constants.ApiClientCmd,
+	Short: "Create a new api client for a user",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		log.Info("create subscription called")
-		response, err := createSubscription(cmd)
+		log.Info("create apiClient called")
+		response, err := createApiClient(cmd)
 		if err != nil {
 			return err
 		}
-		fmt.Println("Subscription: \n\n", response)
+		fmt.Println("ApiClient: \n\n", response)
 		return nil
 	},
 }
 
 func init() {
-	createCmd.AddCommand(createSubscriptionCmd)
+	createCmd.AddCommand(createApiClientCmd)
 
-	createSubscriptionCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
-	createSubscriptionCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the subscription needs to be created")
-	createSubscriptionCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the subscription needs to be created")
-	createSubscriptionCmd.Flags().StringP(constants.ProductIdParamName, "p", "", "Id of the Amber Product for which the subscription needs to be created")
-	createSubscriptionCmd.Flags().StringP(constants.SubscriptionNameParamName, "n", "", "Name of the subscription that needs to be created")
-	createSubscriptionCmd.Flags().StringSliceP(constants.PolicyIdsParamName, "i", []string{}, "List of comma separated policy IDs to be linked to the subscription")
-	createSubscriptionCmd.Flags().StringSliceP(constants.TagKeyAndValuesParamName, "v", []string{}, "List of the comma separated tad Id and value pairs in the "+
+	createApiClientCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
+	createApiClientCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the api client needs to be created")
+	createApiClientCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the api client needs to be created")
+	createApiClientCmd.Flags().StringP(constants.ProductIdParamName, "p", "", "Id of the Amber Product for which the api client needs to be created")
+	createApiClientCmd.Flags().StringP(constants.ApiClientNameParamName, "n", "", "Name of the api client that needs to be created")
+	createApiClientCmd.Flags().StringSliceP(constants.PolicyIdsParamName, "i", []string{}, "List of comma separated policy IDs to be linked to the api client")
+	createApiClientCmd.Flags().StringSliceP(constants.TagKeyAndValuesParamName, "v", []string{}, "List of the comma separated tad Id and value pairs in the "+
 		"following format:\n Workload:WorkloadAI,Workload:WorkloadEXE etc.")
-	createSubscriptionCmd.Flags().StringP(constants.SetExpiryDateParamName, "e", "", "Set the expiry date in the format yyyy-mm-dd for the new subscription (default is 1 month)")
-	createSubscriptionCmd.MarkFlagRequired(constants.ApiKeyParamName)
-	createSubscriptionCmd.MarkFlagRequired(constants.ServiceIdParamName)
-	createSubscriptionCmd.MarkFlagRequired(constants.ProductIdParamName)
-	createSubscriptionCmd.MarkFlagRequired(constants.SubscriptionNameParamName)
+	createApiClientCmd.Flags().StringP(constants.SetExpiryDateParamName, "e", "", "Set the expiry date in the format yyyy-mm-dd for the new api client (default is 1 month)")
+	createApiClientCmd.MarkFlagRequired(constants.ApiKeyParamName)
+	createApiClientCmd.MarkFlagRequired(constants.ServiceIdParamName)
+	createApiClientCmd.MarkFlagRequired(constants.ProductIdParamName)
+	createApiClientCmd.MarkFlagRequired(constants.ApiClientNameParamName)
 }
 
-func createSubscription(cmd *cobra.Command) (string, error) {
+func createApiClient(cmd *cobra.Command) (string, error) {
 
 	configValues, err := config.LoadConfiguration()
 	if err != nil {
@@ -107,7 +107,7 @@ func createSubscription(cmd *cobra.Command) (string, error) {
 		return "", errors.Wrap(err, "Invalid product id provided")
 	}
 
-	subscriptionName, err := cmd.Flags().GetString(constants.SubscriptionNameParamName)
+	apiClientName, err := cmd.Flags().GetString(constants.ApiClientNameParamName)
 	if err != nil {
 		return "", err
 	}
@@ -131,13 +131,13 @@ func createSubscription(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
-	var tagKeyValues []models.SubscriptionTagIdValue
+	var tagKeyValues []models.ApiClientTagIdValue
 	for _, tagIdValue := range tagKeyValuesString {
 		splitTag := strings.Split(tagIdValue, ":")
 		if len(splitTag) != 2 {
 			return "", errors.New("Tag Id value pairs are not provided in proper format, please check help section for more details")
 		}
-		tagKeyValues = append(tagKeyValues, models.SubscriptionTagIdValue{Key: splitTag[0], Value: splitTag[1]})
+		tagKeyValues = append(tagKeyValues, models.ApiClientTagIdValue{Key: splitTag[0], Value: splitTag[1]})
 	}
 
 	expiryDateString, err := cmd.Flags().GetString(constants.SetExpiryDateParamName)
@@ -145,34 +145,34 @@ func createSubscription(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
-	var subscriptionInfo = models.CreateSubscription{
+	var apiClientInfo = models.CreateApiClient{
 		ProductId:    productId,
-		Name:         subscriptionName,
+		Name:         apiClientName,
 		PolicyIds:    policyIds,
 		TagIdsValues: tagKeyValues,
 		CreatedBy:    tenantId,
 		ServiceId:    serviceId,
-		Status:       constants.SubscriptionStatusActive,
+		Status:       constants.ApiClientStatusActive,
 	}
 
 	if expiryDateString == "" {
-		fmt.Println("No expiry date provided. Setting subscription expiry date to 1 month from now")
-		subscriptionInfo.ExpiredAt = time.Now().AddDate(0, 1, 0).UTC()
+		fmt.Println("No expiry date provided. Setting api client expiry date to 1 month from now")
+		apiClientInfo.ExpiredAt = time.Now().AddDate(0, 1, 0).UTC()
 	} else {
 		date, err := time.Parse(constants.ExpiryDateInputFormat, expiryDateString)
 		if err != nil {
 			log.WithError(err).Error("Incorrect expiry date format provided")
 			return "", errors.New("Incorrect expiry date provided. Date should be of the form yyyy-mm-dd")
 		}
-		subscriptionInfo.ExpiredAt = date.UTC()
+		apiClientInfo.ExpiredAt = date.UTC()
 	}
 
-	if err = validation.ValidateStrings([]string{subscriptionName}); err != nil {
-		return "", errors.Wrap(err, "Invalid subscription name provided")
+	if err = validation.ValidateStrings([]string{apiClientName}); err != nil {
+		return "", errors.Wrap(err, "Invalid api client name provided")
 	}
 
 	tmsClient := tms.NewTmsClient(client, tmsUrl, tenantId, apiKey)
-	response, err := tmsClient.CreateSubscription(&subscriptionInfo)
+	response, err := tmsClient.CreateApiClient(&apiClientInfo)
 	if err != nil {
 		return "", err
 	}

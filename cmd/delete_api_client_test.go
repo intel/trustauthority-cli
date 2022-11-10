@@ -12,7 +12,7 @@ import (
 	"testing"
 )
 
-func TestListSubscriptionsTagsCmd(t *testing.T) {
+func TestDeleteApiClientCmd(t *testing.T) {
 	server := test.MockServer(t)
 	defer server.Close()
 	test.SetupMockConfiguration(server.URL, tempConfigFile)
@@ -23,15 +23,14 @@ func TestListSubscriptionsTagsCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args: []string{constants.ListCmd, constants.SubscriptionCmd, constants.TagCmd, "-a", "abc", "-r",
-				"5cfb6af4-59ac-4a14-8b83-bd65b1e11777", "-s", "3780cc39-cce2-4ec2-a47f-03e55b12e259"},
+			args: []string{constants.DeleteCmd, constants.ApiClientCmd, "-a", "abc", "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777", "-d",
+				"3780cc39-cce2-4ec2-a47f-03e55b12e259"},
 			wantErr: false,
 		},
 	}
 
-	getSubscriptionsCmd.AddCommand(getSubscriptionTagsValuesCmd)
-	listCmd.AddCommand(getSubscriptionsCmd)
-	tenantCmd.AddCommand(listCmd)
+	deleteCmd.AddCommand(deleteApiClientCmd)
+	tenantCmd.AddCommand(deleteCmd)
 
 	for _, tc := range tt {
 		_, err := execute(t, tenantCmd, tc.args)

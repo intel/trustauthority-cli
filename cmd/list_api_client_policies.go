@@ -21,13 +21,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var getSubscriptionPoliciesCmd = &cobra.Command{
+var getApiClientPoliciesCmd = &cobra.Command{
 	Use:   constants.PolicyCmd,
-	Short: "Used to get the list of policy IDs linked to a subscription",
+	Short: "Used to get the list of policy IDs linked to a apiClient",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		log.Info("list subscription policy called")
-		response, err := getSubscriptionPolicies(cmd)
+		log.Info("list apiClient policy called")
+		response, err := getApiClientPolicies(cmd)
 		if err != nil {
 			return err
 		}
@@ -37,17 +37,17 @@ var getSubscriptionPoliciesCmd = &cobra.Command{
 }
 
 func init() {
-	getSubscriptionsCmd.AddCommand(getSubscriptionPoliciesCmd)
+	getApiClientsCmd.AddCommand(getApiClientPoliciesCmd)
 
-	getSubscriptionPoliciesCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
-	getSubscriptionPoliciesCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the subscription policies are to be fetched")
-	getSubscriptionPoliciesCmd.Flags().StringP(constants.SubscriptionIdParamName, "s", "", "Id of the subscription for which the policies are to be fetched")
-	getSubscriptionPoliciesCmd.MarkFlagRequired(constants.ApiKeyParamName)
-	getSubscriptionPoliciesCmd.MarkFlagRequired(constants.ServiceIdParamName)
-	getSubscriptionPoliciesCmd.MarkFlagRequired(constants.SubscriptionIdParamName)
+	getApiClientPoliciesCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
+	getApiClientPoliciesCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the apiClient policies are to be fetched")
+	getApiClientPoliciesCmd.Flags().StringP(constants.ApiClientIdParamName, "s", "", "Id of the apiClient for which the policies are to be fetched")
+	getApiClientPoliciesCmd.MarkFlagRequired(constants.ApiKeyParamName)
+	getApiClientPoliciesCmd.MarkFlagRequired(constants.ServiceIdParamName)
+	getApiClientPoliciesCmd.MarkFlagRequired(constants.ApiClientIdParamName)
 }
 
-func getSubscriptionPolicies(cmd *cobra.Command) (string, error) {
+func getApiClientPolicies(cmd *cobra.Command) (string, error) {
 	configValues, err := config.LoadConfiguration()
 	if err != nil {
 		return "", err
@@ -70,17 +70,17 @@ func getSubscriptionPolicies(cmd *cobra.Command) (string, error) {
 		return "", errors.Wrap(err, "Invalid service id provided")
 	}
 
-	subscriptionIdString, err := cmd.Flags().GetString(constants.SubscriptionIdParamName)
+	apiClientIdString, err := cmd.Flags().GetString(constants.ApiClientIdParamName)
 	if err != nil {
 		return "", err
 	}
-	subscriptionId, err := uuid.Parse(subscriptionIdString)
+	apiClientId, err := uuid.Parse(apiClientIdString)
 	if err != nil {
-		return "", errors.Wrap(err, "Invalid subscription id provided")
+		return "", errors.Wrap(err, "Invalid apiClient id provided")
 	}
 
 	tmsClient := tms.NewTmsClient(client, tmsUrl, uuid.Nil, apiKey)
-	response, err := tmsClient.GetSubscriptionPolicies(serviceId, subscriptionId)
+	response, err := tmsClient.GetApiClientPolicies(serviceId, apiClientId)
 	if err != nil {
 		return "", err
 	}

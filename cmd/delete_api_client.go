@@ -21,34 +21,34 @@ import (
 	"time"
 )
 
-var deleteSubscriptionCmd = &cobra.Command{
-	Use:   constants.SubscriptionCmd,
-	Short: "Delete a subscription whose ID has been provided",
+var deleteApiClientCmd = &cobra.Command{
+	Use:   constants.ApiClientCmd,
+	Short: "Delete an api client whose ID has been provided",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		log.Info("delete subscription called")
-		serviceId, err := deleteSubscription(cmd)
+		log.Info("delete apiClient called")
+		serviceId, err := deleteApiClient(cmd)
 		if err != nil {
 			return err
 		}
-		fmt.Printf("Deleted subscription with Id: %s \n\n", serviceId)
+		fmt.Printf("Deleted api client with Id: %s \n\n", serviceId)
 		return nil
 	},
 }
 
 func init() {
-	deleteCmd.AddCommand(deleteSubscriptionCmd)
+	deleteCmd.AddCommand(deleteApiClientCmd)
 
-	deleteSubscriptionCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
-	deleteSubscriptionCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the subscription needs to be created")
-	deleteSubscriptionCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the subscription needs to be created")
-	deleteSubscriptionCmd.Flags().StringP(constants.SubscriptionIdParamName, "d", "", "Id of the subscription which needs to be fetched (optional)")
-	deleteSubscriptionCmd.MarkFlagRequired(constants.ApiKeyParamName)
-	deleteSubscriptionCmd.MarkFlagRequired(constants.ServiceIdParamName)
-	deleteSubscriptionCmd.MarkFlagRequired(constants.SubscriptionIdParamName)
+	deleteApiClientCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
+	deleteApiClientCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the api client needs to be created")
+	deleteApiClientCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the api client needs to be created")
+	deleteApiClientCmd.Flags().StringP(constants.ApiClientIdParamName, "d", "", "Id of the api client which needs to be fetched (optional)")
+	deleteApiClientCmd.MarkFlagRequired(constants.ApiKeyParamName)
+	deleteApiClientCmd.MarkFlagRequired(constants.ServiceIdParamName)
+	deleteApiClientCmd.MarkFlagRequired(constants.ApiClientIdParamName)
 }
 
-func deleteSubscription(cmd *cobra.Command) (string, error) {
+func deleteApiClient(cmd *cobra.Command) (string, error) {
 	configValues, err := config.LoadConfiguration()
 	if err != nil {
 		return "", err
@@ -86,22 +86,22 @@ func deleteSubscription(cmd *cobra.Command) (string, error) {
 		return "", errors.Wrap(err, "Invalid service id provided")
 	}
 
-	subscriptionIdString, err := cmd.Flags().GetString(constants.SubscriptionIdParamName)
+	apiClientIdString, err := cmd.Flags().GetString(constants.ApiClientIdParamName)
 	if err != nil {
 		return "", err
 	}
 
 	tmsClient := tms.NewTmsClient(client, tmsUrl, tenantId, apiKey)
 
-	subscriptionId, err := uuid.Parse(subscriptionIdString)
+	apiClientId, err := uuid.Parse(apiClientIdString)
 	if err != nil {
-		return "", errors.Wrap(err, "Invalid subscription id provided")
+		return "", errors.Wrap(err, "Invalid api client id provided")
 	}
 
-	err = tmsClient.DeleteSubscription(serviceId, subscriptionId)
+	err = tmsClient.DeleteApiClient(serviceId, apiClientId)
 	if err != nil {
 		return "", err
 	}
 
-	return subscriptionIdString, nil
+	return apiClientIdString, nil
 }

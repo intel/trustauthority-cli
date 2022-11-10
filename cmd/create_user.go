@@ -42,7 +42,7 @@ func init() {
 	createCmd.AddCommand(createUserCmd)
 
 	createUserCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
-	createUserCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the subscription needs to be created")
+	createUserCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the user needs to be created")
 	createUserCmd.Flags().StringP(constants.EmailIdParamName, "e", "", "Email id of the tenant user to be created")
 	createUserCmd.Flags().StringP(constants.UserRoleParamName, "r", "", "Role of the tenant user to be created, should be one of Tenant Admin/User")
 	createUserCmd.MarkFlagRequired(constants.ApiKeyParamName)
