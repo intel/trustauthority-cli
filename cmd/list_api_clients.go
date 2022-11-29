@@ -42,7 +42,7 @@ func init() {
 
 	getApiClientsCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
 	getApiClientsCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the apiClient needs to be created")
-	getApiClientsCmd.Flags().StringP(constants.ApiClientIdParamName, "d", "", "Id of the apiClient which needs to be fetched (optional)")
+	getApiClientsCmd.Flags().StringP(constants.ApiClientIdParamName, "c", "", "Id of the apiClient which needs to be fetched (optional)")
 	getApiClientsCmd.MarkFlagRequired(constants.ApiKeyParamName)
 	getApiClientsCmd.MarkFlagRequired(constants.ServiceIdParamName)
 }

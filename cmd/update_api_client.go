@@ -47,7 +47,7 @@ func init() {
 	updateApiClientCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the api client needs to be updated")
 	updateApiClientCmd.Flags().StringP(constants.ProductIdParamName, "p", "", "Id of the Amber Product for which the api client needs to be updated")
 	updateApiClientCmd.Flags().StringP(constants.ApiClientNameParamName, "n", "", "Description of the api client that needs to be updated")
-	updateApiClientCmd.Flags().StringP(constants.ApiClientIdParamName, "u", "", "Id of the api client that needs to be updated")
+	updateApiClientCmd.Flags().StringP(constants.ApiClientIdParamName, "c", "", "Id of the api client that needs to be updated")
 	updateApiClientCmd.Flags().StringSliceP(constants.PolicyIdsParamName, "i", []string{}, "List of comma separated policy IDs to be linked to the api client")
 	updateApiClientCmd.Flags().StringSliceP(constants.TagKeyAndValuesParamName, "v", []string{}, "List of the comma separated tad Id and value pairs in the "+
 		"following format:\n Workload:WorkloadAI,Workload:WorkloadEXE etc.")

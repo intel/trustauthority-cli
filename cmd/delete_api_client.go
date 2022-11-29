@@ -42,7 +42,7 @@ func init() {
 	deleteApiClientCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
 	deleteApiClientCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the api client needs to be created")
 	deleteApiClientCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the api client needs to be created")
-	deleteApiClientCmd.Flags().StringP(constants.ApiClientIdParamName, "d", "", "Id of the api client which needs to be fetched (optional)")
+	deleteApiClientCmd.Flags().StringP(constants.ApiClientIdParamName, "c", "", "Id of the api client which needs to be fetched (optional)")
 	deleteApiClientCmd.MarkFlagRequired(constants.ApiKeyParamName)
 	deleteApiClientCmd.MarkFlagRequired(constants.ServiceIdParamName)
 	deleteApiClientCmd.MarkFlagRequired(constants.ApiClientIdParamName)

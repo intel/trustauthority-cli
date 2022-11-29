@@ -41,7 +41,7 @@ func init() {
 
 	getApiClientPoliciesCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
 	getApiClientPoliciesCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the apiClient policies are to be fetched")
-	getApiClientPoliciesCmd.Flags().StringP(constants.ApiClientIdParamName, "s", "", "Id of the apiClient for which the policies are to be fetched")
+	getApiClientPoliciesCmd.Flags().StringP(constants.ApiClientIdParamName, "c", "", "Id of the apiClient for which the policies are to be fetched")
 	getApiClientPoliciesCmd.MarkFlagRequired(constants.ApiKeyParamName)
 	getApiClientPoliciesCmd.MarkFlagRequired(constants.ServiceIdParamName)
 	getApiClientPoliciesCmd.MarkFlagRequired(constants.ApiClientIdParamName)
