@@ -57,7 +57,7 @@ type (
 	}
 
 	CreateTenantUser struct {
-		ID        uuid.UUID `json:"id"`
+		ID        uuid.UUID `json:"-"`
 		Email     string    `json:"email"`
 		TenantId  uuid.UUID `json:"-"`
 		Active    bool      `json:"-"`
