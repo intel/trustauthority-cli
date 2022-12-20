@@ -4,6 +4,16 @@ A CLI tool for Tenants to use and access Amber Services
 ### OS Supported
 Ubuntu LTS 20.04
 
+### Prerequisites
+1. Installing make and makeself
+   - Run the following command:
+   ```console
+   apt -y install make makeself
+   ```
+2. Installing golang
+   - Supported golang version is 1.18.x
+   - Go through the following link to install golang: https://go.dev/doc/install
+
 ### Build
 
 - git clone https://github.com/intel/amber-cli.git cli
