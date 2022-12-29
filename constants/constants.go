@@ -37,7 +37,6 @@ const (
 	PolicyIdParamName        = "policy-id"
 	TagNameParamName         = "tag-name"
 	TagKeyAndValuesParamName = "tag-key-value"
-	SetExpiryDateParamName   = "set-expiry"
 	EnvFileParamName         = "env-file"
 
 	RootCmd        = "tenantctl"
@@ -75,7 +74,6 @@ const (
 	ApiClientStatusCancelled = "Cancelled"
 	TenantAdminRole          = "Tenant Admin"
 	UserRole                 = "User"
-	ExpiryDateInputFormat    = "2006-01-02"
 )
 
 //HTTP constants

@@ -137,7 +137,6 @@ type (
 		ProductName string          `json:"product_name"`
 		Status      ApiClientStatus `json:"status"`
 		Name        string          `json:"name"`
-		ExpiredAt   time.Time       `json:"expired_at"`
 		CreatedAt   time.Time       `json:"created_at"`
 	}
 
@@ -151,22 +150,22 @@ type (
 		TagIdsValues []ApiClientTagIdValue `json:"tags"`
 		UpdatedBy    uuid.UUID             `json:"-"`
 		Status       ApiClientStatus       `json:"status"`
-		ExpiredAt    time.Time             `json:"expired_at"`
+		UpdaterType  string                `json:"-"`
 	}
 
 	ApiClientDetail struct {
-		ID               uuid.UUID           `json:"id"`
-		ServiceId        uuid.UUID           `json:"service_id"`
-		ServiceOfferName string              `json:"service_offer_name"`
-		ProductId        uuid.UUID           `json:"product_id"`
-		ProductName      string              `json:"product_name"`
-		Status           ApiClientStatus     `json:"status"`
-		Name             string              `json:"name"`
-		ExpiredAt        time.Time           `json:"expired_at"`
-		Keys             []string            `json:"keys"`
-		PolicyIds        []uuid.UUID         `json:"policy_ids"`
-		TagsValues       []ApiClientTagValue `json:"tags"`
-		CreatedAt        time.Time           `json:"created_at"`
+		ID                uuid.UUID           `json:"id"`
+		ServiceId         uuid.UUID           `json:"service_id"`
+		ServiceOfferName  string              `json:"service_offer_name"`
+		ProductId         uuid.UUID           `json:"product_id"`
+		ProductName       string              `json:"product_name"`
+		Status            ApiClientStatus     `json:"status"`
+		Name              string              `json:"name"`
+		Keys              []string            `json:"keys"`
+		PolicyIds         []uuid.UUID         `json:"policy_ids"`
+		TagsValues        []ApiClientTagValue `json:"tags"`
+		CreatedAt         time.Time           `json:"created_at"`
+		ProductExternalId string              `json:"-"`
 	}
 
 	CreateApiClient struct {
@@ -178,7 +177,7 @@ type (
 		Name         string                `json:"name"`
 		Status       ApiClientStatus       `json:"status"`
 		CreatedBy    uuid.UUID             `json:"-"`
-		ExpiredAt    time.Time             `json:"expired_at"`
+		CreatorType  string                `json:"-"`
 	}
 
 	ApiClientPolicies struct {

@@ -75,10 +75,10 @@ tenantctl delete service -a < api key > -s < service id >
 tenantctl update service -a < api key > -s < service id > -n < service name >
 
 ##### Create Api Client:
-tenantctl create apiClient -a < api key > -r < service id > -p < product id > -n < api client name > -i "comma separated policy Ids" -v "tag-key1:tag-value1,tag-key2:tag-value2" -e "date in format yyyy-mm-dd"
+tenantctl create apiClient -a < api key > -r < service id > -p < product id > -n < api client name > -i "comma separated policy Ids" -v "tag-key1:tag-value1,tag-key2:tag-value2"
 
 ##### Update Api Client:
-tenantctl update apiClient -a < api key > -r < service id > -p < product id > -c < api client id > -n < api client name > -i "comma separated policy Ids" -v "tag-key1:tag-value1,tag-key2:tag-value2" -s < Active/Inactive/Cancelled > -e "date in format yyyy-mm-dd"
+tenantctl update apiClient -a < api key > -r < service id > -p < product id > -c < api client id > -n < api client name > -i "comma separated policy Ids" -v "tag-key1:tag-value1,tag-key2:tag-value2" -s < Active/Inactive/Cancelled >
 
 ##### Get Api Clients:
 tenantctl list apiClient -a < api key > -r < service id >

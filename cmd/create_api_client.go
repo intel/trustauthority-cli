@@ -51,7 +51,6 @@ func init() {
 	createApiClientCmd.Flags().StringSliceP(constants.PolicyIdsParamName, "i", []string{}, "List of comma separated policy IDs to be linked to the api client")
 	createApiClientCmd.Flags().StringSliceP(constants.TagKeyAndValuesParamName, "v", []string{}, "List of the comma separated tad Id and value pairs in the "+
 		"following format:\n Workload:WorkloadAI,Workload:WorkloadEXE etc.")
-	createApiClientCmd.Flags().StringP(constants.SetExpiryDateParamName, "e", "", "Set the expiry date in the format yyyy-mm-dd for the new api client (default is 1 month)")
 	createApiClientCmd.MarkFlagRequired(constants.ApiKeyParamName)
 	createApiClientCmd.MarkFlagRequired(constants.ServiceIdParamName)
 	createApiClientCmd.MarkFlagRequired(constants.ProductIdParamName)
@@ -140,11 +139,6 @@ func createApiClient(cmd *cobra.Command) (string, error) {
 		tagKeyValues = append(tagKeyValues, models.ApiClientTagIdValue{Key: splitTag[0], Value: splitTag[1]})
 	}
 
-	expiryDateString, err := cmd.Flags().GetString(constants.SetExpiryDateParamName)
-	if err != nil {
-		return "", err
-	}
-
 	var apiClientInfo = models.CreateApiClient{
 		ProductId:    productId,
 		Name:         apiClientName,
@@ -153,18 +147,6 @@ func createApiClient(cmd *cobra.Command) (string, error) {
 		CreatedBy:    tenantId,
 		ServiceId:    serviceId,
 		Status:       constants.ApiClientStatusActive,
-	}
-
-	if expiryDateString == "" {
-		fmt.Println("No expiry date provided. Setting api client expiry date to 1 month from now")
-		apiClientInfo.ExpiredAt = time.Now().AddDate(0, 1, 0).UTC()
-	} else {
-		date, err := time.Parse(constants.ExpiryDateInputFormat, expiryDateString)
-		if err != nil {
-			log.WithError(err).Error("Incorrect expiry date format provided")
-			return "", errors.New("Incorrect expiry date provided. Date should be of the form yyyy-mm-dd")
-		}
-		apiClientInfo.ExpiredAt = date.UTC()
 	}
 
 	if err = validation.ValidateStrings([]string{apiClientName}); err != nil {
