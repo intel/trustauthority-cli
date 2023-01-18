@@ -23,7 +23,7 @@ func TestDeleteUserCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args:    []string{constants.DeleteCmd, constants.UserCmd, "-a", "abc", "-u", "23011406-6f3b-4431-9363-4e1af9af6b13"},
+			args:    []string{constants.DeleteCmd, constants.UserCmd, "-u", "23011406-6f3b-4431-9363-4e1af9af6b13"},
 			wantErr: false,
 		},
 	}

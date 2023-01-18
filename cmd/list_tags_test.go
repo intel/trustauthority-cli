@@ -23,7 +23,7 @@ func TestListTagCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args:    []string{constants.ListCmd, constants.TagCmd, "-a", "abc"},
+			args:    []string{constants.ListCmd, constants.TagCmd},
 			wantErr: false,
 		},
 	}

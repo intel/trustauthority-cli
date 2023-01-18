@@ -42,7 +42,6 @@ var updateApiClientCmd = &cobra.Command{
 func init() {
 	updateCmd.AddCommand(updateApiClientCmd)
 
-	updateApiClientCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
 	updateApiClientCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the api client needs to be updated")
 	updateApiClientCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the api client needs to be updated")
 	updateApiClientCmd.Flags().StringP(constants.ProductIdParamName, "p", "", "Id of the Amber Product for which the api client needs to be updated")
@@ -52,7 +51,6 @@ func init() {
 	updateApiClientCmd.Flags().StringSliceP(constants.TagKeyAndValuesParamName, "v", []string{}, "List of the comma separated tad Id and value pairs in the "+
 		"following format:\n Workload:WorkloadAI,Workload:WorkloadEXE etc.")
 	updateApiClientCmd.Flags().StringP(constants.ActivationStatus, "s", "", "Add activation status for api client, should be one of \"Active\", \"Inactive\" or \"Cancelled\"")
-	updateApiClientCmd.MarkFlagRequired(constants.ApiKeyParamName)
 	updateApiClientCmd.MarkFlagRequired(constants.ServiceIdParamName)
 	updateApiClientCmd.MarkFlagRequired(constants.ProductIdParamName)
 	updateApiClientCmd.MarkFlagRequired(constants.ApiClientNameParamName)

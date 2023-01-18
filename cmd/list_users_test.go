@@ -23,7 +23,7 @@ func TestListUsersCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args:    []string{constants.ListCmd, constants.UserCmd, "-a", "abc"},
+			args:    []string{constants.ListCmd, constants.UserCmd},
 			wantErr: false,
 		},
 	}

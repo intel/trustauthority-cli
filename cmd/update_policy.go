@@ -42,9 +42,11 @@ var updatePolicyCmd = &cobra.Command{
 func init() {
 	updateCmd.AddCommand(updatePolicyCmd)
 
-	updatePolicyCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
-	updatePolicyCmd.Flags().StringP(constants.PolicyFileParamName, "f", "", "Path of the file containing the policy to be uploaded")
-	updatePolicyCmd.MarkFlagRequired(constants.ApiKeyParamName)
+	updatePolicyCmd.Flags().StringP(constants.PolicyIdParamName, "i", "", "Id of the policy to be updated")
+	updatePolicyCmd.Flags().StringP(constants.PolicyNameParamName, "n", "", "Name of the policy to be updated")
+	updatePolicyCmd.Flags().StringP(constants.PolicyFileParamName, "f", "", "Path of the file containing the rego policy to be uploaded")
+	updatePolicyCmd.MarkFlagRequired(constants.PolicyIdParamName)
+	updatePolicyCmd.MarkFlagRequired(constants.PolicyNameParamName)
 	updatePolicyCmd.MarkFlagRequired(constants.PolicyFileParamName)
 }
 
@@ -62,6 +64,21 @@ func updatePolicy(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
+	policyIdString, err := cmd.Flags().GetString(constants.PolicyIdParamName)
+	if err != nil {
+		return "", err
+	}
+
+	policyId, err := uuid.Parse(policyIdString)
+	if err != nil {
+		return "", errors.Wrap(err, "Invalid policy Id provided, should be in UUID format")
+	}
+
+	policyName, err := cmd.Flags().GetString(constants.PolicyNameParamName)
+	if err != nil {
+		return "", err
+	}
+
 	policyFilePath, err := cmd.Flags().GetString(constants.PolicyFileParamName)
 	if err != nil {
 		return "", err
@@ -72,14 +89,8 @@ func updatePolicy(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
-	var policyUpdateReq models.PolicyRequest
-	err = json.Unmarshal(policyBytes, &policyUpdateReq)
-	if err != nil {
-		return "", err
-	}
-
-	if policyUpdateReq.PolicyId == uuid.Nil {
-		return "", errors.Errorf("Please add the policy_id to the JSON request in policy file %s", policyFilePath)
+	var policyUpdateReq = models.PolicyRequest{
+		CommonPolicy: models.CommonPolicy{PolicyId: policyId, PolicyName: policyName, Policy: string(policyBytes)},
 	}
 
 	pmsClient := pms.NewPmsClient(client, pmsUrl, uuid.Nil, apiKey)

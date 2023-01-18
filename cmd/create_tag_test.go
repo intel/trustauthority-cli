@@ -23,7 +23,7 @@ func TestCreateTagCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args:    []string{constants.CreateCmd, constants.TagCmd, "-a", "abc", "-n", "Test Tag"},
+			args:    []string{constants.CreateCmd, constants.TagCmd, "-n", "Test Tag"},
 			wantErr: false,
 		},
 	}

@@ -36,9 +36,6 @@ var listTagCmd = &cobra.Command{
 
 func init() {
 	listCmd.AddCommand(listTagCmd)
-
-	listTagCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
-	listTagCmd.MarkFlagRequired(constants.ApiKeyParamName)
 }
 
 func getTag(cmd *cobra.Command) (string, error) {

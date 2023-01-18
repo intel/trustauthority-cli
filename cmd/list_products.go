@@ -40,11 +40,8 @@ var getProductsCmd = &cobra.Command{
 func init() {
 	listCmd.AddCommand(getProductsCmd)
 
-	getProductsCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to "+
-		"connect to amber services")
 	getProductsCmd.Flags().StringP(constants.ServiceOfferIdParamName, "r", "", "Id of the Amber "+
 		"service offer for which the product list needs to be fetched")
-	getProductsCmd.MarkFlagRequired(constants.ApiKeyParamName)
 	getProductsCmd.MarkFlagRequired(constants.ServiceOfferIdParamName)
 }
 

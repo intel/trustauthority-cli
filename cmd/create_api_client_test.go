@@ -23,13 +23,13 @@ func TestCreateApiClientCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args: []string{constants.CreateCmd, constants.ApiClientCmd, "-a", "abc", "-n", "Test Subs", "-p",
+			args: []string{constants.CreateCmd, constants.ApiClientCmd, "-n", "Test Subs", "-p",
 				"e169d34f-58ce-4717-9b3a-5c66abd33417", "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777"},
 			wantErr:     false,
 			description: "Test Create Api Client",
 		},
 		{
-			args: []string{constants.CreateCmd, constants.ApiClientCmd, "-a", "abc", "-n", "Test Subs", "-p",
+			args: []string{constants.CreateCmd, constants.ApiClientCmd, "-n", "Test Subs", "-p",
 				"e169d34f-58ce-4717-9b3a-5c66abd33417", "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777",
 				"-v", "5cfb6af4-59ac-4a14-8b83-bd65b1e11779"},
 			wantErr:     true,

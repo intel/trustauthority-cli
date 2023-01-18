@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/client/pms"
 	"intel/amber/tac/v1/config"
@@ -41,9 +42,15 @@ var createPolicyCmd = &cobra.Command{
 func init() {
 	createCmd.AddCommand(createPolicyCmd)
 
-	createPolicyCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
-	createPolicyCmd.Flags().StringP(constants.PolicyFileParamName, "f", "", "Path of the file containing the policy to be uploaded")
-	createPolicyCmd.MarkFlagRequired(constants.ApiKeyParamName)
+	createPolicyCmd.Flags().StringP(constants.PolicyNameParamName, "n", "", "Name of the policy to be uploaded")
+	createPolicyCmd.Flags().StringP(constants.PolicyTypeParamName, "t", "", "Type of the policy to be uploaded, should be one of \"Appraisal policy\" or \"Token customization policy\"")
+	createPolicyCmd.Flags().StringP(constants.ServiceOfferIdParamName, "r", "", "Service offer id for which the policy needs to be uploaded")
+	createPolicyCmd.Flags().StringP(constants.AttestationTypeParamName, "a", "", "Attestation type of policy to be uploaded, should be one of \"SGX Attestation\" or \"TDX Attestation\"")
+	createPolicyCmd.Flags().StringP(constants.PolicyFileParamName, "f", "", "Path of the file containing the rego policy to be uploaded")
+	createPolicyCmd.MarkFlagRequired(constants.PolicyNameParamName)
+	createPolicyCmd.MarkFlagRequired(constants.PolicyTypeParamName)
+	createPolicyCmd.MarkFlagRequired(constants.ServiceOfferIdParamName)
+	createPolicyCmd.MarkFlagRequired(constants.AttestationTypeParamName)
 	createPolicyCmd.MarkFlagRequired(constants.PolicyFileParamName)
 }
 
@@ -61,6 +68,31 @@ func createPolicy(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
+	policyName, err := cmd.Flags().GetString(constants.PolicyNameParamName)
+	if err != nil {
+		return "", err
+	}
+
+	policyType, err := cmd.Flags().GetString(constants.PolicyTypeParamName)
+	if err != nil {
+		return "", err
+	}
+
+	soIdString, err := cmd.Flags().GetString(constants.ServiceOfferIdParamName)
+	if err != nil {
+		return "", err
+	}
+
+	soId, err := uuid.Parse(soIdString)
+	if err != nil {
+		return "", errors.Wrap(err, "Invalid service offer Id provided, should be in UUID format")
+	}
+
+	attestationType, err := cmd.Flags().GetString(constants.AttestationTypeParamName)
+	if err != nil {
+		return "", err
+	}
+
 	policyFilePath, err := cmd.Flags().GetString(constants.PolicyFileParamName)
 	if err != nil {
 		return "", err
@@ -71,11 +103,13 @@ func createPolicy(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
-	var policyCreateReq models.PolicyRequest
-	err = json.Unmarshal(policyBytes, &policyCreateReq)
-	if err != nil {
-		return "", err
-	}
+	var policyCreateReq = models.PolicyRequest{models.CommonPolicy{
+		Policy:          string(policyBytes),
+		PolicyName:      policyName,
+		PolicyType:      policyType,
+		ServiceOfferId:  soId,
+		AttestationType: attestationType,
+	}}
 
 	pmsClient := pms.NewPmsClient(client, pmsUrl, uuid.Nil, apiKey)
 	response, err := pmsClient.CreatePolicy(&policyCreateReq)

@@ -40,9 +40,7 @@ var getPoliciesCmd = &cobra.Command{
 func init() {
 	listCmd.AddCommand(getPoliciesCmd)
 
-	getPoliciesCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
 	getPoliciesCmd.Flags().StringP(constants.PolicyIdParamName, "p", "", "Path of the file containing the policy to be uploaded")
-	getPoliciesCmd.MarkFlagRequired(constants.ApiKeyParamName)
 }
 
 func getPolicies(cmd *cobra.Command) (string, error) {

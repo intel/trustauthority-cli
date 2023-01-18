@@ -23,11 +23,11 @@ func TestListServicesCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args:    []string{constants.ListCmd, constants.ServiceCmd, "-a", "abc"},
+			args:    []string{constants.ListCmd, constants.ServiceCmd},
 			wantErr: false,
 		},
 		{
-			args:    []string{constants.ListCmd, constants.ServiceCmd, "-a", "abc", "-r", "ae3d7720-08ab-421c-b8d4-1725c358f03e"},
+			args:    []string{constants.ListCmd, constants.ServiceCmd, "-r", "ae3d7720-08ab-421c-b8d4-1725c358f03e"},
 			wantErr: false,
 		},
 	}

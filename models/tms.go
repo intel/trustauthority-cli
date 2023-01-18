@@ -7,6 +7,7 @@ package models
 
 import (
 	"github.com/google/uuid"
+	"intel/amber/tac/v1/constants"
 	"time"
 )
 
@@ -14,22 +15,33 @@ type ApiClientStatus string
 
 type (
 	Tenant struct {
-		ID       uuid.UUID `json:"id"`
-		Name     string    `json:"name"`
-		Company  string    `json:"company"`
-		Address  string    `json:"address"`
-		ParentId uuid.UUID `json:"-"`
-		Email    string    `json:"email"`
+		ID         uuid.UUID `json:"id"`
+		Name       string    `json:"name"`
+		Company    string    `json:"company"`
+		Address    string    `json:"address"`
+		ParentId   uuid.UUID `json:"-"`
+		Email      string    `json:"email"`
+		ExternalId uuid.UUID `json:"-"`
+		SourceId   uuid.UUID `json:"-"`
 	}
 
 	Role struct {
-		ID   uuid.UUID `json:"id"`
-		Name string    `json:"name"`
+		ID         uuid.UUID                   `json:"id"`
+		Name       string                      `json:"name"`
+		Permission map[string]PermissionStruct `json:"permissions,omitempty"`
+		Scope      string                      `json:"scope,omitempty"`
+	}
+
+	PermissionStruct struct {
+		Grants []string               `json:"grants"`
+		Data   map[string]interface{} `json:"data,omitempty"`
 	}
 
 	TenantRoles struct {
-		TenantId uuid.UUID `json:"tenant_id"`
-		Roles    []Role    `json:"roles"`
+		TenantId   uuid.UUID `json:"tenant_id"`
+		SourceId   uuid.UUID `json:"source_id"`
+		SourceName string    `json:"source_name"`
+		Roles      []Role    `json:"roles"`
 	}
 
 	User struct {
@@ -39,8 +51,10 @@ type (
 		Active                 bool          `json:"active"`
 		CreatedAt              time.Time     `json:"created_at"`
 		PrivacyAcknowledgement bool          `json:"privacy_acknowledgement"`
+		CreatorType            string        `json:"-"`
 	}
 
+	// TenantUser - Tenant user details response payload
 	TenantUser struct {
 		ID                     uuid.UUID `json:"id"`
 		Email                  string    `json:"email"`
@@ -48,6 +62,7 @@ type (
 		Active                 bool      `json:"active"`
 		CreatedAt              time.Time `json:"created_at"`
 		PrivacyAcknowledgement bool      `json:"privacy_acknowledgement"`
+		CreatorType            string    `json:"-"`
 	}
 
 	UserRole struct {
@@ -57,12 +72,22 @@ type (
 	}
 
 	CreateTenantUser struct {
-		ID        uuid.UUID `json:"-"`
-		Email     string    `json:"email"`
-		TenantId  uuid.UUID `json:"-"`
-		Active    bool      `json:"-"`
-		CreatedBy uuid.UUID `json:"-"`
-		Role      string    `json:"role"`
+		ID          uuid.UUID `json:"-"`
+		Email       string    `json:"email"`
+		TenantId    uuid.UUID `json:"-"`
+		Active      bool      `json:"-"`
+		CreatedBy   uuid.UUID `json:"-"`
+		CreatorType string    `json:"-"`
+		Role        string    `json:"role"`
+	}
+
+	TagCreate struct {
+		ID          uuid.UUID `json:"id,omitempty"`
+		Name        string    `json:"name"`
+		TenantId    uuid.UUID `json:"-"`
+		Predefined  bool      `json:"-"`
+		CreatedBy   uuid.UUID `json:"-"`
+		CreatorType string    `json:"-"`
 	}
 
 	Tag struct {
@@ -74,18 +99,22 @@ type (
 	}
 
 	UpdateTenantUserRoles struct {
-		UserId    uuid.UUID   `json:"-"`
-		TenantId  uuid.UUID   `json:"-"`
-		Role      string      `json:"role"`
-		RoleIds   []uuid.UUID `json:"-"`
-		UpdatedBy uuid.UUID   `json:"-"`
+		UserId      uuid.UUID   `json:"-"`
+		TenantId    uuid.UUID   `json:"-"`
+		Role        string      `json:"role"`
+		RoleIds     []uuid.UUID `json:"-"`
+		UpdatedBy   uuid.UUID   `json:"-"`
+		UpdaterType string      `json:"-"`
 	}
 
 	Product struct {
-		ID             uuid.UUID      `json:"id"`
-		ServiceOfferId uuid.UUID      `json:"service_offer_id"`
-		Name           string         `json:"name"`
-		Policy         *ProductPolicy `json:"policy"`
+		ID             uuid.UUID             `json:"id"`
+		ServiceOfferId uuid.UUID             `json:"service_offer_id"`
+		Name           string                `json:"name"`
+		Policy         *ProductPolicy        `json:"policy"`
+		ExternalId     string                `json:"-"`
+		PlanId         uuid.UUID             `json:"plan_id"`
+		ProductType    constants.ProductType `json:"product_type"`
 	}
 
 	ProductPolicy struct {
@@ -95,24 +124,25 @@ type (
 		QuotaRenewalInSecs int `json:"quota_renewal_period"`
 	}
 
+	// ServiceOffer - Service Offer details response payload
 	ServiceOffer struct {
 		ID   uuid.UUID `json:"id"`
 		Name string    `json:"name"`
 	}
 
+	// Service - Service details response payload
 	Service struct {
-		ID             uuid.UUID `json:"id"`
-		TenantId       uuid.UUID `json:"tenant_id"`
-		ServiceOfferId uuid.UUID `json:"service_offer_id"`
-		Name           string    `json:"name"`
-		CreatedAt      time.Time `json:"created_at"`
-	}
-
-	UpdateService struct {
-		Id        uuid.UUID `json:"-"`
-		Name      string    `json:"name"`
-		TenantId  uuid.UUID `json:"-"`
-		UpdatedBy uuid.UUID `json:"-"`
+		ID                       uuid.UUID `json:"id"`
+		TenantId                 uuid.UUID `json:"tenant_id"`
+		ServiceOfferId           uuid.UUID `json:"service_offer_id"`
+		Name                     string    `json:"name"`
+		PlanId                   uuid.UUID `json:"plan_id"`
+		PlanName                 string    `json:"plan_name"`
+		Active                   bool      `json:"active"`
+		ExternalId               uuid.UUID `json:"-"`
+		CreatedAt                time.Time `json:"created_at"`
+		CreatorType              string    `json:"-"`
+		ServiceOfferPlanSourceId uuid.UUID `json:"-"`
 	}
 
 	ServiceDetail struct {
@@ -121,23 +151,22 @@ type (
 		ServiceOfferName string    `json:"service_offer_name"`
 		Name             string    `json:"name"`
 		CreatedAt        time.Time `json:"created_at"`
+		Active           bool      `json:"active"`
+		PlanId           uuid.UUID `json:"plan_id"`
+		PlanName         string    `json:"plan_name"`
 	}
 
-	CreateService struct {
-		ServiceOfferId uuid.UUID `json:"service_offer_id"`
-		TenantId       uuid.UUID `json:"-"`
-		Name           string    `json:"name"`
-		CreatedBy      uuid.UUID `json:"-"`
-	}
-
+	// ApiClient - API Client details response payload
 	ApiClient struct {
-		ID          uuid.UUID       `json:"id"`
-		ServiceId   uuid.UUID       `json:"service_id"`
-		ProductId   uuid.UUID       `json:"product_id"`
-		ProductName string          `json:"product_name"`
-		Status      ApiClientStatus `json:"status"`
-		Name        string          `json:"name"`
-		CreatedAt   time.Time       `json:"created_at"`
+		ID                uuid.UUID             `json:"id"`
+		ServiceId         uuid.UUID             `json:"service_id"`
+		ProductId         uuid.UUID             `json:"product_id"`
+		ProductName       string                `json:"product_name"`
+		Status            ApiClientStatus       `json:"status"`
+		Name              string                `json:"name"`
+		CreatedAt         time.Time             `json:"created_at"`
+		ProductExternalId string                `json:"-"`
+		ProductType       constants.ProductType `json:"product_type"`
 	}
 
 	UpdateApiClient struct {
@@ -154,18 +183,19 @@ type (
 	}
 
 	ApiClientDetail struct {
-		ID                uuid.UUID           `json:"id"`
-		ServiceId         uuid.UUID           `json:"service_id"`
-		ServiceOfferName  string              `json:"service_offer_name"`
-		ProductId         uuid.UUID           `json:"product_id"`
-		ProductName       string              `json:"product_name"`
-		Status            ApiClientStatus     `json:"status"`
-		Name              string              `json:"name"`
-		Keys              []string            `json:"keys"`
-		PolicyIds         []uuid.UUID         `json:"policy_ids"`
-		TagsValues        []ApiClientTagValue `json:"tags"`
-		CreatedAt         time.Time           `json:"created_at"`
-		ProductExternalId string              `json:"-"`
+		ID                uuid.UUID             `json:"id"`
+		ServiceId         uuid.UUID             `json:"service_id"`
+		ServiceOfferName  string                `json:"service_offer_name"`
+		ProductId         uuid.UUID             `json:"product_id"`
+		ProductName       string                `json:"product_name"`
+		Status            ApiClientStatus       `json:"status"`
+		Name              string                `json:"name"`
+		Keys              []string              `json:"keys"`
+		PolicyIds         []uuid.UUID           `json:"policy_ids"`
+		TagsValues        []ApiClientTagValue   `json:"tags"`
+		CreatedAt         time.Time             `json:"created_at"`
+		ProductExternalId string                `json:"-"`
+		ProductType       constants.ProductType `json:"product_type"`
 	}
 
 	CreateApiClient struct {
@@ -201,5 +231,28 @@ type (
 
 	Tags struct {
 		Tags []Tag `json:"tags"`
+	}
+
+	Plan struct {
+		ID             uuid.UUID `json:"id"`
+		ServiceOfferId uuid.UUID `json:"service_offer_id"`
+		Name           string    `json:"name"`
+		MaxKey         int       `json:"max_key"`
+		MaxTenantAdmin int       `json:"max_tenant_admin"`
+		MaxTenantUser  int       `json:"max_tenant_user"`
+		MaxPolicy      int       `json:"max_policy"`
+		Ledger         bool      `json:"ledger"`
+	}
+
+	PlanProducts struct {
+		ID             uuid.UUID `json:"id"`
+		ServiceOfferId uuid.UUID `json:"service_offer_id"`
+		Name           string    `json:"name"`
+		MaxKey         int       `json:"max_key"`
+		MaxTenantAdmin int       `json:"max_tenant_admin"`
+		MaxTenantUser  int       `json:"max_tenant_user"`
+		MaxPolicy      int       `json:"max_policy"`
+		Ledger         bool      `json:"ledger"`
+		Products       []Product `json:"products"`
 	}
 )

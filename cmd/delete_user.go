@@ -39,10 +39,8 @@ var deleteUserCmd = &cobra.Command{
 func init() {
 	deleteCmd.AddCommand(deleteUserCmd)
 
-	deleteUserCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
 	deleteUserCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the user needs to be deleted")
 	deleteUserCmd.Flags().StringP(constants.UserIdParamName, "u", "", "Id of the specific user the details for whom needs to be fetched")
-	deleteUserCmd.MarkFlagRequired(constants.ApiKeyParamName)
 	deleteUserCmd.MarkFlagRequired(constants.UserIdParamName)
 }
 

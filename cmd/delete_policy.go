@@ -39,10 +39,8 @@ var deletePolicyCmd = &cobra.Command{
 func init() {
 	deleteCmd.AddCommand(deletePolicyCmd)
 
-	deletePolicyCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
 	deletePolicyCmd.Flags().StringP(constants.PolicyIdParamName, "p", "", "Id of the policy to be deleted")
 	deletePolicyCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the policy needs to be deleted")
-	deletePolicyCmd.MarkFlagRequired(constants.ApiKeyParamName)
 	deletePolicyCmd.MarkFlagRequired(constants.PolicyIdParamName)
 
 }

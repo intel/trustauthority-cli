@@ -43,7 +43,6 @@ var createApiClientCmd = &cobra.Command{
 func init() {
 	createCmd.AddCommand(createApiClientCmd)
 
-	createApiClientCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
 	createApiClientCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the api client needs to be created")
 	createApiClientCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the api client needs to be created")
 	createApiClientCmd.Flags().StringP(constants.ProductIdParamName, "p", "", "Id of the Amber Product for which the api client needs to be created")
@@ -51,7 +50,6 @@ func init() {
 	createApiClientCmd.Flags().StringSliceP(constants.PolicyIdsParamName, "i", []string{}, "List of comma separated policy IDs to be linked to the api client")
 	createApiClientCmd.Flags().StringSliceP(constants.TagKeyAndValuesParamName, "v", []string{}, "List of the comma separated tad Id and value pairs in the "+
 		"following format:\n Workload:WorkloadAI,Workload:WorkloadEXE etc.")
-	createApiClientCmd.MarkFlagRequired(constants.ApiKeyParamName)
 	createApiClientCmd.MarkFlagRequired(constants.ServiceIdParamName)
 	createApiClientCmd.MarkFlagRequired(constants.ProductIdParamName)
 	createApiClientCmd.MarkFlagRequired(constants.ApiClientNameParamName)

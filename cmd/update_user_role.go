@@ -49,11 +49,9 @@ func init() {
 	updateCmd.AddCommand(updateUserCmd)
 	updateUserCmd.AddCommand(updateUserRoleCmd)
 
-	updateUserRoleCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
 	updateUserRoleCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the user needs to be created")
 	updateUserRoleCmd.Flags().StringP(constants.UserIdParamName, "u", "", "Id of the specific user")
 	updateUserRoleCmd.Flags().StringP(constants.UserRoleParamName, "r", "", "Role of the specific user that needs to be updated. Should be either Tenant Admin or User")
-	updateUserRoleCmd.MarkFlagRequired(constants.ApiKeyParamName)
 	updateUserRoleCmd.MarkFlagRequired(constants.UserIdParamName)
 	updateUserRoleCmd.MarkFlagRequired(constants.UserRoleParamName)
 }

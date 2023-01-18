@@ -24,6 +24,7 @@ Ubuntu LTS 20.04
   b. TENANT_ID="< Id of the Tenant >"  (The Tenant Id can be overridden from CLI) <br>
 - run "./tenantctl-{version}.bin". This will install the CLI to your system.
 - use the CLI: tenantctl < command > < resource >
+- export AMBER_API_KEY=<subscription key>. This needs to be done before running any of the CLI commands.
 
 Note: If behind a proxy, add the Amber FQDN to NO_PROXY environment variable.
 
@@ -42,103 +43,87 @@ Note: If behind a proxy, add the Amber FQDN to NO_PROXY environment variable.
 ### Commands Usage examples (please see help for more details ):
 
 ##### Create User:
-tenantctl create user -a < api key > -e < email Id> -r < Role (Tenant Admin/User) >
+tenantctl create user -e < email Id> -r < Role (Tenant Admin/User) >
 
 ##### Get Users:               
-tenantctl list user -a < api key >
+tenantctl list user
 
 ##### Update User Role:
-tenantctl update user role -a < api key > -u < user id > -r < Role (Tenant Admin/User) >
+tenantctl update user role -u < user id > -r < Role (Tenant Admin/User) >
 
 ##### Delete User:
-tenantctl delete user -a < api key > -u < user id >
+tenantctl delete user -u < user id >
 
 ##### Get Service Offers:
-tenantctl list serviceOffer -a < api key >
+tenantctl list serviceOffer
+
+##### Get Plans:
+tenantctl list plan -r < service offer id >
+
+##### Get Plan By Id:
+tenantctl list plan -r < service offer id > -p < plan id >
 
 ##### Get Products:            
-tenantctl list product -a < api key > -r < service offer id >
-
-##### Create Service:          
-tenantctl create service -a < api key > -r < service offer id > -n < service name >
+tenantctl list product -r < service offer id >
 
 ##### Get Services:
-tenantctl list service -a < api key >
+tenantctl list service
 
 ##### Get Service By Id:
-tenantctl list service -a < api key > -r < service Id >
-
-##### Delete Service:
-tenantctl delete service -a < api key > -s < service id >
-
-##### Update Service:
-tenantctl update service -a < api key > -s < service id > -n < service name >
+tenantctl list service -r < service Id >
 
 ##### Create Api Client:
-tenantctl create apiClient -a < api key > -r < service id > -p < product id > -n < api client name > -i "comma separated policy Ids" -v "tag-key1:tag-value1,tag-key2:tag-value2"
+tenantctl create apiClient -r < service id > -p < product id > -n < api client name > -i "comma separated policy Ids" -v "tag-key1:tag-value1,tag-key2:tag-value2"
 
 ##### Update Api Client:
-tenantctl update apiClient -a < api key > -r < service id > -p < product id > -c < api client id > -n < api client name > -i "comma separated policy Ids" -v "tag-key1:tag-value1,tag-key2:tag-value2" -s < Active/Inactive/Cancelled >
+tenantctl update apiClient -r < service id > -p < product id > -c < api client id > -n < api client name > -i "comma separated policy Ids" -v "tag-key1:tag-value1,tag-key2:tag-value2" -s < Active/Inactive/Cancelled >
 
 ##### Get Api Clients:
-tenantctl list apiClient -a < api key > -r < service id >
+tenantctl list apiClient -r < service id >
 
 ##### Get Api Client by id:
-tenantctl list apiClient -a < api key > -r < service id > -c < api client id >
+tenantctl list apiClient -r < service id > -c < api client id >
 
 ##### Delete an Api Client:
-tenantctl delete apiClient -a < api key > -r < service id > -c < api client id >
+tenantctl delete apiClient -r < service id > -c < api client id >
 
 ##### Create tag:
-tenantctl create tag -a < api key > -n < tag name > -t < tenant Id >
+tenantctl create tag -n < tag name > -t < tenant Id >
 
 ##### List tags:
-tenantctl list tag -a < api key >
+tenantctl list tag
 
 ##### List Api Client Policies:
-tenantctl list apiClient policy -a < api key > -r < service id > -c < api client id >
+tenantctl list apiClient policy -r < service id > -c < api client id >
 
 ##### List Api Client Tags:
-tenantctl list apiClient tag -a < api key > -r < service id > -c < api client id >
+tenantctl list apiClient tag -r < service id > -c < api client id >
 
 ##### Create Policy:
-tenantctl create policy -a < api key > -f < policy file path >
-
--  Sample policy for policy create command:
-
-```json
-{
-  "policy": "default matches_sgx_policy = false \n\n matches_sgx_policy = true { \n input.amber_sgx_is_debuggable == false \n input.amber_sgx_isvsvn == 0 \n input.amber_sgx_isvprodid == 0 \n input.amber_sgx_mrsigner ==  \"d412a4f07ef83892a5915fb2ab584be31e186e5a4f95ab5f6950fd4eb8694d7b\" \n  \n input.amber_sgx_mrenclave == \"bab91f200038076ac25f87de0ca67472443c2ebe17ed9ba95314e609038f51ab\" \n }",
-  "user_id": "f04971b7-fb41-4a9e-a06e-4bf6e71f98b3",
-  "policy_name": "Sample_Policy_SGX",
-  "policy_type": "Appraisal policy",
-  "service_offer_name": "SGX Attestation",
-  "service_offer_id": "b04971b7-fb41-4a9e-a06e-4bf6e71f98bd"
-}
-```
+tenantctl create policy -n < name of policy > -t < policy type > -a < attestation type > -r < service offer id > -f < rego policy file path >
 
 ##### Get policies:
-tenantctl list policy -a < api key >
+tenantctl list policy
 
 ##### Get policy by id:
-tenantctl list policy -a < api key > -p < policy id >
+tenantctl list policy -p < policy id >
 
 ##### Delete policy:
-tenantctl delete policy -a < api key > -p < policy id >
+tenantctl delete policy -p < policy id >
 
 ##### Update policy:
-tenantctl update policy -a < api key > -f < policy file path >
+tenantctl update policy -i < policy id > -n < name of policy > -f < rego policy file path >
 
-- Sample policy for policy update command:
+-  Sample rego policy for create/update policy command:
 
-```json
-{
-  "policy_id": "e48dabc5-9608-4ff3-aaed-f25909ab9de1",
-  "policy": "default matches_sgx_policy = false \n\n matches_sgx_policy = true { \n input.amber_sgx_is_debuggable == false \n input.amber_sgx_isvsvn == 0 \n input.amber_sgx_isvprodid == 0 \n input.amber_sgx_mrsigner ==  \"d412a4f07ef83892a5915fb2ab584be31e186e5a4f95ab5f6950fd4eb8694d7b\" \n  \n input.amber_sgx_mrenclave == \"bab91f200038076ac25f87de0ca67472443c2ebe17ed9ba95314e609038f51ab\" \n }",
-  "user_id": "f04971b7-fb41-4a9e-a06e-4bf6e71f98b3",
-  "policy_name": "Sample_Policy_SGX",
-  "policy_type": "Appraisal policy",
-  "service_offer_name": "SGX Attestation",
-  "service_offer_id": "b04971b7-fb41-4a9e-a06e-4bf6e71f98bd"
-}
+```bash
+default matches_sgx_policy = false 
+matches_sgx_policy = true 
+{  input.amber_sgx_is_debuggable == false 
+   input.amber_sgx_isvsvn == 0 
+   input.amber_sgx_isvprodid == 0 
+   input.amber_sgx_mrsigner ==  \"d412a4f07ef83892a5915fb2ab584be31e186e5a4f95ab5f6950fd4eb8694d7b\" 
+   input.amber_sgx_mrenclave == \"bab91f200038076ac25f87de0ca67472443c2ebe17ed9ba95314e609038f51ab\" 
+} 
 ```
+

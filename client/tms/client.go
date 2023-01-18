@@ -10,7 +10,6 @@ import (
 	"encoding/json"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/client"
 	"intel/amber/tac/v1/constants"
 	"intel/amber/tac/v1/models"
@@ -27,11 +26,8 @@ type TmsClient interface {
 	GetApiClientTagValues(serviceId, apiClientId uuid.UUID) (*models.ApiClientTagsValues, error)
 	DeleteApiClient(serviceId, apiClientId uuid.UUID) error
 
-	CreateService(request *models.CreateService) (*models.Service, error)
-	UpdateService(request *models.UpdateService) (*models.Service, error)
 	GetServices() ([]models.Service, error)
 	RetrieveService(serviceId uuid.UUID) (*models.ServiceDetail, error)
-	DeleteService(serviceId uuid.UUID) error
 
 	GetProducts(serviceOfferId uuid.UUID) ([]models.Product, error)
 
@@ -42,8 +38,11 @@ type TmsClient interface {
 	GetUsers() ([]models.TenantUser, error)
 	DeleteUser(userId uuid.UUID) error
 
-	CreateTenantTag(request *models.Tag) (*models.Tag, error)
+	CreateTenantTag(request *models.TagCreate) (*models.Tag, error)
 	GetTenantTags() (*models.Tags, error)
+
+	GetPlans(serviceOfferId uuid.UUID) ([]models.Plan, error)
+	RetrievePlan(serviceOfferId, planId uuid.UUID) (*models.PlanProducts, error)
 }
 
 //Client Details for TMS client
@@ -396,101 +395,6 @@ func (pc tmsClient) DeleteUser(userId uuid.UUID) error {
 	return nil
 }
 
-func (pc tmsClient) CreateService(request *models.CreateService) (*models.Service, error) {
-	reqBytes, err := json.Marshal(request)
-	if err != nil {
-		return nil, errors.Wrap(err, " Error marshalling request")
-	}
-
-	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceApiEndpoint)
-	if err != nil {
-		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
-	}
-
-	// Create a new request using http
-	req, err := http.NewRequest(http.MethodPost, reqURL.String(), bytes.NewBuffer(reqBytes))
-	if err != nil {
-		return nil, errors.Wrap(err, " Error forming request")
-	}
-	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
-	req.Header.Add(constants.HTTPHeaderKeyContentType, constants.HTTPMediaTypeJson)
-	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
-	req.Header.Add(constants.HTTPHeaderKeyCreatedBy, pc.TenantId.String())
-
-	response, err := client.SendRequest(pc.Client, req)
-	if err != nil {
-		return nil, errors.Wrap(err, "Error in response body")
-	}
-
-	// Parse response for validation
-	var serviceDetail models.Service
-	err = json.Unmarshal(response, &serviceDetail)
-	if err != nil {
-		return nil, errors.Wrap(err, "Error unmarshalling response")
-	}
-	return &serviceDetail, nil
-}
-
-func (pc tmsClient) UpdateService(request *models.UpdateService) (*models.Service, error) {
-	reqBytes, err := json.Marshal(request)
-	if err != nil {
-		return nil, errors.Wrap(err, " Error marshalling request")
-	}
-
-	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceApiEndpoint + "/" + request.Id.String())
-	if err != nil {
-		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
-	}
-
-	// Create a new request using http
-	req, err := http.NewRequest(http.MethodPut, reqURL.String(), bytes.NewBuffer(reqBytes))
-	if err != nil {
-		return nil, errors.Wrap(err, " Error forming request")
-	}
-	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
-	req.Header.Add(constants.HTTPHeaderKeyContentType, constants.HTTPMediaTypeJson)
-	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
-	req.Header.Add(constants.HTTPHeaderKeyUpdatedBy, pc.TenantId.String())
-
-	response, err := client.SendRequest(pc.Client, req)
-	if err != nil {
-		return nil, errors.Wrap(err, "Error in response body")
-	}
-
-	// Parse response for validation
-	var serviceDetail models.Service
-	err = json.Unmarshal(response, &serviceDetail)
-	if err != nil {
-		return nil, errors.Wrap(err, "Error unmarshalling response")
-	}
-	return &serviceDetail, nil
-}
-
-func (pc tmsClient) DeleteService(serviceId uuid.UUID) error {
-
-	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceApiEndpoint + "/" + serviceId.String())
-	if err != nil {
-		return errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
-	}
-
-	// Create a new request using http
-	req, err := http.NewRequest(http.MethodDelete, reqURL.String(), nil)
-	if err != nil {
-		return errors.Wrap(err, " Error forming request")
-	}
-	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
-
-	_, err = client.SendRequest(pc.Client, req)
-	if err != nil {
-		return errors.Wrap(err, "Error in response body")
-	}
-
-	if err != nil {
-		return errors.Wrap(err, "Error unmarshalling response")
-	}
-	return nil
-}
-
 func (pc tmsClient) GetServices() ([]models.Service, error) {
 	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceApiEndpoint)
 	if err != nil {
@@ -603,7 +507,7 @@ func (pc tmsClient) GetServiceOffers() ([]models.ServiceOffer, error) {
 	return searchServiceRes, nil
 }
 
-func (pc tmsClient) CreateTenantTag(request *models.Tag) (*models.Tag, error) {
+func (pc tmsClient) CreateTenantTag(request *models.TagCreate) (*models.Tag, error) {
 	reqURL, err := url.Parse(pc.BaseURL.String() + constants.TagApiEndpoint)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
@@ -628,8 +532,6 @@ func (pc tmsClient) CreateTenantTag(request *models.Tag) (*models.Tag, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "Error in response body")
 	}
-
-	log.Info(string(response))
 
 	// Parse response for validation
 	var createTagRes models.Tag
@@ -666,4 +568,62 @@ func (pc tmsClient) GetTenantTags() (*models.Tags, error) {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
 	return &getTagsRes, nil
+}
+
+func (pc tmsClient) GetPlans(serviceOfferId uuid.UUID) ([]models.Plan, error) {
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceOfferApiEndpoint + "/" + serviceOfferId.String() +
+		constants.PlanApiEndpoint)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
+	}
+
+	// Create a new request using http
+	req, err := http.NewRequest(http.MethodGet, reqURL.String(), nil)
+	if err != nil {
+		return nil, errors.Wrap(err, " Error forming request")
+	}
+	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
+	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+
+	response, err := client.SendRequest(pc.Client, req)
+	if err != nil {
+		return nil, errors.Wrap(err, "Error in response body")
+	}
+
+	// Parse response for validation
+	var searchPlanRes []models.Plan
+	err = json.Unmarshal(response, &searchPlanRes)
+	if err != nil {
+		return nil, errors.Wrap(err, "Error unmarshalling response")
+	}
+	return searchPlanRes, nil
+}
+
+func (pc tmsClient) RetrievePlan(serviceOfferId, planId uuid.UUID) (*models.PlanProducts, error) {
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceOfferApiEndpoint + "/" + serviceOfferId.String() +
+		constants.PlanApiEndpoint + "/" + planId.String())
+	if err != nil {
+		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
+	}
+
+	// Create a new request using http
+	req, err := http.NewRequest(http.MethodGet, reqURL.String(), nil)
+	if err != nil {
+		return nil, errors.Wrap(err, " Error forming request")
+	}
+	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
+	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+
+	response, err := client.SendRequest(pc.Client, req)
+	if err != nil {
+		return nil, errors.Wrap(err, "Error in response body")
+	}
+
+	// Parse response for validation
+	var retrievePlanRes models.PlanProducts
+	err = json.Unmarshal(response, &retrievePlanRes)
+	if err != nil {
+		return nil, errors.Wrap(err, "Error unmarshalling response")
+	}
+	return &retrievePlanRes, nil
 }

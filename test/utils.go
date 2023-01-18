@@ -20,23 +20,17 @@ var (
 	policy = `{
     "policy_id": "e48dabc5-9608-4ff3-aaed-f25909ab9de1",
     "policy": "default matches_sgx_policy = false \n\n matches_sgx_policy = true { \n \n input.amber_sgx_isvsvn == 0 \n\n } ",
-	"tenant_id": "f04971b7-fb41-4a9e-a06e-4bf6e71f98b3",
-	"user_id": "f04971b7-fb41-4a9e-a06e-4bf6e71f98b3",
-	"version": "v1",
     "policy_name": "Sample_Policy_SGX",
     "policy_type": "Appraisal policy",
-    "service_offer_name": "SGX Attestation",
+    "attestation_type": "SGX Attestation",
     "service_offer_id": "e8a72b7e-c4b1-4bdc-bf40-68f23c68a2aa" }`
 
 	policyList = `[{
     "policy_id": "e48dabc5-9608-4ff3-aaed-f25909ab9de1",
     "policy": "default matches_sgx_policy = false \n\n matches_sgx_policy = true { \n \n input.amber_sgx_isvsvn == 0 \n\n } ",
-	"tenant_id": "f04971b7-fb41-4a9e-a06e-4bf6e71f98b3",
-	"user_id": "f04971b7-fb41-4a9e-a06e-4bf6e71f98b3",
-	"version": "v1",
-    "policy_name": "Sample_Policy_SGX",
-    "policy_type": "Appraisal",
-    "service_offer_name": "SGX",
+	"policy_name": "Sample_Policy_SGX",
+    "policy_type": "Appraisal policy",
+    "attestation_type": "SGX Attestation",
     "service_offer_id": "e8a72b7e-c4b1-4bdc-bf40-68f23c68a2aa" }]`
 
 	user = `{
@@ -153,6 +147,45 @@ var (
             "value": "EXE Workload"
         }
     ]}`
+
+	plans = `[
+		{
+			"id": "8f2a20fa-b08d-48a8-b2b4-2ebd1feb6f74",
+    		"service_offer_id": "ee28f3c2-6f58-489d-aa46-1140565d4718",
+    		"name": "Basic",
+			"max_key": 1,
+    		"max_tenant_admin": 1,
+    		"max_tenant_user": 1,
+    		"max_policy": 1,
+    		"ledger": false
+  		}
+	]`
+
+	planProducts = `{
+			"id": "8f2a20fa-b08d-48a8-b2b4-2ebd1feb6f74",
+  			"service_offer_id": "ee28f3c2-6f58-489d-aa46-1140565d4718",
+  			"name": "Premium",
+  			"max_key": 10,
+  			"max_tenant_admin": 10,
+  			"max_tenant_user": 10,
+  			"max_policy": 10,
+  			"ledger": false,
+  			"products": [
+			{
+      			"id": "a3ad72aa-86d6-49aa-b851-6a52caf0941b",
+      			"service_offer_id": "ee28f3c2-6f58-489d-aa46-1140565d4718",
+      			"name": "Premium",
+      			"policy": {
+        			"limit": 40,
+        			"quota": 2500000,
+        			"limit_renewal_period": 60,
+        			"quota_renewal_period": 2592000
+      		},
+			"plan_id": "838c41b7-8c75-466e-9753-d6c3424662f2",
+      		"product_type": ""
+		}
+ 	  ]
+	}`
 )
 
 var idReg = fmt.Sprintf("{id:%s}", "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}")
@@ -176,6 +209,9 @@ func MockServer(t *testing.T) *httptest.Server {
 	productExpr := fmt.Sprintf("%s%s%s", "/management/v1/service-offers/", idReg, "/products")
 
 	tenantTagsExpr := fmt.Sprintf("%s", "/management/v1/tags")
+
+	planExpr := fmt.Sprintf("%s%s%s", "/management/v1/service-offers/", idReg, "/plans")
+	planIdExpr := fmt.Sprintf("%s%s%s%s", "/management/v1/service-offers/", idReg, "/plans/", idReg)
 
 	r := mux.NewRouter()
 
@@ -335,15 +371,6 @@ func MockServer(t *testing.T) *httptest.Server {
 	r.HandleFunc(serviceExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(service))
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
-	}).Methods(http.MethodPost)
-
-	r.HandleFunc(serviceExpr, func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
 		_, err := w.Write([]byte(serviceList))
 		if err != nil {
 			t.Log("test/test_utility:mockServer(): Unable to write data")
@@ -358,24 +385,6 @@ func MockServer(t *testing.T) *httptest.Server {
 			t.Log("test/test_utility:mockServer(): Unable to write data")
 		}
 	}).Methods(http.MethodGet)
-
-	r.HandleFunc(serviceIdExpr, func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write(nil)
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
-	}).Methods(http.MethodDelete)
-
-	r.HandleFunc(serviceIdExpr, func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.Header().Set("Accept", "application/json")
-		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(service))
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
-	}).Methods(http.MethodPut)
 
 	r.HandleFunc(serviceOfferExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -409,6 +418,24 @@ func MockServer(t *testing.T) *httptest.Server {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
 		_, err := w.Write([]byte(tagList))
+		if err != nil {
+			t.Log("test/test_utility:mockServer(): Unable to write data")
+		}
+	}).Methods(http.MethodGet)
+
+	r.HandleFunc(planExpr, func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
+		_, err := w.Write([]byte(plans))
+		if err != nil {
+			t.Log("test/test_utility:mockServer(): Unable to write data")
+		}
+	}).Methods(http.MethodGet)
+
+	r.HandleFunc(planIdExpr, func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
+		_, err := w.Write([]byte(planProducts))
 		if err != nil {
 			t.Log("test/test_utility:mockServer(): Unable to write data")
 		}

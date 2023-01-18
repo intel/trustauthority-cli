@@ -23,7 +23,8 @@ func TestUpdatePolicyCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args:    []string{constants.UpdateCmd, constants.PolicyCmd, "-a", "abc", "-f", "../test/resources/policy.json"},
+			args: []string{constants.UpdateCmd, constants.PolicyCmd, "-i", "e48dabc5-9608-4ff3-aaed-f25909ab9de1",
+				"-n", "Sample_Policy_SGX", "-f", "../test/resources/rego-policy.txt"},
 			wantErr: false,
 		},
 	}

@@ -39,10 +39,8 @@ var createTagCmd = &cobra.Command{
 func init() {
 	createCmd.AddCommand(createTagCmd)
 
-	createTagCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
 	createTagCmd.Flags().StringP(constants.TagNameParamName, "n", "", "Name of the tag that needs to be created")
 	createTagCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Tenant ID under which the tag needs to be created")
-	createTagCmd.MarkFlagRequired(constants.ApiKeyParamName)
 	createTagCmd.MarkFlagRequired(constants.TagNameParamName)
 }
 
@@ -81,10 +79,9 @@ func createTag(cmd *cobra.Command) (string, error) {
 
 	tmsClient := tms.NewTmsClient(client, tmsUrl, tenantId, apiKey)
 
-	createTagReq := &models.Tag{
-		Name:       tagName,
-		TenantId:   tenantId,
-		Predefined: false,
+	createTagReq := &models.TagCreate{
+		Name:     tagName,
+		TenantId: tenantId,
 	}
 	response, err := tmsClient.CreateTenantTag(createTagReq)
 	if err != nil {

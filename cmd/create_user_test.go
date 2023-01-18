@@ -23,7 +23,7 @@ func TestCreateUserCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args:    []string{constants.CreateCmd, constants.UserCmd, "-a", "abc", "-e", "test@mail.com", "-r", "User"},
+			args:    []string{constants.CreateCmd, constants.UserCmd, "-e", "test@mail.com", "-r", "User"},
 			wantErr: false,
 		},
 	}

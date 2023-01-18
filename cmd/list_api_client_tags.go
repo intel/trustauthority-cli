@@ -31,7 +31,7 @@ var getApiClientTagsValuesCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		fmt.Println("Services: \n\n", response)
+		fmt.Println("Tags: \n\n", response)
 		return nil
 	},
 }
@@ -39,10 +39,8 @@ var getApiClientTagsValuesCmd = &cobra.Command{
 func init() {
 	getApiClientsCmd.AddCommand(getApiClientTagsValuesCmd)
 
-	getApiClientTagsValuesCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
 	getApiClientTagsValuesCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the apiClient policies are to be fetched")
 	getApiClientTagsValuesCmd.Flags().StringP(constants.ApiClientIdParamName, "c", "", "Id of the apiClient for which the policies are to be fetched")
-	getApiClientTagsValuesCmd.MarkFlagRequired(constants.ApiKeyParamName)
 	getApiClientTagsValuesCmd.MarkFlagRequired(constants.ServiceIdParamName)
 	getApiClientTagsValuesCmd.MarkFlagRequired(constants.ApiClientIdParamName)
 }

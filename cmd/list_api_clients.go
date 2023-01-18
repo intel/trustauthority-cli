@@ -40,10 +40,8 @@ var getApiClientsCmd = &cobra.Command{
 func init() {
 	listCmd.AddCommand(getApiClientsCmd)
 
-	getApiClientsCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
 	getApiClientsCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the apiClient needs to be created")
 	getApiClientsCmd.Flags().StringP(constants.ApiClientIdParamName, "c", "", "Id of the apiClient which needs to be fetched (optional)")
-	getApiClientsCmd.MarkFlagRequired(constants.ApiKeyParamName)
 	getApiClientsCmd.MarkFlagRequired(constants.ServiceIdParamName)
 }
 
@@ -80,6 +78,7 @@ func getApiClients(cmd *cobra.Command) (string, error) {
 
 	var responseBytes []byte
 	if apiClientIdString == "" {
+		fmt.Println("API client ID is not set, fetching all API clients ...")
 		response, err := tmsClient.GetApiClient(serviceId)
 		if err != nil {
 			return "", err

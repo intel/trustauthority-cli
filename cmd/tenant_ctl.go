@@ -7,12 +7,14 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
 	"intel/amber/tac/v1/utils"
 	"os"
+	"strings"
 )
 
 var (
@@ -35,6 +37,10 @@ func Execute() {
 		os.Exit(1)
 	}
 	tenantCmd.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
+		apiKey = os.Getenv(constants.ApiKeyEnvVar)
+		if strings.TrimSpace(apiKey) == "" {
+			return errors.Errorf("%s environment variable needs to be set with a proper subscription key before using CLI", constants.ApiKeyEnvVar)
+		}
 		configValues, err := config.LoadConfiguration()
 		if err != nil {
 			if err := utils.SetUpLogs(logFile, constants.DefaultLogLevel); err != nil {

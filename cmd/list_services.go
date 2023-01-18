@@ -40,9 +40,7 @@ var getServicesCmd = &cobra.Command{
 func init() {
 	listCmd.AddCommand(getServicesCmd)
 
-	getServicesCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
 	getServicesCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service which needs to be fetched")
-	getServicesCmd.MarkFlagRequired(constants.ApiKeyParamName)
 }
 
 func getServices(cmd *cobra.Command) (string, error) {

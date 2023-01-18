@@ -38,10 +38,6 @@ var getUsersCmd = &cobra.Command{
 
 func init() {
 	listCmd.AddCommand(getUsersCmd)
-
-	getUsersCmd.Flags().StringVarP(&apiKey, constants.ApiKeyParamName, "a", "", "API key to be used to connect to amber services")
-	getUsersCmd.MarkFlagRequired(constants.ApiKeyParamName)
-
 }
 
 func getUsers(cmd *cobra.Command) (string, error) {

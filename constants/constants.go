@@ -16,25 +16,28 @@ const (
 	LogFilePath           = LogDir + "tac.log"
 	DefaultFilePermission = 0640
 	ExplicitCLIName       = "Tenant CLI"
+	ApiKeyEnvVar          = "AMBER_API_KEY"
 )
 
 //Command and parameter names
 const (
-	ApiKeyParamName          = "api-key"
 	TenantIdParamName        = "tenant-id"
 	UserIdParamName          = "user-id"
 	ServiceIdParamName       = "service-id"
 	ServiceOfferIdParamName  = "service-offer-id"
 	ProductIdParamName       = "product-id"
+	PlanIdParamName          = "plan-id"
 	ApiClientIdParamName     = "api-client-id"
 	ActivationStatus         = "status"
 	PolicyIdsParamName       = "policy-ids"
 	ApiClientNameParamName   = "api-client-name"
-	ServiceNameParamName     = "service-name"
 	EmailIdParamName         = "email-id"
 	UserRoleParamName        = "user-role"
 	PolicyFileParamName      = "policy-file"
 	PolicyIdParamName        = "policy-id"
+	PolicyNameParamName      = "policy-name"
+	PolicyTypeParamName      = "policy-type"
+	AttestationTypeParamName = "attestation-type"
 	TagNameParamName         = "tag-name"
 	TagKeyAndValuesParamName = "tag-key-value"
 	EnvFileParamName         = "env-file"
@@ -56,6 +59,7 @@ const (
 	ProductCmd      = "product"
 	ServiceOfferCmd = "serviceOffer"
 	ServiceCmd      = "service"
+	PlanCmd         = "plan"
 	ApiClientCmd    = "apiClient"
 	TagCmd          = "tag"
 	RoleCmd         = "role"
@@ -97,4 +101,12 @@ const (
 	UserApiEndpoint           = "/users"
 	ProductApiEndpoint        = "/products"
 	TagApiEndpoint            = "/tags"
+	PlanApiEndpoint           = "/plans"
+)
+
+type ProductType string
+
+const (
+	Attestation ProductType = "attestation"
+	Management  ProductType = "management"
 )

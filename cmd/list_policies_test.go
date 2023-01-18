@@ -23,11 +23,11 @@ func TestListPoliciesCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args:    []string{constants.ListCmd, constants.PolicyCmd, "-a", "abc"},
+			args:    []string{constants.ListCmd, constants.PolicyCmd},
 			wantErr: false,
 		},
 		{
-			args: []string{constants.ListCmd, constants.PolicyCmd, "-a", "abc", "-p",
+			args: []string{constants.ListCmd, constants.PolicyCmd, "-p",
 				"e48dabc5-9608-4ff3-aaed-f25909ab9de1"},
 			wantErr: false,
 		},

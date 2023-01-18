@@ -23,7 +23,7 @@ func TestDeletePolicyCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args:    []string{constants.DeleteCmd, constants.PolicyCmd, "-a", "abc", "-p", "e48dabc5-9608-4ff3-aaed-f25909ab9de1"},
+			args:    []string{constants.DeleteCmd, constants.PolicyCmd, "-p", "e48dabc5-9608-4ff3-aaed-f25909ab9de1"},
 			wantErr: false,
 		},
 	}

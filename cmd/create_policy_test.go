@@ -43,12 +43,14 @@ func TestCreatePolicyCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args:        []string{constants.CreateCmd, constants.PolicyCmd, "-a", "abc", "-f", "../test/resources/policy.json"},
+			args: []string{constants.CreateCmd, constants.PolicyCmd, "-n", "Sample_Policy_SGX", "-t", "Appraisal policy",
+				"-r", "e8a72b7e-c4b1-4bdc-bf40-68f23c68a2aa", "-a", "SGX Attestation", "-f", "../test/resources/rego-policy.txt"},
 			wantErr:     false,
 			description: "Test Create Policy",
 		},
 		{
-			args:        []string{constants.CreateCmd, constants.PolicyCmd, "-a", "abc", "-f", ""},
+			args: []string{constants.CreateCmd, constants.PolicyCmd, "-n", "Sample_Policy_SGX", "-t", "Appraisal policy",
+				"-r", "e8a72b7e-c4b1-4bdc-bf40-68f23c68a2aa", "-a", "SGX Attestation", "-f", ""},
 			wantErr:     true,
 			description: "Test Create Policy With Invalid File Path",
 		},
