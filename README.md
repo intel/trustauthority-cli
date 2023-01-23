@@ -48,6 +48,9 @@ tenantctl create user -e < email Id> -r < Role (Tenant Admin/User) >
 ##### Get Users:               
 tenantctl list user
 
+##### Get Users by email id:
+tenantctl list user -e <email id>
+
 ##### Update User Role:
 tenantctl update user role -u < user id > -r < Role (Tenant Admin/User) >
 

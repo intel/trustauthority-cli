@@ -26,6 +26,14 @@ func TestListUsersCmd(t *testing.T) {
 			args:    []string{constants.ListCmd, constants.UserCmd},
 			wantErr: false,
 		},
+		{
+			args:    []string{constants.ListCmd, constants.UserCmd, "-e", "notfound@mail.com"},
+			wantErr: true,
+		},
+		{
+			args:    []string{constants.ListCmd, constants.UserCmd, "-e", "arijitgh@gmail.com"},
+			wantErr: false,
+		},
 	}
 
 	listCmd.AddCommand(getUsersCmd)

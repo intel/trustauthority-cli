@@ -53,10 +53,20 @@ var (
     {
         "id": "23011406-6f3b-4431-9363-4e1af9af6b13",
         "email": "arijitgh@gmail.com",
-			"role": {
+        "role": {
 				"id": "66ec2e33-8cd3-42b1-8963-c7765205446e",
 				"name": "Tenant Admin"
-			},
+        },
+        "active": false,
+        "created_at": "2022-06-19T20:02:55.157679Z"
+    },
+    {
+        "id": "43011406-6f3b-4431-9363-4e1af9af6b11",
+        "email": "anotheremail@gmail.com",
+        "role": {
+				"id": "66ec2e33-8cd3-42b1-8963-c7765205446e",
+				"name": "Tenant Admin"
+        },
         "active": false,
         "created_at": "2022-06-19T20:02:55.157679Z"
     }]`
@@ -273,15 +283,6 @@ func MockServer(t *testing.T) *httptest.Server {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
 		_, err := w.Write([]byte(userList))
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
-	}).Methods(http.MethodGet)
-
-	r.HandleFunc(tenantUserIdExpr, func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(user))
 		if err != nil {
 			t.Log("test/test_utility:mockServer(): Unable to write data")
 		}

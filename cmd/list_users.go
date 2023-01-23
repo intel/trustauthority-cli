@@ -9,10 +9,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/client/tms"
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
+	"intel/amber/tac/v1/validation"
 	"net/http"
 	"net/url"
 	"time"
@@ -38,6 +40,8 @@ var getUsersCmd = &cobra.Command{
 
 func init() {
 	listCmd.AddCommand(getUsersCmd)
+
+	getUsersCmd.Flags().StringP(constants.EmailIdParamName, "e", "", "Email Id of the Tenant User to be retrieved")
 }
 
 func getUsers(cmd *cobra.Command) (string, error) {
@@ -57,16 +61,38 @@ func getUsers(cmd *cobra.Command) (string, error) {
 	tmsClient := tms.NewTmsClient(client, tmsUrl, uuid.Nil, apiKey)
 
 	var responseBytes []byte
-
 	response, err := tmsClient.GetUsers()
 	if err != nil {
 		return "", err
 	}
 
-	responseBytes, err = json.MarshalIndent(response, "", "  ")
+	emailIdString, err := cmd.Flags().GetString(constants.EmailIdParamName)
 	if err != nil {
 		return "", err
 	}
 
-	return string(responseBytes), nil
+	if emailIdString != "" {
+		err := validation.ValidateEmailAddress(emailIdString)
+		if err != nil {
+			return "", err
+		}
+		for _, user := range response {
+			if user.Email == emailIdString {
+				responseBytes, err = json.MarshalIndent(user, "", "  ")
+				if err != nil {
+					return "", err
+				}
+				return string(responseBytes), nil
+			}
+		}
+		return "", errors.New("User associated with the email Id provided in input was not found")
+	} else {
+		fmt.Println("Email ID was not provided, listing all users....")
+		responseBytes, err = json.MarshalIndent(response, "", "  ")
+		if err != nil {
+			return "", err
+		}
+
+		return string(responseBytes), nil
+	}
 }

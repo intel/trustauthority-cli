@@ -53,10 +53,10 @@ type tmsClient struct {
 	ApiKey   string
 }
 
-func NewTmsClient(client *http.Client, qvsURL *url.URL, tenantId uuid.UUID, apiKey string) TmsClient {
+func NewTmsClient(client *http.Client, tmsURL *url.URL, tenantId uuid.UUID, apiKey string) TmsClient {
 	return &tmsClient{
 		Client:   client,
-		BaseURL:  qvsURL,
+		BaseURL:  tmsURL,
 		TenantId: tenantId,
 		ApiKey:   apiKey,
 	}
