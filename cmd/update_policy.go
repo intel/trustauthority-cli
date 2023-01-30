@@ -46,8 +46,6 @@ func init() {
 	updatePolicyCmd.Flags().StringP(constants.PolicyNameParamName, "n", "", "Name of the policy to be updated")
 	updatePolicyCmd.Flags().StringP(constants.PolicyFileParamName, "f", "", "Path of the file containing the rego policy to be uploaded")
 	updatePolicyCmd.MarkFlagRequired(constants.PolicyIdParamName)
-	updatePolicyCmd.MarkFlagRequired(constants.PolicyNameParamName)
-	updatePolicyCmd.MarkFlagRequired(constants.PolicyFileParamName)
 }
 
 func updatePolicy(cmd *cobra.Command) (string, error) {
@@ -74,9 +72,15 @@ func updatePolicy(cmd *cobra.Command) (string, error) {
 		return "", errors.Wrap(err, "Invalid policy Id provided, should be in UUID format")
 	}
 
+	var policyUpdateReq = models.PolicyUpdateRequest{PolicyId: policyId}
+
 	policyName, err := cmd.Flags().GetString(constants.PolicyNameParamName)
 	if err != nil {
 		return "", err
+	}
+
+	if policyName != "" {
+		policyUpdateReq.PolicyName = policyName
 	}
 
 	policyFilePath, err := cmd.Flags().GetString(constants.PolicyFileParamName)
@@ -89,8 +93,8 @@ func updatePolicy(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
-	var policyUpdateReq = models.PolicyRequest{
-		CommonPolicy: models.CommonPolicy{PolicyId: policyId, PolicyName: policyName, Policy: string(policyBytes)},
+	if string(policyBytes) != "" {
+		policyUpdateReq.Policy = string(policyBytes)
 	}
 
 	pmsClient := pms.NewPmsClient(client, pmsUrl, uuid.Nil, apiKey)

@@ -22,6 +22,7 @@ type PolicyResponse struct {
 	Deleted         bool       `json:"deleted"`
 	CreatedAt       time.Time  `json:"created_time"`
 	UpdatedAt       time.Time  `json:"modified_time"`
+	PolicyJWT       string     `json:"policy_jwt,omitempty"`
 	PolicyHash      string     `json:"policy_hash"`
 	PolicySignature string     `json:"policy_signature"`
 }
@@ -33,4 +34,13 @@ type CommonPolicy struct {
 	PolicyType      string    `json:"policy_type"`
 	ServiceOfferId  uuid.UUID `json:"service_offer_id"`
 	AttestationType string    `json:"attestation_type"`
+}
+
+type PolicyUpdateRequest struct {
+	PolicyId       uuid.UUID `json:"policy_id"`
+	Policy         string    `json:"policy"`
+	TenantId       uuid.UUID `json:"-"`
+	PolicyName     string    `json:"policy_name"`
+	UserId         uuid.UUID `json:"_"`
+	SubscriptionId uuid.UUID `json:"-"`
 }

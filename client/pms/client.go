@@ -22,7 +22,7 @@ type PmsClient interface {
 	CreatePolicy(policyRequest *models.PolicyRequest) (*models.PolicyResponse, error)
 	DeletePolicy(policyID uuid.UUID) error
 	GetPolicy(policyID uuid.UUID) (*models.PolicyResponse, error)
-	UpdatePolicy(request *models.PolicyRequest) (*models.PolicyResponse, error)
+	UpdatePolicy(request *models.PolicyUpdateRequest) (*models.PolicyResponse, error)
 	SearchPolicy() ([]models.PolicyResponse, error)
 }
 
@@ -159,7 +159,7 @@ func (pc pmsClient) SearchPolicy() ([]models.PolicyResponse, error) {
 	return policyRes, nil
 }
 
-func (pc pmsClient) UpdatePolicy(request *models.PolicyRequest) (*models.PolicyResponse, error) {
+func (pc pmsClient) UpdatePolicy(request *models.PolicyUpdateRequest) (*models.PolicyResponse, error) {
 	reqBytes, err := json.Marshal(request)
 	if err != nil {
 		return nil, errors.Wrap(err, " Error marshalling policy update request")
