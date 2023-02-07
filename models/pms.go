@@ -41,6 +41,6 @@ type PolicyUpdateRequest struct {
 	Policy         string    `json:"policy"`
 	TenantId       uuid.UUID `json:"-"`
 	PolicyName     string    `json:"policy_name"`
-	UserId         uuid.UUID `json:"_"`
+	UserId         uuid.UUID `json:"-"`
 	SubscriptionId uuid.UUID `json:"-"`
 }
