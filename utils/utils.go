@@ -12,11 +12,12 @@ import (
 	"intel/amber/tac/v1/constants"
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
 func ReadAnswerFileToEnv(filename string) error {
-	fin, err := os.Open(filename)
+	fin, err := os.Open(filepath.Clean(filename))
 	if err != nil {
 		return errors.Wrap(err, "Failed to load answer file")
 	}

@@ -15,6 +15,7 @@ import (
 	"intel/amber/tac/v1/utils"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -49,7 +50,7 @@ func LoadConfiguration() (*Configuration, error) {
 }
 
 func (c *Configuration) Save(filename string) error {
-	configFile, err := os.OpenFile(filename, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0600)
+	configFile, err := os.OpenFile(filepath.Clean(filename), os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0600)
 	if err != nil {
 		return errors.Wrap(err, "Failed to create config file")
 	}
