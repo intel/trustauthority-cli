@@ -14,6 +14,7 @@ import (
 	"intel/amber/tac/v1/constants"
 	"intel/amber/tac/v1/utils"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -31,7 +32,7 @@ var tenantCmd = &cobra.Command{
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the tenantCmd.
 func Execute() {
-	logFile, err := os.OpenFile(constants.LogFilePath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, constants.DefaultFilePermission)
+	logFile, err := os.OpenFile(filepath.Clean(constants.LogFilePath), os.O_CREATE|os.O_APPEND|os.O_WRONLY, constants.DefaultFilePermission)
 	if err != nil {
 		fmt.Println("Error opening/creating log file: " + err.Error())
 		os.Exit(1)
