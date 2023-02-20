@@ -18,6 +18,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -98,7 +99,7 @@ func createPolicy(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
-	policyBytes, err := os.ReadFile(policyFilePath)
+	policyBytes, err := os.ReadFile(filepath.Clean(policyFilePath))
 	if err != nil {
 		return "", err
 	}

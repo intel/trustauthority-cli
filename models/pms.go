@@ -6,6 +6,7 @@
 package models
 
 import (
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
 	"time"
 )
@@ -43,4 +44,9 @@ type PolicyUpdateRequest struct {
 	PolicyName     string    `json:"policy_name"`
 	UserId         uuid.UUID `json:"-"`
 	SubscriptionId uuid.UUID `json:"-"`
+}
+
+type PolicyClaims struct {
+	AttestationPolicy string `json:"AttestationPolicy"`
+	jwt.RegisteredClaims
 }

@@ -102,6 +102,9 @@ tenantctl list apiClient policy -r < service id > -c < api client id >
 ##### List Api Client Tags:
 tenantctl list apiClient tag -r < service id > -c < api client id >
 
+##### Create Policy JWT
+tenantctl create policy-jwt -f <rego policy file path> -p <signing key path> -c <cert path> -a <algorithm> -s
+
 ##### Create Policy:
 tenantctl create policy -n < name of policy > -t < policy type > -a < attestation type > -r < service offer id > -f < rego policy file path >
 

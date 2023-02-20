@@ -34,6 +34,9 @@ const (
 	EmailIdParamName         = "email-id"
 	UserRoleParamName        = "user-role"
 	PolicyFileParamName      = "policy-file"
+	PrivateKeyFileParamName  = "privkeyfile"
+	CertificateFileParamName = "certfile"
+	SignObjectParamName      = "sign"
 	PolicyIdParamName        = "policy-id"
 	PolicyNameParamName      = "policy-name"
 	PolicyTypeParamName      = "policy-type"
@@ -41,6 +44,7 @@ const (
 	TagNameParamName         = "tag-name"
 	TagKeyAndValuesParamName = "tag-key-value"
 	EnvFileParamName         = "env-file"
+	AlgorithmParamName       = "algorithm"
 
 	RootCmd        = "tenantctl"
 	CreateCmd      = "create"
@@ -55,6 +59,7 @@ const (
 //Resource names
 const (
 	PolicyCmd       = "policy"
+	PolicyJwtCmd    = "policy-jwt"
 	UserCmd         = "user"
 	ProductCmd      = "product"
 	ServiceOfferCmd = "serviceOffer"
@@ -78,6 +83,18 @@ const (
 	ApiClientStatusCancelled = "Cancelled"
 	TenantAdminRole          = "Tenant Admin"
 	UserRole                 = "User"
+
+	PS384       = "PS384"
+	RS256       = "RS256"
+	PS256       = "PS256"
+	RS384       = "RS384"
+	PublicKey   = "PUBLIC KEY"
+	CertType    = "CERTIFICATE"
+	HashSize256 = "256"
+	HashSize384 = "384"
+	NonAlg      = "None"
+	KeyHeader   = "x5c"
+	TimeLayout  = "20060102150405"
 )
 
 //HTTP constants
