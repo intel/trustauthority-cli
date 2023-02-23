@@ -37,7 +37,7 @@ var createPolicyJwtCmd = &cobra.Command{
 }
 
 func init() {
-	listCmd.AddCommand(createPolicyJwtCmd)
+	createCmd.AddCommand(createPolicyJwtCmd)
 
 	createPolicyJwtCmd.Flags().StringP(constants.PolicyFileParamName, "f", "", "Path of the file containing the rego policy to be uploaded")
 	createPolicyJwtCmd.Flags().BoolP(constants.SignObjectParamName, "s", false, "Determines if the policy needs to be signed. Generates a JWS when this parameter is signed")

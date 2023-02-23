@@ -102,9 +102,6 @@ tenantctl list apiClient policy -r < service id > -c < api client id >
 ##### List Api Client Tags:
 tenantctl list apiClient tag -r < service id > -c < api client id >
 
-##### Create Policy JWT
-tenantctl create policy-jwt -f <rego policy file path> -p <signing key path> -c <cert path> -a <algorithm> -s
-
 ##### Create Policy:
 tenantctl create policy -n < name of policy > -t < policy type > -a < attestation type > -r < service offer id > -f < rego policy file path >
 
@@ -133,3 +130,31 @@ matches_sgx_policy = true
 } 
 ```
 
+### Create Policy JWT
+tenantctl create policy-jwt -f < rego policy file path > -p < signing key path > -c < cert path > -a < algorithm > -s
+
+#### Prerequisites: 
+Create self signed key and certificate for policy JWT token creation:
+- Generate key and cert files for -algorithm (PS384 | RS384) (Recommend)
+```
+openssl req -x509 -nodes -days 365 -newkey rsa:3072 -keyout amber-jwt.key -out amber-jwt.crt
+```
+- Generate key and cert files for -algorithm (PS256 | RS256)
+```
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout amber-jwt.key -out amber-jwt.crt
+```
+
+#### Notes:
+1. Signed policy token could be self verified at jwt.io
+2. Output file name of this command is input policy file name suffixed with ".signed.current_timestamp.txt" extension
+3. Policy payload Amber uses rego format which is different from Azure MAA
+4. Supported signing algorithms are "RS256", "PS256", "RS384", "PS384", default algorithm is PS384
+5. The signing algorithm needs to match the certificate algorithm
+
+
+#### References:
+- Azure MAA:
+    - https://learn.microsoft.com/en-us/azure/attestation/policy-examples
+    - https://docs.microsoft.com/en-us/azure/attestation/author-sign-policy
+- JWS RFC7515:
+    - https://www.rfc-editor.org/rfc/rfc7515
