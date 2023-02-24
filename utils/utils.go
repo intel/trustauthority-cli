@@ -85,35 +85,39 @@ func CheckSigningAlgorithm(privKeyFinal *rsa.PrivateKey, algorithm string) jwt.S
 
 // CheckKeyFiles check input private key and certificate files are valid
 func CheckKeyFiles(privKeyFilePath, certificateFilePath string) (*rsa.PrivateKey, string, error) {
+
+	if privKeyFilePath == "" {
+		return nil, "", errors.New("Private key file path cannot be empty")
+	}
+
+	if certificateFilePath == "" {
+		return nil, "", errors.New("Certificate file path cannot be empty")
+	}
+
 	privKeyBytes, err := ioutil.ReadFile(filepath.Clean(privKeyFilePath))
 	if err != nil {
-		fmt.Println(err.Error())
-		return nil, "", err
+		return nil, "", errors.Wrap(err, "Error reading private key file")
 	}
 
 	privKeyFinal, err := jwt.ParseRSAPrivateKeyFromPEM(privKeyBytes)
 	if err != nil {
-		fmt.Println(err.Error())
-		return nil, "", err
+		return nil, "", errors.Wrap(err, "Error parsing private key PEM file")
 	}
 	certBytes, err := ioutil.ReadFile(filepath.Clean(certificateFilePath))
 	if err != nil {
-		fmt.Println(err.Error())
-		return nil, "", err
+		return nil, "", errors.Wrap(err, "Error reading certificate file")
 	}
 
 	cert, err := parseCertificate(certBytes)
 	if err != nil {
-		fmt.Println(err.Error())
-		return nil, "", err
+		return nil, "", errors.Wrap(err, "Error parsing certificate")
 	}
 
 	pubKeyBytesFromCert := publicKeyToBytes(cert.PublicKey.(*rsa.PublicKey))
 	pubKeyBytesFromPriv := publicKeyToBytes(&privKeyFinal.PublicKey)
 
 	if bytes.Compare(pubKeyBytesFromCert, pubKeyBytesFromPriv) != 0 {
-		fmt.Println("Provided private key and certificate do not match")
-		return nil, "", errors.New("provided private key and certificate do not match")
+		return nil, "", errors.New("Provided private key and certificate do not match")
 	}
 
 	certContents := base64.StdEncoding.EncodeToString(cert.Raw)

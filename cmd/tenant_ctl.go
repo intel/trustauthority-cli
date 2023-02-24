@@ -38,9 +38,12 @@ func Execute() {
 		os.Exit(1)
 	}
 	tenantCmd.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
-		apiKey = os.Getenv(constants.ApiKeyEnvVar)
-		if strings.TrimSpace(apiKey) == "" {
-			return errors.Errorf("%s environment variable needs to be set with a proper subscription key before using CLI", constants.ApiKeyEnvVar)
+		//API key is not needed for generating policy JWT or setting up config, API key check is skipped for these 2 commands
+		if cmd.Name() != constants.PolicyJwtCmd && cmd.Name() != constants.SetupConfigCmd {
+			apiKey = os.Getenv(constants.ApiKeyEnvVar)
+			if strings.TrimSpace(apiKey) == "" {
+				return errors.Errorf("%s environment variable needs to be set with a proper subscription key before using CLI", constants.ApiKeyEnvVar)
+			}
 		}
 		configValues, err := config.LoadConfiguration()
 		if err != nil {
