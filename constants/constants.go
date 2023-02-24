@@ -5,6 +5,8 @@
 
 package constants
 
+import "errors"
+
 const (
 	ExecLink              = "/usr/bin/tenantctl"
 	HomeDir               = "/opt/tac/"
@@ -17,6 +19,7 @@ const (
 	DefaultFilePermission = 0640
 	ExplicitCLIName       = "Tenant CLI"
 	ApiKeyEnvVar          = "AMBER_API_KEY"
+	RootPath              = "/"
 )
 
 //Command and parameter names
@@ -126,4 +129,9 @@ type ProductType string
 const (
 	Attestation ProductType = "attestation"
 	Management  ProductType = "management"
+)
+
+var (
+	ErrorInvalidPath = errors.New("Unsafe or invalid path specified")
+	ErrorTrustedRoot = errors.New("path is outside of trusted root")
 )

@@ -15,9 +15,9 @@ import (
 	"intel/amber/tac/v1/constants"
 	"intel/amber/tac/v1/models"
 	"intel/amber/tac/v1/utils"
+	"intel/amber/tac/v1/validation"
 	"io/ioutil"
 	"os"
-	"path/filepath"
 )
 
 // createPolicyJwtCmd represents the createPolicyJwtCmd command
@@ -51,14 +51,16 @@ func generatePolicyJwt(cmd *cobra.Command) error {
 	var tokenString, algorithm string
 	// Create permitted algorithm set
 	algorithms := set.New(set.NonThreadSafe)
-	algorithms.Add(constants.RS256, constants.PS256, constants.RS384, constants.PS384)
-
 	policyFilePath, err := cmd.Flags().GetString(constants.PolicyFileParamName)
 	if err != nil {
 		return err
 	}
-
-	policyBytes, err := os.ReadFile(filepath.Clean(policyFilePath))
+	algorithms.Add(constants.RS256, constants.PS256, constants.RS384, constants.PS384)
+	path, err := validation.ValidatePath(policyFilePath)
+	if err != nil {
+		return err
+	}
+	policyBytes, err := os.ReadFile(path)
 	if err != nil {
 		return err
 	}
@@ -135,7 +137,10 @@ func generatePolicyJwt(cmd *cobra.Command) error {
 		tokenString = tokenString + "."
 	}
 
-	outputFile := utils.GenerateOutputFileName(policyFilePath)
+	outputFile, err := utils.GenerateOutputFileName(policyFilePath)
+	if err != nil {
+		return err
+	}
 	// Output to screen
 	generateConsoleOutput(string(policyBytes), algorithm, outputFile, tokenString)
 

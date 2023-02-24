@@ -13,9 +13,9 @@ import (
 	"gopkg.in/yaml.v3"
 	"intel/amber/tac/v1/constants"
 	"intel/amber/tac/v1/utils"
+	"intel/amber/tac/v1/validation"
 	"net/url"
 	"os"
-	"path/filepath"
 	"strings"
 )
 
@@ -50,7 +50,11 @@ func LoadConfiguration() (*Configuration, error) {
 }
 
 func (c *Configuration) Save(filename string) error {
-	configFile, err := os.OpenFile(filepath.Clean(filename), os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0600)
+	path, err := validation.ValidatePath(filename)
+	if err != nil {
+		return errors.Wrap(err, "Invalid ConfigurationFilePath")
+	}
+	configFile, err := os.OpenFile(path, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0600)
 	if err != nil {
 		return errors.Wrap(err, "Failed to create config file")
 	}

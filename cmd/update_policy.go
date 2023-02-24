@@ -15,10 +15,10 @@ import (
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
 	"intel/amber/tac/v1/models"
+	"intel/amber/tac/v1/validation"
 	"net/http"
 	"net/url"
 	"os"
-	"path/filepath"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -89,7 +89,11 @@ func updatePolicy(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
-	policyBytes, err := os.ReadFile(filepath.Clean(policyFilePath))
+	path, err := validation.ValidatePath(policyFilePath)
+	if err != nil {
+		return "", errors.Wrap(err, "Invalid policyFilePath")
+	}
+	policyBytes, err := os.ReadFile(path)
 	if err != nil {
 		return "", err
 	}

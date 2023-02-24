@@ -8,6 +8,9 @@ package validation
 import (
 	"errors"
 	"github.com/sirupsen/logrus"
+	"intel/amber/tac/v1/constants"
+	"os"
+	"path/filepath"
 	"regexp"
 )
 
@@ -33,4 +36,29 @@ func ValidateEmailAddress(email string) error {
 	}
 
 	return nil
+}
+
+func inTrustedRoot(path string, trustedRoot string) bool {
+	for path != constants.RootPath {
+		path = filepath.Dir(path)
+		if path == trustedRoot {
+			return true
+		}
+	}
+	return false
+}
+func ValidatePath(path string) (string, error) {
+	trustedRoot, err := os.UserHomeDir()
+	if err != nil {
+		return "", err
+	}
+	c := filepath.Clean(path)
+	r, err := filepath.EvalSymlinks(c)
+	if err != nil {
+		return c, constants.ErrorInvalidPath
+	}
+	if !inTrustedRoot(r, trustedRoot) {
+		return c, constants.ErrorTrustedRoot
+	}
+	return r, nil
 }

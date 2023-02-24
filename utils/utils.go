@@ -17,6 +17,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/constants"
+	"intel/amber/tac/v1/validation"
 	"io"
 	"io/ioutil"
 	"os"
@@ -26,7 +27,11 @@ import (
 )
 
 func ReadAnswerFileToEnv(filename string) error {
-	fin, err := os.Open(filepath.Clean(filename))
+	path, err := validation.ValidatePath(filename)
+	if err != nil {
+		return errors.Wrap(err, "Invalid ReadAnswerFilePath")
+	}
+	fin, err := os.Open(path)
 	if err != nil {
 		return errors.Wrap(err, "Failed to load answer file")
 	}
@@ -85,7 +90,6 @@ func CheckSigningAlgorithm(privKeyFinal *rsa.PrivateKey, algorithm string) jwt.S
 
 // CheckKeyFiles check input private key and certificate files are valid
 func CheckKeyFiles(privKeyFilePath, certificateFilePath string) (*rsa.PrivateKey, string, error) {
-
 	if privKeyFilePath == "" {
 		return nil, "", errors.New("Private key file path cannot be empty")
 	}
@@ -93,8 +97,15 @@ func CheckKeyFiles(privKeyFilePath, certificateFilePath string) (*rsa.PrivateKey
 	if certificateFilePath == "" {
 		return nil, "", errors.New("Certificate file path cannot be empty")
 	}
-
-	privKeyBytes, err := ioutil.ReadFile(filepath.Clean(privKeyFilePath))
+	filepath, err := validation.ValidatePath(privKeyFilePath)
+	if err != nil {
+		return nil, "", errors.Wrap(err, "Invalid privKeyFilePath")
+	}
+	certfile, err := validation.ValidatePath(certificateFilePath)
+	if err != nil {
+		return nil, "", errors.Wrap(err, "Invalid certificateFilePath")
+	}
+	privKeyBytes, err := ioutil.ReadFile(filepath)
 	if err != nil {
 		return nil, "", errors.Wrap(err, "Error reading private key file")
 	}
@@ -103,7 +114,8 @@ func CheckKeyFiles(privKeyFilePath, certificateFilePath string) (*rsa.PrivateKey
 	if err != nil {
 		return nil, "", errors.Wrap(err, "Error parsing private key PEM file")
 	}
-	certBytes, err := ioutil.ReadFile(filepath.Clean(certificateFilePath))
+
+	certBytes, err := ioutil.ReadFile(certfile)
 	if err != nil {
 		return nil, "", errors.Wrap(err, "Error reading certificate file")
 	}
@@ -124,10 +136,15 @@ func CheckKeyFiles(privKeyFilePath, certificateFilePath string) (*rsa.PrivateKey
 	return privKeyFinal, certContents, nil
 }
 
-func GenerateOutputFileName(inputFile string) string {
-	filename := strings.TrimSuffix(inputFile, filepath.Ext(inputFile))
+func GenerateOutputFileName(inputFile string) (string, error) {
+	inputFilepath, err := validation.ValidatePath(inputFile)
+	if err != nil {
+		return "", errors.Wrap(err, "Invalid GenerateOutputFilePath ")
+	}
+	filename := strings.TrimSuffix(inputFilepath, filepath.Ext(inputFilepath))
 	date := time.Now().Format(constants.TimeLayout)
-	return filepath.Clean(filename + ".signed." + date + ".txt")
+
+	return filename + ".signed." + date + ".txt", nil
 }
 
 // publicKeyToBytes public key to bytes
