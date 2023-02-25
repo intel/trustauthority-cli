@@ -133,5 +133,4 @@ const (
 
 var (
 	ErrorInvalidPath = errors.New("Unsafe or invalid path specified")
-	ErrorTrustedRoot = errors.New("path is outside of trusted root")
 )
