@@ -55,14 +55,18 @@ func generatePolicyJwt(cmd *cobra.Command) error {
 	if err != nil {
 		return err
 	}
+	if policyFilePath == "" {
+		return errors.New("Policy file path cannot be empty")
+	}
+	
 	algorithms.Add(constants.RS256, constants.PS256, constants.RS384, constants.PS384)
 	path, err := validation.ValidatePath(policyFilePath)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "Invalid policy file path provided")
 	}
 	policyBytes, err := os.ReadFile(path)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "Error reading policy file")
 	}
 
 	if len(policyBytes) == 0 {

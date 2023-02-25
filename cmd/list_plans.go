@@ -78,6 +78,7 @@ func getPlans(cmd *cobra.Command) (string, error) {
 
 	var responseBytes []byte
 	if planIdString == "" {
+		fmt.Println("Plan ID was not provided. Listing all plans....")
 		response, err := tmsClient.GetPlans(serviceOfferId)
 		if err != nil {
 			return "", err

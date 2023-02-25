@@ -98,6 +98,9 @@ func createPolicy(cmd *cobra.Command) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	if policyFilePath == "" {
+		return "", errors.New("Policy file path cannot be empty")
+	}
 
 	path, err := validation.ValidatePath(policyFilePath)
 	if err != nil {
@@ -105,7 +108,7 @@ func createPolicy(cmd *cobra.Command) (string, error) {
 	}
 	policyBytes, err := os.ReadFile(path)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "Error reading policy file")
 	}
 
 	var policyCreateReq = models.PolicyRequest{models.CommonPolicy{

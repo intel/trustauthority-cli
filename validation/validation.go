@@ -7,6 +7,7 @@ package validation
 
 import (
 	"errors"
+	"fmt"
 	"github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/constants"
 	"path/filepath"
@@ -41,7 +42,7 @@ func ValidatePath(path string) (string, error) {
 	c := filepath.Clean(path)
 	r, err := filepath.EvalSymlinks(c)
 	if err != nil {
-		return c, constants.ErrorInvalidPath
+		return c, fmt.Errorf("%s: %s", constants.ErrorInvalidPath, path)
 	}
 	return r, nil
 }
