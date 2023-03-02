@@ -40,7 +40,7 @@ func init() {
 	deleteCmd.AddCommand(deleteUserCmd)
 
 	deleteUserCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the user needs to be deleted")
-	deleteUserCmd.Flags().StringP(constants.UserIdParamName, "u", "", "Id of the specific user the details for whom needs to be fetched")
+	deleteUserCmd.Flags().StringP(constants.UserIdParamName, "u", "", "Id of the specific user the details for whom needs to be deleted")
 	deleteUserCmd.MarkFlagRequired(constants.UserIdParamName)
 }
 

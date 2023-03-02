@@ -219,6 +219,7 @@ func MockServer(t *testing.T) *httptest.Server {
 	productExpr := fmt.Sprintf("%s%s%s", "/management/v1/service-offers/", idReg, "/products")
 
 	tenantTagsExpr := fmt.Sprintf("%s", "/management/v1/tags")
+	tenantTagIdExpr := fmt.Sprintf("%s%s%s", tenantTagsExpr, "/", idReg)
 
 	planExpr := fmt.Sprintf("%s%s%s", "/management/v1/service-offers/", idReg, "/plans")
 	planIdExpr := fmt.Sprintf("%s%s%s%s", "/management/v1/service-offers/", idReg, "/plans/", idReg)
@@ -423,6 +424,14 @@ func MockServer(t *testing.T) *httptest.Server {
 			t.Log("test/test_utility:mockServer(): Unable to write data")
 		}
 	}).Methods(http.MethodGet)
+
+	r.HandleFunc(tenantTagIdExpr, func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
+		_, err := w.Write([]byte(tagList))
+		if err != nil {
+			t.Log("test/test_utility:mockServer(): Unable to write data")
+		}
+	}).Methods(http.MethodDelete)
 
 	r.HandleFunc(planExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")

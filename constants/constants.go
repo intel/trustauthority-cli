@@ -31,6 +31,7 @@ const (
 	ProductIdParamName       = "product-id"
 	PlanIdParamName          = "plan-id"
 	ApiClientIdParamName     = "api-client-id"
+	TagIdParamName           = "tag-id"
 	ActivationStatus         = "status"
 	PolicyIdsParamName       = "policy-ids"
 	ApiClientNameParamName   = "api-client-name"

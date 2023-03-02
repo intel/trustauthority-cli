@@ -40,6 +40,7 @@ type TmsClient interface {
 
 	CreateTenantTag(request *models.TagCreate) (*models.Tag, error)
 	GetTenantTags() (*models.Tags, error)
+	DeleteTenantTag(tagId uuid.UUID) error
 
 	GetPlans(serviceOfferId uuid.UUID) ([]models.Plan, error)
 	RetrievePlan(serviceOfferId, planId uuid.UUID) (*models.PlanProducts, error)
@@ -77,7 +78,7 @@ func (pc tmsClient) CreateApiClient(request *models.CreateApiClient) (*models.Ap
 	// Create a new request using http
 	req, err := http.NewRequest(http.MethodPost, reqURL.String(), bytes.NewBuffer(reqBytes))
 	if err != nil {
-		return nil, errors.Wrap(err, " Error forming request")
+		return nil, errors.Wrap(err, "Error forming request")
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyContentType, constants.HTTPMediaTypeJson)
@@ -113,7 +114,7 @@ func (pc tmsClient) UpdateApiClient(request *models.UpdateApiClient, apiClientId
 	// Create a new request using http
 	req, err := http.NewRequest(http.MethodPut, reqURL.String(), bytes.NewBuffer(reqBytes))
 	if err != nil {
-		return nil, errors.Wrap(err, " Error forming request")
+		return nil, errors.Wrap(err, "Error forming request")
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyContentType, constants.HTTPMediaTypeJson)
@@ -144,7 +145,7 @@ func (pc tmsClient) GetApiClient(serviceId uuid.UUID) ([]models.ApiClient, error
 	// Create a new request using http
 	req, err := http.NewRequest(http.MethodGet, reqURL.String(), nil)
 	if err != nil {
-		return nil, errors.Wrap(err, " Error forming request")
+		return nil, errors.Wrap(err, "Error forming request")
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
@@ -173,7 +174,7 @@ func (pc tmsClient) RetrieveApiClient(serviceId uuid.UUID, apiClientId uuid.UUID
 	// Create a new request using http
 	req, err := http.NewRequest(http.MethodGet, reqURL.String(), nil)
 	if err != nil {
-		return nil, errors.Wrap(err, " Error forming request")
+		return nil, errors.Wrap(err, "Error forming request")
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
@@ -202,7 +203,7 @@ func (pc tmsClient) GetApiClientPolicies(serviceId, apiClientId uuid.UUID) (*mod
 	// Create a new request using http
 	req, err := http.NewRequest(http.MethodGet, reqURL.String(), nil)
 	if err != nil {
-		return nil, errors.Wrap(err, " Error forming request")
+		return nil, errors.Wrap(err, "Error forming request")
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
@@ -231,7 +232,7 @@ func (pc tmsClient) GetApiClientTagValues(serviceId, apiClientId uuid.UUID) (*mo
 	// Create a new request using http
 	req, err := http.NewRequest(http.MethodGet, reqURL.String(), nil)
 	if err != nil {
-		return nil, errors.Wrap(err, " Error forming request")
+		return nil, errors.Wrap(err, "Error forming request")
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
@@ -260,7 +261,7 @@ func (pc tmsClient) DeleteApiClient(serviceId, apiClientId uuid.UUID) error {
 	// Create a new request using http
 	req, err := http.NewRequest(http.MethodDelete, reqURL.String(), nil)
 	if err != nil {
-		return errors.Wrap(err, " Error forming request")
+		return errors.Wrap(err, "Error forming request")
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
@@ -288,7 +289,7 @@ func (pc tmsClient) CreateUser(user *models.CreateTenantUser) (*models.TenantUse
 	// Create a new request using http
 	req, err := http.NewRequest(http.MethodPost, reqURL.String(), bytes.NewBuffer(reqBytes))
 	if err != nil {
-		return nil, errors.Wrap(err, " Error forming request")
+		return nil, errors.Wrap(err, "Error forming request")
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyContentType, constants.HTTPMediaTypeJson)
@@ -324,7 +325,7 @@ func (pc tmsClient) UpdateTenantUserRole(request *models.UpdateTenantUserRoles) 
 	// Create a new request using http
 	req, err := http.NewRequest(http.MethodPut, reqURL.String(), bytes.NewBuffer(reqBytes))
 	if err != nil {
-		return nil, errors.Wrap(err, " Error forming request")
+		return nil, errors.Wrap(err, "Error forming request")
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyContentType, constants.HTTPMediaTypeJson)
@@ -354,7 +355,7 @@ func (pc tmsClient) GetUsers() ([]models.TenantUser, error) {
 	// Create a new request using http
 	req, err := http.NewRequest(http.MethodGet, reqURL.String(), nil)
 	if err != nil {
-		return nil, errors.Wrap(err, " Error forming request")
+		return nil, errors.Wrap(err, "Error forming request")
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
@@ -382,7 +383,7 @@ func (pc tmsClient) DeleteUser(userId uuid.UUID) error {
 	// Create a new request using http
 	req, err := http.NewRequest(http.MethodDelete, reqURL.String(), nil)
 	if err != nil {
-		return errors.Wrap(err, " Error forming request")
+		return errors.Wrap(err, "Error forming request")
 	}
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
 	req.Header.Add(constants.HTTPHeaderKeyUpdatedBy, pc.TenantId.String())
@@ -404,7 +405,7 @@ func (pc tmsClient) GetServices() ([]models.Service, error) {
 	// Create a new request using http
 	req, err := http.NewRequest(http.MethodGet, reqURL.String(), nil)
 	if err != nil {
-		return nil, errors.Wrap(err, " Error forming request")
+		return nil, errors.Wrap(err, "Error forming request")
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
@@ -432,7 +433,7 @@ func (pc tmsClient) RetrieveService(id uuid.UUID) (*models.ServiceDetail, error)
 	// Create a new request using http
 	req, err := http.NewRequest(http.MethodGet, reqURL.String(), nil)
 	if err != nil {
-		return nil, errors.Wrap(err, " Error forming request")
+		return nil, errors.Wrap(err, "Error forming request")
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
@@ -460,7 +461,7 @@ func (pc tmsClient) GetProducts(serviceOfferId uuid.UUID) ([]models.Product, err
 	// Create a new request using http
 	req, err := http.NewRequest(http.MethodGet, reqURL.String(), nil)
 	if err != nil {
-		return nil, errors.Wrap(err, " Error forming request")
+		return nil, errors.Wrap(err, "Error forming request")
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
@@ -488,7 +489,7 @@ func (pc tmsClient) GetServiceOffers() ([]models.ServiceOffer, error) {
 	// Create a new request using http
 	req, err := http.NewRequest(http.MethodGet, reqURL.String(), nil)
 	if err != nil {
-		return nil, errors.Wrap(err, " Error forming request")
+		return nil, errors.Wrap(err, "Error forming request")
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
@@ -515,13 +516,13 @@ func (pc tmsClient) CreateTenantTag(request *models.TagCreate) (*models.Tag, err
 
 	reqBytes, err := json.Marshal(request)
 	if err != nil {
-		return nil, errors.Wrap(err, " Error marshalling request")
+		return nil, errors.Wrap(err, "Error marshalling request")
 	}
 
 	// Create a new request using http
 	req, err := http.NewRequest(http.MethodPost, reqURL.String(), bytes.NewBuffer(reqBytes))
 	if err != nil {
-		return nil, errors.Wrap(err, " Error forming request")
+		return nil, errors.Wrap(err, "Error forming request")
 	}
 	req.Header.Add(constants.HTTPHeaderKeyContentType, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
@@ -551,7 +552,7 @@ func (pc tmsClient) GetTenantTags() (*models.Tags, error) {
 	// Create a new request using http
 	req, err := http.NewRequest(http.MethodGet, reqURL.String(), nil)
 	if err != nil {
-		return nil, errors.Wrap(err, " Error forming request")
+		return nil, errors.Wrap(err, "Error forming request")
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
@@ -570,6 +571,27 @@ func (pc tmsClient) GetTenantTags() (*models.Tags, error) {
 	return &getTagsRes, nil
 }
 
+func (pc tmsClient) DeleteTenantTag(tagId uuid.UUID) error {
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.TagApiEndpoint + "/" + tagId.String())
+	if err != nil {
+		return errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
+	}
+
+	// Create a new request using http
+	req, err := http.NewRequest(http.MethodDelete, reqURL.String(), nil)
+	if err != nil {
+		return errors.Wrap(err, "Error forming request")
+	}
+	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+
+	_, err = client.SendRequest(pc.Client, req)
+	if err != nil {
+		return errors.Wrap(err, "Error reading response body")
+	}
+
+	return nil
+}
+
 func (pc tmsClient) GetPlans(serviceOfferId uuid.UUID) ([]models.Plan, error) {
 	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceOfferApiEndpoint + "/" + serviceOfferId.String() +
 		constants.PlanApiEndpoint)
@@ -580,7 +602,7 @@ func (pc tmsClient) GetPlans(serviceOfferId uuid.UUID) ([]models.Plan, error) {
 	// Create a new request using http
 	req, err := http.NewRequest(http.MethodGet, reqURL.String(), nil)
 	if err != nil {
-		return nil, errors.Wrap(err, " Error forming request")
+		return nil, errors.Wrap(err, "Error forming request")
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
@@ -609,7 +631,7 @@ func (pc tmsClient) RetrievePlan(serviceOfferId, planId uuid.UUID) (*models.Plan
 	// Create a new request using http
 	req, err := http.NewRequest(http.MethodGet, reqURL.String(), nil)
 	if err != nil {
-		return nil, errors.Wrap(err, " Error forming request")
+		return nil, errors.Wrap(err, "Error forming request")
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)

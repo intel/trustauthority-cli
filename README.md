@@ -57,6 +57,9 @@ tenantctl update user role -u < user id > -r < Role (Tenant Admin/User) >
 ##### Delete User:
 tenantctl delete user -u < user id >
 
+##### Delete Tag:
+tenantctl delete tag -t < tag id >
+
 ##### Get Service Offers:
 tenantctl list serviceOffer
 
