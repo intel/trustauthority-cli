@@ -1,0 +1,78 @@
+name: OnMergeRelease
+
+on:
+  push:
+    branches:
+      - 'main'
+      - 'release/*'
+    tags:
+      - '**'
+
+jobs:
+  build-test:
+    runs-on: [ self-hosted ]
+    env:
+      http_proxy: ${{ secrets.HTTP_PROXY }}
+      https_proxy: ${{ secrets.HTTPS_PROXY }}
+      no_proxy: ${{ secrets.NO_PROXY }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Style Checker
+        run: |
+          if [ $(make go-fmt | tail -n 1 | grep gofmt | wc -l)  -eq 0 ]; then
+             exit 0
+          fi
+
+      - name: Unit Test Coverage
+        run: |
+          make test-coverage
+          COVERAGE=$(make test-coverage | grep 'total' | awk '{print $3}' | awk -F. '{print $1}')
+          echo "Unit test coverage is - $COVERAGE%"
+          if [[ $COVERAGE -lt 75 ]]; then
+            echo "Unit test coverage must be above 75% "
+            exit 1
+          fi
+
+  snyk-scan:
+    runs-on: [ self-hosted ]
+    env:
+      http_proxy: ${{ secrets.HTTP_PROXY }}
+      https_proxy: ${{ secrets.HTTPS_PROXY }}
+      no_proxy: ${{ secrets.NO_PROXY }}
+    needs: [ "build-test" ]
+    steps:
+
+      - name: Snyk Scan
+        run: |
+          snyk config set endpoint=${{ secrets.SNYK_URL }}
+          snyk config set api=${{ secrets.SYNK_API_TOKEN }}
+          snyk config set org=${{ secrets.ORG_NAME }}
+          snyk auth ${{ secrets.SNYK_AUTH_TOKEN }}
+          snyk test --insecure --all-projects --json-file-output=snyc-scan.json
+
+  artifact-installer:
+    runs-on: [ self-hosted ]
+    env:
+      http_proxy: ${{ secrets.HTTP_PROXY }}
+      https_proxy: ${{ secrets.HTTPS_PROXY }}
+      no_proxy: ${{ secrets.NO_PROXY }}
+      ARTIFACTORY: ${{ secrets.ARTIFACTORY }}
+      ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
+      ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD}}
+      PULL_KEY_FROM_ARTIFACTORY: true
+    needs: [ "build-test" ]
+    steps:
+      - name: Push Installer
+        run: make push-artifact
+
+  clenup-images-bins:
+    runs-on: [ self-hosted ]
+    needs: [ "build-test", "snyk-scan", "artifact-installer" ]
+    steps:
+      - name: Clean unused\untagged docker images.
+        run: docker rmi $(docker images --filter "dangling=true" -q --no-trunc) || true
+      - name: Clean generated binaries.
+        run: make clean

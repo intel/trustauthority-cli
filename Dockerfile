@@ -8,6 +8,4 @@ ARG TAAS_VERSION
 ARG TAAS_COMMIT
 WORKDIR /app
 COPY . .
-RUN BUILDDATE=$(TZ=UTC date +%Y-%m-%dT%H:%M:%S%z); \
-        env GOOS=linux GOSUMDB=off go test ./... -coverprofile=cover.out; \
-        env GOOS=linux GOSUMDB=off go tool cover -func=cover.out
+RUN env GOOS=linux GOSUMDB=off go test ./...
