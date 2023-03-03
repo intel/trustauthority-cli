@@ -52,10 +52,11 @@ for directory in $BIN_PATH $CONFIG_PATH $LOG_PATH; do
     exit 1
   fi
   chown -R $SERVICE_USERNAME:$SERVICE_USERNAME $directory
-  chmod 700 $directory
 done
 
-chmod 740 $LOG_PATH
+chmod 700 $BIN_PATH
+chmod 600 $LOG_PATH
+chmod 600 $CONFIG_PATH
 
 cp $COMPONENT_NAME $BIN_PATH/ && chown $SERVICE_USERNAME:$SERVICE_USERNAME $BIN_PATH/*
 chmod 700 $BIN_PATH/*
