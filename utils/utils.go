@@ -53,9 +53,23 @@ func ReadAnswerFileToEnv(filename string) error {
 					return errors.Wrap(err, "Failed to set ENV")
 				}
 			}
+			matched := isValid(key)
+			if !matched {
+				return errors.Errorf("Invalid ENV variable: %s", key)
+			}
 		}
 	}
 	return nil
+}
+func isValid(lookup string) bool {
+	envMap := map[string]bool{
+		"AMBER_BASE_URL": true,
+		"TENANT_ID":      true,
+	}
+	if _, ok := envMap[lookup]; ok {
+		return true
+	}
+	return false
 }
 
 //SetUpLogs set the log output and the log level
