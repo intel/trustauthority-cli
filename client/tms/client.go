@@ -18,12 +18,12 @@ import (
 )
 
 type TmsClient interface {
-	CreateApiClient(request *models.CreateApiClient) (*models.ApiClientDetail, error)
+	CreateApiClient(request *models.CreateApiClient) (*models.ApiClient, error)
 	UpdateApiClient(request *models.UpdateApiClient, apiClientid uuid.UUID) (*models.ApiClient, error)
 	GetApiClient(serviceId uuid.UUID) ([]models.ApiClient, error)
 	RetrieveApiClient(serviceId uuid.UUID, apiClientId uuid.UUID) (*models.ApiClientDetail, error)
 	GetApiClientPolicies(serviceId, apiClientId uuid.UUID) (*models.ApiClientPolicies, error)
-	GetApiClientTagValues(serviceId, apiClientId uuid.UUID) (*models.ApiClientTagsValues, error)
+	GetApiClientTagValues(serviceId, apiClientId uuid.UUID) (*models.ApiClientTags, error)
 	DeleteApiClient(serviceId, apiClientId uuid.UUID) error
 
 	GetServices() ([]models.Service, error)
@@ -63,7 +63,7 @@ func NewTmsClient(client *http.Client, tmsURL *url.URL, tenantId uuid.UUID, apiK
 	}
 }
 
-func (pc tmsClient) CreateApiClient(request *models.CreateApiClient) (*models.ApiClientDetail, error) {
+func (pc tmsClient) CreateApiClient(request *models.CreateApiClient) (*models.ApiClient, error) {
 	reqBytes, err := json.Marshal(request)
 	if err != nil {
 		return nil, errors.Wrap(err, " Error marshalling request")
@@ -91,8 +91,10 @@ func (pc tmsClient) CreateApiClient(request *models.CreateApiClient) (*models.Ap
 	}
 
 	// Parse response for validation
-	var apiClientDetail models.ApiClientDetail
-	err = json.Unmarshal(response, &apiClientDetail)
+	var apiClientDetail models.ApiClient
+	dec := json.NewDecoder(bytes.NewReader(response))
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&apiClientDetail)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
@@ -128,7 +130,9 @@ func (pc tmsClient) UpdateApiClient(request *models.UpdateApiClient, apiClientId
 
 	// Parse response for validation
 	var apiClientDetail models.ApiClient
-	err = json.Unmarshal(response, &apiClientDetail)
+	dec := json.NewDecoder(bytes.NewReader(response))
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&apiClientDetail)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
@@ -157,7 +161,9 @@ func (pc tmsClient) GetApiClient(serviceId uuid.UUID) ([]models.ApiClient, error
 
 	// Parse response for validation
 	var apiClients []models.ApiClient
-	err = json.Unmarshal(response, &apiClients)
+	dec := json.NewDecoder(bytes.NewReader(response))
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&apiClients)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
@@ -186,7 +192,9 @@ func (pc tmsClient) RetrieveApiClient(serviceId uuid.UUID, apiClientId uuid.UUID
 
 	// Parse response for validation
 	var apiClients models.ApiClientDetail
-	err = json.Unmarshal(response, &apiClients)
+	dec := json.NewDecoder(bytes.NewReader(response))
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&apiClients)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
@@ -215,14 +223,16 @@ func (pc tmsClient) GetApiClientPolicies(serviceId, apiClientId uuid.UUID) (*mod
 
 	// Parse response for validation
 	var apiClientPolicies models.ApiClientPolicies
-	err = json.Unmarshal(response, &apiClientPolicies)
+	dec := json.NewDecoder(bytes.NewReader(response))
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&apiClientPolicies)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
 	return &apiClientPolicies, nil
 }
 
-func (pc tmsClient) GetApiClientTagValues(serviceId, apiClientId uuid.UUID) (*models.ApiClientTagsValues, error) {
+func (pc tmsClient) GetApiClientTagValues(serviceId, apiClientId uuid.UUID) (*models.ApiClientTags, error) {
 	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceApiEndpoint + "/" +
 		serviceId.String() + constants.ApiClientResourceEndpoint + "/" + apiClientId.String() + constants.TagApiEndpoint)
 	if err != nil {
@@ -243,8 +253,10 @@ func (pc tmsClient) GetApiClientTagValues(serviceId, apiClientId uuid.UUID) (*mo
 	}
 
 	// Parse response for validation
-	var apiClientTagsValues models.ApiClientTagsValues
-	err = json.Unmarshal(response, &apiClientTagsValues)
+	var apiClientTagsValues models.ApiClientTags
+	dec := json.NewDecoder(bytes.NewReader(response))
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&apiClientTagsValues)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
@@ -269,7 +281,7 @@ func (pc tmsClient) DeleteApiClient(serviceId, apiClientId uuid.UUID) error {
 
 	_, err = client.SendRequest(pc.Client, req)
 	if err != nil {
-		return errors.Wrap(err, "Error in response body")
+		return errors.Wrap(err, "Error in response")
 	}
 
 	return nil
@@ -303,7 +315,9 @@ func (pc tmsClient) CreateUser(user *models.CreateTenantUser) (*models.TenantUse
 
 	// Parse response for validation
 	var createUserRes models.TenantUser
-	err = json.Unmarshal(response, &createUserRes)
+	dec := json.NewDecoder(bytes.NewReader(response))
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&createUserRes)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
@@ -339,7 +353,9 @@ func (pc tmsClient) UpdateTenantUserRole(request *models.UpdateTenantUserRoles) 
 
 	// Parse response for validation
 	var updateUserRes models.TenantUser
-	err = json.Unmarshal(response, &updateUserRes)
+	dec := json.NewDecoder(bytes.NewReader(response))
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&updateUserRes)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
@@ -367,7 +383,9 @@ func (pc tmsClient) GetUsers() ([]models.TenantUser, error) {
 
 	// Parse response for validation
 	var searchUserRes []models.TenantUser
-	err = json.Unmarshal(response, &searchUserRes)
+	dec := json.NewDecoder(bytes.NewReader(response))
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&searchUserRes)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
@@ -417,7 +435,9 @@ func (pc tmsClient) GetServices() ([]models.Service, error) {
 
 	// Parse response for validation
 	var searchServiceRes []models.Service
-	err = json.Unmarshal(response, &searchServiceRes)
+	dec := json.NewDecoder(bytes.NewReader(response))
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&searchServiceRes)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
@@ -445,7 +465,9 @@ func (pc tmsClient) RetrieveService(id uuid.UUID) (*models.ServiceDetail, error)
 
 	// Parse response for validation
 	var retrieveServiceRes *models.ServiceDetail
-	err = json.Unmarshal(response, &retrieveServiceRes)
+	dec := json.NewDecoder(bytes.NewReader(response))
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&retrieveServiceRes)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
@@ -472,12 +494,14 @@ func (pc tmsClient) GetProducts(serviceOfferId uuid.UUID) ([]models.Product, err
 	}
 
 	// Parse response for validation
-	var searchServiceRes []models.Product
-	err = json.Unmarshal(response, &searchServiceRes)
+	var searchProductsRes []models.Product
+	dec := json.NewDecoder(bytes.NewReader(response))
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&searchProductsRes)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
-	return searchServiceRes, nil
+	return searchProductsRes, nil
 }
 
 func (pc tmsClient) GetServiceOffers() ([]models.ServiceOffer, error) {
@@ -500,12 +524,14 @@ func (pc tmsClient) GetServiceOffers() ([]models.ServiceOffer, error) {
 	}
 
 	// Parse response for validation
-	var searchServiceRes []models.ServiceOffer
-	err = json.Unmarshal(response, &searchServiceRes)
+	var searchServiceOfferRes []models.ServiceOffer
+	dec := json.NewDecoder(bytes.NewReader(response))
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&searchServiceOfferRes)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
-	return searchServiceRes, nil
+	return searchServiceOfferRes, nil
 }
 
 func (pc tmsClient) CreateTenantTag(request *models.TagCreate) (*models.Tag, error) {
@@ -536,7 +562,9 @@ func (pc tmsClient) CreateTenantTag(request *models.TagCreate) (*models.Tag, err
 
 	// Parse response for validation
 	var createTagRes models.Tag
-	err = json.Unmarshal(response, &createTagRes)
+	dec := json.NewDecoder(bytes.NewReader(response))
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&createTagRes)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
@@ -564,7 +592,9 @@ func (pc tmsClient) GetTenantTags() (*models.Tags, error) {
 
 	// Parse response for validation
 	var getTagsRes models.Tags
-	err = json.Unmarshal(response, &getTagsRes)
+	dec := json.NewDecoder(bytes.NewReader(response))
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&getTagsRes)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
@@ -614,7 +644,9 @@ func (pc tmsClient) GetPlans(serviceOfferId uuid.UUID) ([]models.Plan, error) {
 
 	// Parse response for validation
 	var searchPlanRes []models.Plan
-	err = json.Unmarshal(response, &searchPlanRes)
+	dec := json.NewDecoder(bytes.NewReader(response))
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&searchPlanRes)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
@@ -643,7 +675,9 @@ func (pc tmsClient) RetrievePlan(serviceOfferId, planId uuid.UUID) (*models.Plan
 
 	// Parse response for validation
 	var retrievePlanRes models.PlanProducts
-	err = json.Unmarshal(response, &retrievePlanRes)
+	dec := json.NewDecoder(bytes.NewReader(response))
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&retrievePlanRes)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}

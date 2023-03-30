@@ -36,15 +36,10 @@ var (
 	user = `{
         "id": "23011406-6f3b-4431-9363-4e1af9af6b13",
         "email": "arijitgh@gmail.com",
-        "tenant_roles": [
-            {
-                "tenant_id": "89120415-6fbc-41c7-b9f2-3b4ba10e87c9",
-                "role": {
-                        "id": "66ec2e33-8cd3-42b1-8963-c7765205446e",
-                        "name": "Tenant Admin"
-                    }
-            }
-        ],
+		"role": {
+			"id": "66ec2e33-8cd3-42b1-8963-c7765205446e",
+			"name": "Tenant Admin"
+		},
         "active": false,
         "created_at": "2022-06-19T20:02:55.157679Z"
     }`
@@ -82,13 +77,15 @@ var (
         "id": "5cfb6af4-59ac-4a14-8b83-bd65b1e11777",
         "tenant_id": "89120415-6fbc-41c7-b9f2-3b4ba10e87c9",
         "service_offer_id": "ae3d7720-08ab-421c-b8d4-1725c358f03e",
-        "description": "Test Service"
+        "name": "Test Service"
     }]`
 	service = `{
         "id": "5cfb6af4-59ac-4a14-8b83-bd65b1e11777",
-        "tenant_id": "89120415-6fbc-41c7-b9f2-3b4ba10e87c9",
         "service_offer_id": "ae3d7720-08ab-421c-b8d4-1725c358f03e",
-        "description": "Test Service"
+		"service_offer_name": "Test Service Offer",
+		"plan_id": "bc3d7720-08ab-421c-b8d4-1725c358f03e",
+		"plan_name": "Test Plan",
+        "name": "Test Service"
     }`
 
 	apiClientList = `[
@@ -97,10 +94,10 @@ var (
         "service_id": "5cfb6af4-59ac-4a14-8b83-bd65b1e11777",
         "product_id": "e169d34f-58ce-4717-9b3a-5c66abd33417",
         "status": "",
-        "description": "Test apiClient"
+        "name": "Test apiClient"
     }]`
 
-	apiClient = `{
+	apiClientDetails = `{
         "id": "3780cc39-cce2-4ec2-a47f-03e55b12e259",
         "service_id": "5cfb6af4-59ac-4a14-8b83-bd65b1e11777",
         "product_id": "e169d34f-58ce-4717-9b3a-5c66abd33417",
@@ -110,6 +107,14 @@ var (
 			"9dca50986c414304a4b1ffe202dcf2b0",
 			"996a9a6e67814f1784eadb5405bdabf3"
 		]
+    }`
+
+	apiClient = `{
+        "id": "3780cc39-cce2-4ec2-a47f-03e55b12e259",
+        "service_id": "5cfb6af4-59ac-4a14-8b83-bd65b1e11777",
+        "product_id": "e169d34f-58ce-4717-9b3a-5c66abd33417",
+        "status": "",
+        "name": "Test apiClient"
     }`
 
 	productList = `[
@@ -145,16 +150,16 @@ var (
 	}`
 
 	tagsValues = `{
-	    "tags_values": [
+	    "tags": [
          {
-            "id": "f31aa1bc-99a1-4706-91ff-218e12c49e00",
-            "name": "Workload",
-            "value": "AI"
+            "key": "Workload",
+            "value": "AI",
+			"predefined": true
 		 },
          {
-            "id": "f31aa1bc-99a1-4706-91ff-218e12c49e00",
-            "name": "Workload",
-            "value": "EXE Workload"
+            "key": "Workload",
+            "value": "EXE Workload",
+			"predefined": false
         }
     ]}`
 
@@ -337,7 +342,7 @@ func MockServer(t *testing.T) *httptest.Server {
 	r.HandleFunc(apiClientIdExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(apiClient))
+		_, err := w.Write([]byte(apiClientDetails))
 		if err != nil {
 			t.Log("test/test_utility:mockServer(): Unable to write data")
 		}
@@ -346,7 +351,7 @@ func MockServer(t *testing.T) *httptest.Server {
 	r.HandleFunc(apiClientIdExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(apiClient))
+		_, err := w.Write(nil)
 		if err != nil {
 			t.Log("test/test_utility:mockServer(): Unable to write data")
 		}

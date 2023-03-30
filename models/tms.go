@@ -26,15 +26,15 @@ type (
 	}
 
 	Role struct {
-		ID         uuid.UUID                   `json:"id"`
-		Name       string                      `json:"name"`
-		Permission map[string]PermissionStruct `json:"permissions,omitempty"`
-		Scope      string                      `json:"scope,omitempty"`
+		ID         uuid.UUID                 `json:"id"`
+		Name       string                    `json:"name"`
+		Permission map[string]PermissionAttr `json:"permissions,omitempty"`
+		Scope      string                    `json:"scope,omitempty"`
 	}
 
-	PermissionStruct struct {
-		Grants []string               `json:"grants"`
-		Data   map[string]interface{} `json:"data,omitempty"`
+	PermissionAttr struct {
+		Grants []string            `json:"grants"`
+		Data   map[string][]string `json:"data,omitempty"`
 	}
 
 	TenantRoles struct {
@@ -146,14 +146,15 @@ type (
 	}
 
 	ServiceDetail struct {
-		ID               uuid.UUID `json:"id"`
-		ServiceOfferId   uuid.UUID `json:"service_offer_id"`
-		ServiceOfferName string    `json:"service_offer_name"`
-		Name             string    `json:"name"`
-		CreatedAt        time.Time `json:"created_at"`
-		Active           bool      `json:"active"`
-		PlanId           uuid.UUID `json:"plan_id"`
-		PlanName         string    `json:"plan_name"`
+		ID                       uuid.UUID `json:"id"`
+		ServiceOfferId           uuid.UUID `json:"service_offer_id"`
+		ServiceOfferName         string    `json:"service_offer_name"`
+		Name                     string    `json:"name"`
+		CreatedAt                time.Time `json:"created_at"`
+		Active                   bool      `json:"active"`
+		PlanId                   uuid.UUID `json:"plan_id"`
+		PlanName                 string    `json:"plan_name"`
+		ServiceOfferPlanSourceId uuid.UUID `json:"-"`
 	}
 
 	// ApiClient - API Client details response payload
@@ -220,7 +221,7 @@ type (
 		Predefined bool   `json:"predefined"`
 	}
 
-	ApiClientTagsValues struct {
+	ApiClientTags struct {
 		TagsValues []ApiClientTagValue `json:"tags"`
 	}
 

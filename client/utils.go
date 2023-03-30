@@ -21,13 +21,6 @@ func SendRequest(client *http.Client, req *http.Request) ([]byte, error) {
 		return nil, err
 	}
 
-	defer func() {
-		derr := resp.Body.Close()
-		if derr != nil {
-			log.WithError(derr).Error("Error closing response body")
-		}
-	}()
-
 	if resp != nil {
 		defer func() {
 			err := resp.Body.Close()

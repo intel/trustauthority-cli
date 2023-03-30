@@ -70,7 +70,10 @@ func (pc pmsClient) CreatePolicy(request *models.PolicyRequest) (*models.PolicyR
 
 	// Parse response
 	var policyRes models.PolicyResponse
-	err = json.Unmarshal(response, &policyRes)
+	dec := json.NewDecoder(bytes.NewReader(response))
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&policyRes)
+
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
@@ -123,7 +126,9 @@ func (pc pmsClient) GetPolicy(policyID uuid.UUID) (*models.PolicyResponse, error
 
 	// Parse response
 	var policyRes models.PolicyResponse
-	err = json.Unmarshal(response, &policyRes)
+	dec := json.NewDecoder(bytes.NewReader(response))
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&policyRes)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling policy response")
 	}
@@ -152,7 +157,9 @@ func (pc pmsClient) SearchPolicy() ([]models.PolicyResponse, error) {
 
 	// Parse response
 	var policyRes []models.PolicyResponse
-	err = json.Unmarshal(response, &policyRes)
+	dec := json.NewDecoder(bytes.NewReader(response))
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&policyRes)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
@@ -188,7 +195,9 @@ func (pc pmsClient) UpdatePolicy(request *models.PolicyUpdateRequest) (*models.P
 
 	// Parse response
 	var policyRes models.PolicyResponse
-	err = json.Unmarshal(response, &policyRes)
+	dec := json.NewDecoder(bytes.NewReader(response))
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&policyRes)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}

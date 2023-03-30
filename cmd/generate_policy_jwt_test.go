@@ -51,7 +51,7 @@ func TestGeneratePolicyJwtCmd(t *testing.T) {
 		},
 		{
 			args: []string{constants.CreateCmd, constants.PolicyJwtCmd, "-f", "../test/resources/rego-policy.txt",
-				"-p", "../test/resources/sample-policy-signing-key.txt", "-s"},
+				"-p", keyFile, "-s"},
 			wantErr: true,
 		},
 		{
