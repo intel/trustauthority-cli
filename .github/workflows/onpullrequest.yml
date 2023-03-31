@@ -50,7 +50,6 @@ jobs:
           snyk auth ${{ secrets.SNYK_AUTH_TOKEN }}
           snyk test --insecure --all-projects --json-file-output=snyc-scan.json
 
-
   clenup-images-bins:
     runs-on: [ self-hosted ]
     needs: [ "build-test", "snyk-scan" ]

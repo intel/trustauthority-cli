@@ -1,6 +1,6 @@
 module intel/amber/tac/v1
 
-go 1.18
+go 1.20
 
 require (
 	github.com/fatih/set v0.2.1

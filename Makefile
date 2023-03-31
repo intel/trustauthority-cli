@@ -12,9 +12,16 @@ endif
 
 tenantctl:
 	mkdir -p out/
-	env GOOS=linux GOSUMDB=off GOPROXY=direct go mod tidy && env GOOS=linux GOSUMDB=off GOPROXY=direct go build \
-    -ldflags "-X intel/amber/tac/v1/utils.BuildDate=${BUILDDATE} -X intel/amber/tac/v1/utils.Version=${VERSION} -X intel/amber/tac/v1/utils.GitHash=${GITCOMMIT}" \
-    -o out/tenantctl
+	DOCKER_BUILDKIT=1 docker build \
+		${DOCKER_PROXY_FLAGS} \
+		-f Dockerfile \
+		--target builder  \
+		--build-arg VERSION=${VERSION} \
+		--build-arg COMMIT=${GITCOMMIT} \
+		-t tenantcli-build:${VERSION} \
+		.
+		docker run --rm -v `pwd`/out:/tmp/ tenantcli-build:${VERSION}
+		docker rmi -f tenantcli-build:${VERSION}
 
 installer: tenantctl
 	mkdir -p out/installer
