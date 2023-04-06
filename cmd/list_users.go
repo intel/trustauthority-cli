@@ -8,7 +8,6 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/client/tms"
@@ -58,7 +57,7 @@ func getUsers(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
-	tmsClient := tms.NewTmsClient(client, tmsUrl, uuid.Nil, apiKey)
+	tmsClient := tms.NewTmsClient(client, tmsUrl, apiKey)
 
 	var responseBytes []byte
 	response, err := tmsClient.GetUsers()

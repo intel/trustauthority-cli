@@ -64,7 +64,6 @@ func ReadAnswerFileToEnv(filename string) error {
 func isValidEnvVariable(lookup string) bool {
 	envMap := map[string]bool{
 		"AMBER_BASE_URL": true,
-		"TENANT_ID":      true,
 	}
 	if _, ok := envMap[lookup]; ok {
 		return true

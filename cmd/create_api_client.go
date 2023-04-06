@@ -43,7 +43,6 @@ var createApiClientCmd = &cobra.Command{
 func init() {
 	createCmd.AddCommand(createApiClientCmd)
 
-	createApiClientCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the api client needs to be created")
 	createApiClientCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the api client needs to be created")
 	createApiClientCmd.Flags().StringP(constants.ProductIdParamName, "p", "", "Id of the Amber Product for which the api client needs to be created")
 	createApiClientCmd.Flags().StringP(constants.ApiClientNameParamName, "n", "", "Name of the api client that needs to be created")
@@ -68,20 +67,6 @@ func createApiClient(cmd *cobra.Command) (string, error) {
 	tmsUrl, err := url.Parse(configValues.AmberBaseUrl + constants.TmsBaseUrl)
 	if err != nil {
 		return "", err
-	}
-
-	tenantIdString, err := cmd.Flags().GetString(constants.TenantIdParamName)
-	if err != nil {
-		return "", err
-	}
-
-	if tenantIdString == "" {
-		tenantIdString = configValues.TenantId
-	}
-
-	tenantId, err := uuid.Parse(tenantIdString)
-	if err != nil {
-		return "", errors.Wrap(err, "Invalid tenant id provided")
 	}
 
 	serviceIdString, err := cmd.Flags().GetString(constants.ServiceIdParamName)
@@ -142,7 +127,6 @@ func createApiClient(cmd *cobra.Command) (string, error) {
 		Name:         apiClientName,
 		PolicyIds:    policyIds,
 		TagIdsValues: tagKeyValues,
-		CreatedBy:    tenantId,
 		ServiceId:    serviceId,
 		Status:       constants.ApiClientStatusActive,
 	}
@@ -151,7 +135,7 @@ func createApiClient(cmd *cobra.Command) (string, error) {
 		return "", errors.Wrap(err, "Invalid api client name provided")
 	}
 
-	tmsClient := tms.NewTmsClient(client, tmsUrl, tenantId, apiKey)
+	tmsClient := tms.NewTmsClient(client, tmsUrl, apiKey)
 	response, err := tmsClient.CreateApiClient(&apiClientInfo)
 	if err != nil {
 		return "", err

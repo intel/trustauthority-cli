@@ -8,7 +8,6 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"intel/amber/tac/v1/client/tms"
@@ -52,7 +51,7 @@ func getTag(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
-	tmsClient := tms.NewTmsClient(client, tmsUrl, uuid.Nil, apiKey)
+	tmsClient := tms.NewTmsClient(client, tmsUrl, apiKey)
 
 	response, err := tmsClient.GetTenantTags()
 	if err != nil {

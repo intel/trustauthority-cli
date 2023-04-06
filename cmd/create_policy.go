@@ -119,7 +119,7 @@ func createPolicy(cmd *cobra.Command) (string, error) {
 		AttestationType: attestationType,
 	}}
 
-	pmsClient := pms.NewPmsClient(client, pmsUrl, uuid.Nil, apiKey)
+	pmsClient := pms.NewPmsClient(client, pmsUrl, apiKey)
 	response, err := pmsClient.CreatePolicy(&policyCreateReq)
 	if err != nil {
 		return "", err

@@ -24,7 +24,6 @@ const (
 
 //Command and parameter names
 const (
-	TenantIdParamName        = "tenant-id"
 	UserIdParamName          = "user-id"
 	ServiceIdParamName       = "service-id"
 	ServiceOfferIdParamName  = "service-offer-id"

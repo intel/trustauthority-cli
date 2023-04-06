@@ -71,7 +71,7 @@ func deleteTag(cmd *cobra.Command) (string, error) {
 		return "", errors.Wrap(err, "Invalid tag id provided")
 	}
 
-	tmsClient := tms.NewTmsClient(client, tmsUrl, uuid.Nil, apiKey)
+	tmsClient := tms.NewTmsClient(client, tmsUrl, apiKey)
 
 	err = tmsClient.DeleteTenantTag(tagId)
 	if err != nil {

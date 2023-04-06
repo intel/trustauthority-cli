@@ -105,7 +105,7 @@ func updatePolicy(cmd *cobra.Command) (string, error) {
 		policyUpdateReq.Policy = string(policyBytes)
 	}
 
-	pmsClient := pms.NewPmsClient(client, pmsUrl, uuid.Nil, apiKey)
+	pmsClient := pms.NewPmsClient(client, pmsUrl, apiKey)
 	response, err := pmsClient.UpdatePolicy(&policyUpdateReq)
 	if err != nil {
 		return "", err

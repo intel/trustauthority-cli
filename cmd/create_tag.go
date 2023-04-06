@@ -8,8 +8,6 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/google/uuid"
-	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"intel/amber/tac/v1/client/tms"
@@ -40,7 +38,6 @@ func init() {
 	createCmd.AddCommand(createTagCmd)
 
 	createTagCmd.Flags().StringP(constants.TagNameParamName, "n", "", "Name of the tag that needs to be created")
-	createTagCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Tenant ID under which the tag needs to be created")
 	createTagCmd.MarkFlagRequired(constants.TagNameParamName)
 }
 
@@ -63,25 +60,10 @@ func createTag(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
-	tenantIdString, err := cmd.Flags().GetString(constants.TenantIdParamName)
-	if err != nil {
-		return "", err
-	}
-
-	if tenantIdString == "" {
-		tenantIdString = configValues.TenantId
-	}
-
-	tenantId, err := uuid.Parse(tenantIdString)
-	if err != nil {
-		return "", errors.Wrap(err, "Invalid tenant id provided")
-	}
-
-	tmsClient := tms.NewTmsClient(client, tmsUrl, tenantId, apiKey)
+	tmsClient := tms.NewTmsClient(client, tmsUrl, apiKey)
 
 	createTagReq := &models.TagCreate{
-		Name:     tagName,
-		TenantId: tenantId,
+		Name: tagName,
 	}
 	response, err := tmsClient.CreateTenantTag(createTagReq)
 	if err != nil {

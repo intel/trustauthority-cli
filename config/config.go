@@ -6,7 +6,6 @@
 package config
 
 import (
-	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -21,7 +20,6 @@ import (
 
 type Configuration struct {
 	AmberBaseUrl      string `yaml:"amber-base-url" mapstructure:"amber-base-url"`
-	TenantId          string `yaml:"tenant-id" mapstructure:"tenant-id"`
 	LogLevel          string `yaml:"log-level" mapstructure:"log-level"`
 	HTTPClientTimeout int    `yaml:"http-client-timeout" mapstructure:"http-client-timeout"`
 }
@@ -109,17 +107,6 @@ func SetupConfig(envFilePath string) error {
 	_, err = url.Parse(configValues.AmberBaseUrl)
 	if err != nil {
 		return errors.Wrap(err, "Invalid Amber Base URL")
-	}
-
-	tenantId, err := uuid.Parse(viper.GetString(constants.TenantId))
-	if err != nil {
-		return errors.Wrap(err, "Invalid Tenant Id provided")
-	}
-
-	if tenantId.String() == "" {
-		return errors.New("Tenant Id needs to be provided in configuration")
-	} else {
-		configValues.TenantId = tenantId.String()
 	}
 
 	logLevel, err := log.ParseLevel(viper.GetString(constants.Loglevel))

@@ -63,7 +63,7 @@ func getPolicies(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
-	pmsClient := pms.NewPmsClient(client, pmsUrl, uuid.Nil, apiKey)
+	pmsClient := pms.NewPmsClient(client, pmsUrl, apiKey)
 
 	var responseBytes []byte
 	if policyIdString == "" {

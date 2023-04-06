@@ -464,7 +464,6 @@ func SetupMockConfiguration(serverUrl string, configFile *os.File) *config.Confi
 
 	c := &config.Configuration{
 		AmberBaseUrl: serverUrl,
-		TenantId:     "f04971b7-fb41-4a9e-a06e-4bf6e71f98b3",
 	}
 
 	fileInfo, _ := os.Stat(configFile.Name())

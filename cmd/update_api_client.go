@@ -42,7 +42,6 @@ var updateApiClientCmd = &cobra.Command{
 func init() {
 	updateCmd.AddCommand(updateApiClientCmd)
 
-	updateApiClientCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the api client needs to be updated")
 	updateApiClientCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the api client needs to be updated")
 	updateApiClientCmd.Flags().StringP(constants.ProductIdParamName, "p", "", "Id of the Amber Product for which the api client needs to be updated")
 	updateApiClientCmd.Flags().StringP(constants.ApiClientNameParamName, "n", "", "Description of the api client that needs to be updated")
@@ -70,20 +69,6 @@ func updateApiClient(cmd *cobra.Command) (string, error) {
 	tmsUrl, err := url.Parse(configValues.AmberBaseUrl + constants.TmsBaseUrl)
 	if err != nil {
 		return "", err
-	}
-
-	tenantIdString, err := cmd.Flags().GetString(constants.TenantIdParamName)
-	if err != nil {
-		return "", err
-	}
-
-	if tenantIdString == "" {
-		tenantIdString = configValues.TenantId
-	}
-
-	tenantId, err := uuid.Parse(tenantIdString)
-	if err != nil {
-		return "", errors.Wrap(err, "Invalid tenant id provided")
 	}
 
 	serviceIdString, err := cmd.Flags().GetString(constants.ServiceIdParamName)
@@ -167,7 +152,7 @@ func updateApiClient(cmd *cobra.Command) (string, error) {
 		return "", errors.Wrap(err, "Invalid api client name provided")
 	}
 
-	tmsClient := tms.NewTmsClient(client, tmsUrl, tenantId, apiKey)
+	tmsClient := tms.NewTmsClient(client, tmsUrl, apiKey)
 	response, err := tmsClient.UpdateApiClient(&apiClientInfo, apiClientId)
 	if err != nil {
 		return "", err

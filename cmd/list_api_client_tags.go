@@ -77,7 +77,7 @@ func getApiClientTagsAndValues(cmd *cobra.Command) (string, error) {
 		return "", errors.Wrap(err, "Invalid apiClient id provided")
 	}
 
-	tmsClient := tms.NewTmsClient(client, tmsUrl, uuid.Nil, apiKey)
+	tmsClient := tms.NewTmsClient(client, tmsUrl, apiKey)
 	response, err := tmsClient.GetApiClientTagValues(serviceId, apiClientId)
 	if err != nil {
 		return "", err

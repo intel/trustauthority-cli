@@ -23,13 +23,21 @@ func TestListPoliciesCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args:    []string{constants.ListCmd, constants.PolicyCmd},
-			wantErr: false,
+			args:        []string{constants.ListCmd, constants.PolicyCmd},
+			wantErr:     false,
+			description: "Get all policies under a tenant",
 		},
 		{
 			args: []string{constants.ListCmd, constants.PolicyCmd, "-p",
 				"e48dabc5-9608-4ff3-aaed-f25909ab9de1"},
-			wantErr: false,
+			wantErr:     false,
+			description: "Retrieve a policy under a tenant",
+		},
+		{
+			args: []string{constants.ListCmd, constants.PolicyCmd, "-p",
+				"invalid policy id"},
+			wantErr:     true,
+			description: "Provide invalid policy id",
 		},
 	}
 

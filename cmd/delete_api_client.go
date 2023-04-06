@@ -39,7 +39,6 @@ var deleteApiClientCmd = &cobra.Command{
 func init() {
 	deleteCmd.AddCommand(deleteApiClientCmd)
 
-	deleteApiClientCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the api client needs to be created")
 	deleteApiClientCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the api client needs to be created")
 	deleteApiClientCmd.Flags().StringP(constants.ApiClientIdParamName, "c", "", "Id of the api client which needs to be fetched (optional)")
 	deleteApiClientCmd.MarkFlagRequired(constants.ServiceIdParamName)
@@ -60,20 +59,6 @@ func deleteApiClient(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
-	tenantIdString, err := cmd.Flags().GetString(constants.TenantIdParamName)
-	if err != nil {
-		return "", err
-	}
-
-	if tenantIdString == "" {
-		tenantIdString = configValues.TenantId
-	}
-
-	tenantId, err := uuid.Parse(tenantIdString)
-	if err != nil {
-		return "", errors.Wrap(err, "Invalid tenant id provided")
-	}
-
 	serviceIdString, err := cmd.Flags().GetString(constants.ServiceIdParamName)
 	if err != nil {
 		return "", err
@@ -89,7 +74,7 @@ func deleteApiClient(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
-	tmsClient := tms.NewTmsClient(client, tmsUrl, tenantId, apiKey)
+	tmsClient := tms.NewTmsClient(client, tmsUrl, apiKey)
 
 	apiClientId, err := uuid.Parse(apiClientIdString)
 	if err != nil {

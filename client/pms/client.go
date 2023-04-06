@@ -28,18 +28,16 @@ type PmsClient interface {
 
 //Client Details for PMS client
 type pmsClient struct {
-	Client   *http.Client
-	BaseURL  *url.URL
-	TenantId uuid.UUID
-	ApiKey   string
+	Client  *http.Client
+	BaseURL *url.URL
+	ApiKey  string
 }
 
-func NewPmsClient(client *http.Client, pmsURL *url.URL, tenantId uuid.UUID, apiKey string) PmsClient {
+func NewPmsClient(client *http.Client, pmsURL *url.URL, apiKey string) PmsClient {
 	return &pmsClient{
-		Client:   client,
-		BaseURL:  pmsURL,
-		TenantId: tenantId,
-		ApiKey:   apiKey,
+		Client:  client,
+		BaseURL: pmsURL,
+		ApiKey:  apiKey,
 	}
 }
 

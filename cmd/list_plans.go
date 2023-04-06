@@ -74,7 +74,7 @@ func getPlans(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
-	tmsClient := tms.NewTmsClient(client, tmsUrl, uuid.Nil, apiKey)
+	tmsClient := tms.NewTmsClient(client, tmsUrl, apiKey)
 
 	var responseBytes []byte
 	if planIdString == "" {

@@ -69,7 +69,7 @@ func getProducts(cmd *cobra.Command) (string, error) {
 		return "", errors.Wrap(err, "Invalid service offer id provided")
 	}
 
-	tmsClient := tms.NewTmsClient(client, tmsUrl, uuid.Nil, apiKey)
+	tmsClient := tms.NewTmsClient(client, tmsUrl, apiKey)
 
 	response, err := tmsClient.GetProducts(serviceOfferId)
 	if err != nil {

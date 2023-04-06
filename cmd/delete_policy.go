@@ -40,7 +40,6 @@ func init() {
 	deleteCmd.AddCommand(deletePolicyCmd)
 
 	deletePolicyCmd.Flags().StringP(constants.PolicyIdParamName, "p", "", "Id of the policy to be deleted")
-	deletePolicyCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the policy needs to be deleted")
 	deletePolicyCmd.MarkFlagRequired(constants.PolicyIdParamName)
 
 }
@@ -69,21 +68,7 @@ func deletePolicy(cmd *cobra.Command) (string, error) {
 		return "", errors.Wrap(err, "Invalid policy id provided")
 	}
 
-	tenantIdString, err := cmd.Flags().GetString(constants.TenantIdParamName)
-	if err != nil {
-		return "", err
-	}
-
-	if tenantIdString == "" {
-		tenantIdString = configValues.TenantId
-	}
-
-	tenantId, err := uuid.Parse(tenantIdString)
-	if err != nil {
-		return "", errors.Wrap(err, "Invalid tenant id provided")
-	}
-
-	pmsClient := pms.NewPmsClient(client, pmsUrl, tenantId, apiKey)
+	pmsClient := pms.NewPmsClient(client, pmsUrl, apiKey)
 
 	err = pmsClient.DeletePolicy(policyId)
 	if err != nil {

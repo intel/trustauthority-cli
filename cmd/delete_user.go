@@ -38,9 +38,8 @@ var deleteUserCmd = &cobra.Command{
 
 func init() {
 	deleteCmd.AddCommand(deleteUserCmd)
+	deleteUserCmd.Flags().StringP(constants.UserIdParamName, "u", "", "Id of the specific user, the details for whom needs to be deleted")
 
-	deleteUserCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the user needs to be deleted")
-	deleteUserCmd.Flags().StringP(constants.UserIdParamName, "u", "", "Id of the specific user the details for whom needs to be deleted")
 	deleteUserCmd.MarkFlagRequired(constants.UserIdParamName)
 }
 
@@ -58,20 +57,6 @@ func deleteUser(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
-	tenantIdString, err := cmd.Flags().GetString(constants.TenantIdParamName)
-	if err != nil {
-		return "", err
-	}
-
-	if tenantIdString == "" {
-		tenantIdString = configValues.TenantId
-	}
-
-	tenantId, err := uuid.Parse(tenantIdString)
-	if err != nil {
-		return "", errors.Wrap(err, "Invalid tenant id provided")
-	}
-
 	userIdString, err := cmd.Flags().GetString(constants.UserIdParamName)
 	if err != nil {
 		return "", err
@@ -82,7 +67,7 @@ func deleteUser(cmd *cobra.Command) (string, error) {
 		return "", errors.Wrap(err, "Invalid user id provided")
 	}
 
-	tmsClient := tms.NewTmsClient(client, tmsUrl, tenantId, apiKey)
+	tmsClient := tms.NewTmsClient(client, tmsUrl, apiKey)
 
 	err = tmsClient.DeleteUser(userId)
 	if err != nil {

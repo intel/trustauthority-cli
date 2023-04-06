@@ -21,7 +21,6 @@ Ubuntu LTS 20.04
 - copy the binary installer tenantctl-{version}.bin to the system where it needs to be deployed
 - create an env file tac.env and add the following mandatory contents:<br>
   a. AMBER_BASE_URL=< URL of API Gateway > <br>
-  b. TENANT_ID="< Id of the Tenant >"  (The Tenant Id can be overridden from CLI) <br>
 - run "./tenantctl-{version}.bin". This will install the CLI to your system.
 - use the CLI: tenantctl < command > < resource >
 - export AMBER_API_KEY=<subscription key>. This needs to be done before running any of the CLI commands.
@@ -94,7 +93,7 @@ tenantctl list apiClient -r < service id > -c < api client id >
 tenantctl delete apiClient -r < service id > -c < api client id >
 
 ##### Create tag:
-tenantctl create tag -n < tag name > -t < tenant Id >
+tenantctl create tag -n < tag name >
 
 ##### List tags:
 tenantctl list tag

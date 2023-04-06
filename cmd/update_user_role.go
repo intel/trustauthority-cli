@@ -49,7 +49,6 @@ func init() {
 	updateCmd.AddCommand(updateUserCmd)
 	updateUserCmd.AddCommand(updateUserRoleCmd)
 
-	updateUserRoleCmd.Flags().StringP(constants.TenantIdParamName, "t", "", "Id of the tenant for whom the user needs to be created")
 	updateUserRoleCmd.Flags().StringP(constants.UserIdParamName, "u", "", "Id of the specific user")
 	updateUserRoleCmd.Flags().StringP(constants.UserRoleParamName, "r", "", "Role of the specific user that needs to be updated. Should be either Tenant Admin or User")
 	updateUserRoleCmd.MarkFlagRequired(constants.UserIdParamName)
@@ -68,20 +67,6 @@ func updateUserRole(cmd *cobra.Command) (string, error) {
 	tmsUrl, err := url.Parse(configValues.AmberBaseUrl + constants.TmsBaseUrl)
 	if err != nil {
 		return "", err
-	}
-
-	tenantIdString, err := cmd.Flags().GetString(constants.TenantIdParamName)
-	if err != nil {
-		return "", err
-	}
-
-	if tenantIdString == "" {
-		tenantIdString = configValues.TenantId
-	}
-
-	tenantId, err := uuid.Parse(tenantIdString)
-	if err != nil {
-		return "", errors.Wrap(err, "Invalid tenant id provided")
 	}
 
 	userIdString, err := cmd.Flags().GetString(constants.UserIdParamName)
@@ -108,7 +93,7 @@ func updateUserRole(cmd *cobra.Command) (string, error) {
 		Role:   userRole,
 	}
 
-	tmsClient := tms.NewTmsClient(client, tmsUrl, tenantId, apiKey)
+	tmsClient := tms.NewTmsClient(client, tmsUrl, apiKey)
 
 	response, err := tmsClient.UpdateTenantUserRole(updateUserRoleReq)
 	if err != nil {
