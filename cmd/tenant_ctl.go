@@ -60,7 +60,8 @@ func Execute() {
 			constants.UninstallCmd: true}
 		//API key is not needed for generating policy JWT or setting up config, API key check is skipped for these 2 commands
 		if ok := cmdListWithNoApiKey[cmd.Name()]; !ok {
-			if strings.TrimSpace(configValues.AmberApiKey) == "" {
+			apiKey = configValues.AmberApiKey
+			if strings.TrimSpace(apiKey) == "" {
 				return errors.Errorf("%s config variable needs to be set with a proper API Key before using CLI", constants.AmberApiKeyEnvVar)
 			}
 		}
