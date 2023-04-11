@@ -100,13 +100,28 @@ var (
 	apiClientDetails = `{
         "id": "3780cc39-cce2-4ec2-a47f-03e55b12e259",
         "service_id": "5cfb6af4-59ac-4a14-8b83-bd65b1e11777",
+		"service_offer_name": "Service Offer Name",
         "product_id": "e169d34f-58ce-4717-9b3a-5c66abd33417",
         "status": "",
         "name": "Test apiClient",
 		"keys": [
 			"9dca50986c414304a4b1ffe202dcf2b0",
 			"996a9a6e67814f1784eadb5405bdabf3"
-		]
+		],
+		"policy_ids": [
+          	"1cf3db7d-81ea-4904-babf-fcb3501492db",
+          	"2cf3db7d-81ea-4904-babf-fcb3501492db",
+          	"3cf3db7d-81ea-4904-babf-fcb3501492db",
+          	"4cf3db7d-81ea-4904-babf-fcb3501492db"
+    	],
+    	"tags": [
+       	{
+            "key": "Workload",
+            "value": "Workload-Binary",
+            "predefined": true
+        }
+    	],
+     	"created_at": "0001-01-01T00:00:00Z"
     }`
 
 	apiClient = `{
@@ -315,7 +330,7 @@ func MockServer(t *testing.T) *httptest.Server {
 	r.HandleFunc(apiClientExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(apiClient))
+		_, err := w.Write([]byte(apiClientDetails))
 		if err != nil {
 			t.Log("test/test_utility:mockServer(): Unable to write data")
 		}

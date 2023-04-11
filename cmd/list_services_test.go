@@ -30,6 +30,10 @@ func TestListServicesCmd(t *testing.T) {
 			args:    []string{constants.ListCmd, constants.ServiceCmd, "-r", "ae3d7720-08ab-421c-b8d4-1725c358f03e"},
 			wantErr: false,
 		},
+		{
+			args:    []string{constants.ListCmd, constants.ServiceCmd, "-r", "invalid id"},
+			wantErr: true,
+		},
 	}
 
 	listCmd.AddCommand(getServicesCmd)

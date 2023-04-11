@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 GITCOMMIT := $(shell git describe --always)
 BUILDDATE := $(shell TZ=UTC date +%Y-%m-%dT%H:%M:%S%z)
-VERSION := v0.5.0
+VERSION := v0.6.0
 PROXY_EXISTS := $(shell if [[ "${https_proxy}" || "${http_proxy}" || "${no_proxy}" ]]; then echo 1; else echo 0; fi)
 DOCKER_PROXY_FLAGS := ""
 ifeq ($(PROXY_EXISTS),1)

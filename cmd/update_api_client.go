@@ -139,13 +139,14 @@ func updateApiClient(cmd *cobra.Command) (string, error) {
 		tagIdValues = append(tagIdValues, models.ApiClientTagIdValue{Key: splitTag[0], Value: splitTag[1]})
 	}
 
+	var status = models.ApiClientStatus(activationStatus)
 	var apiClientInfo = models.UpdateApiClient{
 		ProductId:    productId,
-		Name:         apiClientName,
+		Name:         &apiClientName,
 		PolicyIds:    policyIds,
 		TagIdsValues: tagIdValues,
 		ServiceId:    serviceId,
-		Status:       models.ApiClientStatus(activationStatus),
+		Status:       &status,
 	}
 
 	if err = validation.ValidateStrings([]string{apiClientName}); err != nil {

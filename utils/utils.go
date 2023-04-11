@@ -64,6 +64,7 @@ func ReadAnswerFileToEnv(filename string) error {
 func isValidEnvVariable(lookup string) bool {
 	envMap := map[string]bool{
 		"AMBER_BASE_URL": true,
+		"AMBER_API_KEY":  true,
 	}
 	if _, ok := envMap[lookup]; ok {
 		return true
@@ -71,7 +72,7 @@ func isValidEnvVariable(lookup string) bool {
 	return false
 }
 
-//SetUpLogs set the log output and the log level
+// SetUpLogs set the log output and the log level
 func SetUpLogs(logFile io.Writer, logLevel string) error {
 	logrus.SetOutput(logFile)
 	lvl, err := logrus.ParseLevel(logLevel)

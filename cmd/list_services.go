@@ -66,6 +66,7 @@ func getServices(cmd *cobra.Command) (string, error) {
 
 	var responseBytes []byte
 	if serviceIdString == "" {
+		fmt.Println("Service ID was not provided, listing all services....")
 		response, err := tmsClient.GetServices()
 		if err != nil {
 			return "", err

@@ -170,19 +170,21 @@ type (
 		ProductType       constants.ProductType `json:"product_type"`
 	}
 
+	// UpdateApiClient - API Client details request to be updated
 	UpdateApiClient struct {
 		Id           uuid.UUID             `json:"-"`
 		ProductId    uuid.UUID             `json:"product_id"`
 		ServiceId    uuid.UUID             `json:"-"`
-		Name         string                `json:"name"`
+		Name         *string               `json:"name"`
 		TenantId     uuid.UUID             `json:"-"`
 		PolicyIds    []uuid.UUID           `json:"policy_ids"`
 		TagIdsValues []ApiClientTagIdValue `json:"tags"`
 		UpdatedBy    uuid.UUID             `json:"-"`
-		Status       ApiClientStatus       `json:"status"`
+		Status       *ApiClientStatus      `json:"status"`
 		UpdaterType  string                `json:"-"`
 	}
 
+	// ApiClientDetail - API Client details response payload
 	ApiClientDetail struct {
 		ID                uuid.UUID             `json:"id"`
 		ServiceId         uuid.UUID             `json:"service_id"`

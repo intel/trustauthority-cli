@@ -34,28 +34,27 @@ func init() {
 }
 
 func uninstall() error {
-	log.Info("removing : ", constants.HomeDir)
-	err := os.RemoveAll(constants.HomeDir)
+	userHomeDir, err := os.UserHomeDir()
 	if err != nil {
-		log.WithError(err).Error("Error removing home dir: ", constants.HomeDir)
+		fmt.Println("Error fetching user home directory path. Error: ", err.Error())
 	}
 
-	log.Info("removing : ", constants.ConfigDir)
-	err = os.RemoveAll(constants.ConfigDir)
+	log.Info("removing : ", userHomeDir+constants.BinDir)
+	err = os.RemoveAll(userHomeDir + constants.BinDir)
 	if err != nil {
-		log.WithError(err).Error("Error removing config dir: ", constants.ConfigDir)
+		log.WithError(err).Error("Error removing home dir: ", userHomeDir+constants.BinDir)
 	}
 
-	log.Info("removing : ", constants.ExecLink)
-	err = os.Remove(constants.ExecLink)
+	log.Info("removing : ", userHomeDir+constants.ConfigDir)
+	err = os.RemoveAll(userHomeDir + constants.ConfigDir)
 	if err != nil {
-		log.WithError(err).Error("Error removing executable link: ", constants.ExecLink)
+		log.WithError(err).Error("Error removing config dir: ", userHomeDir+constants.ConfigDir)
 	}
 
-	log.Info("removing : ", constants.LogDir)
-	err = os.RemoveAll(constants.LogDir)
+	log.Info("removing : ", userHomeDir+constants.LogDir)
+	err = os.RemoveAll(userHomeDir + constants.LogDir)
 	if err != nil {
-		log.WithError(err).Error("Error removing log dir: ", constants.LogDir)
+		log.WithError(err).Error("Error removing log dir: ", userHomeDir+constants.LogDir)
 	}
 
 	fmt.Println("Tenant CLI uninstalled successfully")

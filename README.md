@@ -19,16 +19,28 @@ Ubuntu LTS 20.04
 - git clone https://github.com/intel/amber-cli.git cli
 - cd cli and run "make installer"
 - copy the binary installer tenantctl-{version}.bin to the system where it needs to be deployed
-- create an env file tac.env and add the following mandatory contents:<br>
+- create an env file tac.env in your home directory and add the following mandatory contents:<br>
   a. AMBER_BASE_URL=< URL of API Gateway > <br>
+  b. AMBER_API_KEY="< API Key of the Tenant >" <br>
 - run "./tenantctl-{version}.bin". This will install the CLI to your system.
 - use the CLI: tenantctl < command > < resource >
-- export AMBER_API_KEY=<subscription key>. This needs to be done before running any of the CLI commands.
 
 Note: If behind a proxy, add the Amber FQDN to NO_PROXY environment variable.
 
+### Directory structure
+
+All files are stored in user's home directory. Following are the details:
+
+- Configuration: $HOME/.config/tenantctl/config.yaml
+- Logs: $HOME/.config/tenantctl/logs/tac.log
+- Bin: $HOME/.local/bin/tenantctl
+
+Note: If you cannot access the command, add the binary path to the PATH env variable
+
+## Commands
+
 ### Uninstall 
-- run "tenantctl uninstall"
+- tenantctl uninstall
 
 ### Setup configuration
 - tenantctl config -v < env file path >

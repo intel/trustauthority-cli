@@ -32,21 +32,19 @@ var tenantCmd = &cobra.Command{
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the tenantCmd.
 func Execute() {
-	logFile, err := os.OpenFile(filepath.Clean(constants.LogFilePath), os.O_CREATE|os.O_APPEND|os.O_WRONLY, constants.DefaultFilePermission)
+	userHomeDir, err := os.UserHomeDir()
+	if err != nil {
+		fmt.Println("Error fetching user home directory path. Error: ", err.Error())
+	}
+
+	cleanedLogPath := filepath.Clean(userHomeDir + constants.LogFilePath)
+
+	logFile, err := os.OpenFile(cleanedLogPath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, constants.DefaultFilePermission)
 	if err != nil {
 		fmt.Println("Error opening/creating log file: " + err.Error())
 		os.Exit(1)
 	}
 	tenantCmd.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
-		cmdListWithNoApiKey := map[string]bool{constants.PolicyJwtCmd: true, constants.SetupConfigCmd: true,
-			constants.UninstallCmd: true}
-		//API key is not needed for generating policy JWT or setting up config, API key check is skipped for these 2 commands
-		if ok := cmdListWithNoApiKey[cmd.Name()]; !ok {
-			apiKey = os.Getenv(constants.ApiKeyEnvVar)
-			if strings.TrimSpace(apiKey) == "" {
-				return errors.Errorf("%s environment variable needs to be set with a proper subscription key before using CLI", constants.ApiKeyEnvVar)
-			}
-		}
 		configValues, err := config.LoadConfiguration()
 		if err != nil {
 			if err := utils.SetUpLogs(logFile, constants.DefaultLogLevel); err != nil {
@@ -55,6 +53,15 @@ func Execute() {
 		} else {
 			if err := utils.SetUpLogs(logFile, configValues.LogLevel); err != nil {
 				return err
+			}
+		}
+		//API key is not needed for generating policy JWT or setting up config, API key check is skipped for these commands
+		cmdListWithNoApiKey := map[string]bool{constants.PolicyJwtCmd: true, constants.SetupConfigCmd: true,
+			constants.UninstallCmd: true}
+		//API key is not needed for generating policy JWT or setting up config, API key check is skipped for these 2 commands
+		if ok := cmdListWithNoApiKey[cmd.Name()]; !ok {
+			if strings.TrimSpace(configValues.AmberApiKey) == "" {
+				return errors.Errorf("%s config variable needs to be set with a proper API Key before using CLI", constants.AmberApiKeyEnvVar)
 			}
 		}
 		return nil

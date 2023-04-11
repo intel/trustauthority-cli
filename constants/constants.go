@@ -5,13 +5,14 @@
 
 package constants
 
-import "errors"
+import (
+	"errors"
+)
 
 const (
-	ExecLink              = "/usr/bin/tenantctl"
-	HomeDir               = "/opt/tac/"
-	ConfigDir             = "/etc/tac/"
-	LogDir                = "/var/log/tac/"
+	BinDir                = "/.local/bin/tenantctl"
+	ConfigDir             = "/.config/tenantctl/"
+	LogDir                = ConfigDir + "logs/"
 	DefaultConfigFilePath = ConfigDir + "config.yaml"
 	ConfigFileName        = "config"
 	ConfigFileExtension   = "yaml"
@@ -19,11 +20,10 @@ const (
 	DefaultFilePermission = 0640
 	MaxPolicyFileSize     = 10240
 	ExplicitCLIName       = "Tenant CLI"
-	ApiKeyEnvVar          = "AMBER_API_KEY"
-	RootPath              = "/"
+	AmberApiKeyEnvVar     = "amber-api-key"
 )
 
-//Command and parameter names
+// Command and parameter names
 const (
 	UserIdParamName          = "user-id"
 	ServiceIdParamName       = "service-id"
@@ -60,7 +60,7 @@ const (
 	SetupConfigCmd = "config"
 )
 
-//Resource names
+// Resource names
 const (
 	PolicyCmd       = "policy"
 	PolicyJwtCmd    = "policy-jwt"
@@ -101,7 +101,7 @@ const (
 	TimeLayout  = "20060102150405"
 )
 
-//HTTP constants
+// HTTP constants
 const (
 	HTTPMediaTypeJson        = "application/json"
 	HTTPHeaderKeyContentType = "Content-Type"
@@ -111,7 +111,7 @@ const (
 	HTTPHeaderKeyUpdatedBy   = "Updated-By"
 )
 
-//API endpoint
+// API endpoint
 const (
 	TmsBaseUrl                = "/management/v1"
 	PmsBaseUrl                = "/management/v1"

@@ -18,7 +18,7 @@ import (
 )
 
 type TmsClient interface {
-	CreateApiClient(request *models.CreateApiClient) (*models.ApiClient, error)
+	CreateApiClient(request *models.CreateApiClient) (*models.ApiClientDetail, error)
 	UpdateApiClient(request *models.UpdateApiClient, apiClientid uuid.UUID) (*models.ApiClient, error)
 	GetApiClient(serviceId uuid.UUID) ([]models.ApiClient, error)
 	RetrieveApiClient(serviceId uuid.UUID, apiClientId uuid.UUID) (*models.ApiClientDetail, error)
@@ -61,7 +61,7 @@ func NewTmsClient(client *http.Client, tmsURL *url.URL, apiKey string) TmsClient
 	}
 }
 
-func (pc tmsClient) CreateApiClient(request *models.CreateApiClient) (*models.ApiClient, error) {
+func (pc tmsClient) CreateApiClient(request *models.CreateApiClient) (*models.ApiClientDetail, error) {
 	reqBytes, err := json.Marshal(request)
 	if err != nil {
 		return nil, errors.Wrap(err, " Error marshalling request")
@@ -88,7 +88,7 @@ func (pc tmsClient) CreateApiClient(request *models.CreateApiClient) (*models.Ap
 	}
 
 	// Parse response for validation
-	var apiClientDetail models.ApiClient
+	var apiClientDetail models.ApiClientDetail
 	dec := json.NewDecoder(bytes.NewReader(response))
 	dec.DisallowUnknownFields()
 	err = dec.Decode(&apiClientDetail)

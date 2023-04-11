@@ -15,20 +15,23 @@ import (
 	"intel/amber/tac/v1/validation"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
 type Configuration struct {
 	AmberBaseUrl      string `yaml:"amber-base-url" mapstructure:"amber-base-url"`
+	AmberApiKey       string `yaml:"amber-api-key" mapstructure:"amber-api-key"`
 	LogLevel          string `yaml:"log-level" mapstructure:"log-level"`
 	HTTPClientTimeout int    `yaml:"http-client-timeout" mapstructure:"http-client-timeout"`
 }
 
 // this function sets the configuration file name and type
 func init() {
+	userHomeDir, _ := os.UserHomeDir()
 	viper.SetConfigName(constants.ConfigFileName)
 	viper.SetConfigType(constants.ConfigFileExtension)
-	viper.AddConfigPath(constants.ConfigDir)
+	viper.AddConfigPath(userHomeDir + constants.ConfigDir)
 }
 
 func LoadConfiguration() (*Configuration, error) {
@@ -47,14 +50,26 @@ func LoadConfiguration() (*Configuration, error) {
 	return &ret, nil
 }
 
-func (c *Configuration) Save(filename string) error {
-	path, err := validation.ValidatePath(filename)
-	if err != nil {
-		return errors.Wrap(err, "Invalid ConfigurationFilePath")
+func SetupConfig(envFilePath string) error {
+	if envFilePath == "" {
+		return errors.New("EnvFilePath needs to be provided in configuration")
 	}
-	configFile, err := os.OpenFile(path, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0600)
+
+	_, err := validation.ValidatePath(envFilePath)
 	if err != nil {
-		return errors.Wrap(err, "Failed to create config file")
+		return errors.Wrap(err, "Invalid Env file path provided")
+	}
+
+	userHomeDir, err := os.UserHomeDir()
+	if err != nil {
+		return errors.Wrap(err, "Error fetching user home directory path")
+	}
+
+	cleanedConfigPath := filepath.Clean(userHomeDir + constants.DefaultConfigFilePath)
+
+	configFile, err := os.OpenFile(cleanedConfigPath, os.O_CREATE|os.O_TRUNC|os.O_RDWR, constants.DefaultFilePermission)
+	if err != nil {
+		return errors.Wrap(err, "Failed to open/create config file")
 	}
 	defer func() {
 		derr := configFile.Close()
@@ -62,29 +77,6 @@ func (c *Configuration) Save(filename string) error {
 			log.WithError(derr).Error("Error closing config file")
 		}
 	}()
-
-	err = yaml.NewEncoder(configFile).Encode(c)
-	if err != nil {
-		return errors.Wrap(err, "Failed to encode config structure")
-	}
-	return nil
-}
-
-func SetupConfig(envFilePath string) error {
-	var err error
-	if envFilePath == "" {
-		return errors.New("EnvFilePath needs to be provided in configuration")
-	}
-	if _, err = os.Stat(constants.DefaultConfigFilePath); err != nil {
-		if os.IsNotExist(err) {
-			_, err = os.Create(constants.DefaultConfigFilePath)
-			if err != nil {
-				return err
-			}
-		} else {
-			return err
-		}
-	}
 
 	if err = utils.ReadAnswerFileToEnv(envFilePath); err != nil {
 		return err
@@ -109,6 +101,11 @@ func SetupConfig(envFilePath string) error {
 		return errors.Wrap(err, "Invalid Amber Base URL")
 	}
 
+	configValues.AmberApiKey = viper.GetString(constants.AmberApiKeyEnvVar)
+	if configValues.AmberApiKey == "" {
+		return errors.Wrap(err, "Invalid API Key provided")
+	}
+
 	logLevel, err := log.ParseLevel(viper.GetString(constants.Loglevel))
 	if err != nil {
 		log.Warn("Invalid/No log level provided. Setting log level to info")
@@ -118,8 +115,9 @@ func SetupConfig(envFilePath string) error {
 
 	configValues.HTTPClientTimeout = viper.GetInt(constants.HttpClientTimeout)
 
-	if err = configValues.Save(constants.DefaultConfigFilePath); err != nil {
-		return err
+	err = yaml.NewEncoder(configFile).Encode(configValues)
+	if err != nil {
+		return errors.Wrap(err, "Failed to encode config structure")
 	}
 	return nil
 }
