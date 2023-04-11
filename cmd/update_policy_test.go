@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"intel/amber/tac/v1/constants"
 	"intel/amber/tac/v1/test"
+	"os"
 	"testing"
 )
 
@@ -16,6 +17,7 @@ func TestUpdatePolicyCmd(t *testing.T) {
 	server := test.MockServer(t)
 	defer server.Close()
 	test.SetupMockConfiguration(server.URL, tempConfigFile)
+	GenerateInvalidPolicyFile(t, tempPolicyFile)
 
 	tt := []struct {
 		args        []string
@@ -26,6 +28,13 @@ func TestUpdatePolicyCmd(t *testing.T) {
 			args: []string{constants.UpdateCmd, constants.PolicyCmd, "-i", "e48dabc5-9608-4ff3-aaed-f25909ab9de1",
 				"-n", "Sample_Policy_SGX", "-f", "../test/resources/rego-policy.txt"},
 			wantErr: false,
+		},
+		{
+
+			args: []string{constants.UpdateCmd, constants.PolicyCmd, "-i", "e48dabc5-9608-4ff3-aaed-f25909ab9de1",
+				"-n", "Sample_Policy_SGX", "-f", tempPolicyFile},
+			wantErr:     true,
+			description: "Test Create Policy With Invalid File Size",
 		},
 	}
 
@@ -41,4 +50,6 @@ func TestUpdatePolicyCmd(t *testing.T) {
 			assert.NoError(t, err)
 		}
 	}
+	err = os.Remove(tempPolicyFile)
+	assert.NoError(t, err)
 }

@@ -133,4 +133,8 @@ func generateKeyPairForTests(t *testing.T, keyFile, certFile string) {
 
 	err = pem.Encode(publicPem, certBlock)
 	assert.NoError(t, err)
+	err = publicPem.Close()
+	assert.NoError(t, err)
+	err = privatePem.Close()
+	assert.NoError(t, err)
 }

@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/constants"
+	"os"
 	"path/filepath"
 	"regexp"
 )
@@ -45,4 +46,14 @@ func ValidatePath(path string) (string, error) {
 		return c, fmt.Errorf("%s: %s", constants.ErrorInvalidPath, path)
 	}
 	return r, nil
+}
+
+func ValidateSize(path string) error {
+	fi, err := os.Stat(path)
+	if err != nil {
+		return err
+	} else if fi.Size() > constants.MaxPolicyFileSize {
+		return fmt.Errorf("%s: %d", constants.ErrorInvalidSize, fi.Size())
+	}
+	return nil
 }

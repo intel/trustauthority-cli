@@ -106,6 +106,7 @@ tenantctl list apiClient tag -r < service id > -c < api client id >
 
 ##### Create Policy:
 tenantctl create policy -n < name of policy > -t < policy type > -a < attestation type > -r < service offer id > -f < rego policy file path >
+Note: Policy file size should be <= 10KB
 
 ##### Get policies:
 tenantctl list policy
@@ -118,6 +119,7 @@ tenantctl delete policy -p < policy id >
 
 ##### Update policy:
 tenantctl update policy -i < policy id > -n < name of policy > -f < rego policy file path >
+Note: Policy file size should be <= 10KB
 
 -  Sample rego policy for create/update policy command:
 

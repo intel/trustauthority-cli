@@ -47,7 +47,7 @@ func init() {
 	createPolicyCmd.Flags().StringP(constants.PolicyTypeParamName, "t", "", "Type of the policy to be uploaded, should be one of \"Appraisal policy\" or \"Token customization policy\"")
 	createPolicyCmd.Flags().StringP(constants.ServiceOfferIdParamName, "r", "", "Service offer id for which the policy needs to be uploaded")
 	createPolicyCmd.Flags().StringP(constants.AttestationTypeParamName, "a", "", "Attestation type of policy to be uploaded, should be one of \"SGX Attestation\" or \"TDX Attestation\"")
-	createPolicyCmd.Flags().StringP(constants.PolicyFileParamName, "f", "", "Path of the file containing the rego policy to be uploaded")
+	createPolicyCmd.Flags().StringP(constants.PolicyFileParamName, "f", "", "Path of the file containing the rego policy to be uploaded. The file size should be <= 10 KB")
 	createPolicyCmd.MarkFlagRequired(constants.PolicyNameParamName)
 	createPolicyCmd.MarkFlagRequired(constants.PolicyTypeParamName)
 	createPolicyCmd.MarkFlagRequired(constants.ServiceOfferIdParamName)
@@ -103,6 +103,11 @@ func createPolicy(cmd *cobra.Command) (string, error) {
 	}
 
 	path, err := validation.ValidatePath(policyFilePath)
+	if err != nil {
+		return "", err
+	}
+
+	err = validation.ValidateSize(policyFilePath)
 	if err != nil {
 		return "", err
 	}

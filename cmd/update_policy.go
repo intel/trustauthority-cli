@@ -45,7 +45,7 @@ func init() {
 
 	updatePolicyCmd.Flags().StringP(constants.PolicyIdParamName, "i", "", "Id of the policy to be updated")
 	updatePolicyCmd.Flags().StringP(constants.PolicyNameParamName, "n", "", "Name of the policy to be updated")
-	updatePolicyCmd.Flags().StringP(constants.PolicyFileParamName, "f", "", "Path of the file containing the rego policy to be uploaded")
+	updatePolicyCmd.Flags().StringP(constants.PolicyFileParamName, "f", "", "Path of the file containing the rego policy to be uploaded. The file size should be <= 10 KB")
 	updatePolicyCmd.MarkFlagRequired(constants.PolicyIdParamName)
 }
 
@@ -99,6 +99,11 @@ func updatePolicy(cmd *cobra.Command) (string, error) {
 	policyBytes, err := os.ReadFile(path)
 	if err != nil {
 		return "", errors.Wrap(err, "Error reading policy file")
+	}
+
+	err = validation.ValidateSize(policyFilePath)
+	if err != nil {
+		return "", err
 	}
 
 	if string(policyBytes) != "" {

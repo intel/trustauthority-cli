@@ -17,6 +17,7 @@ const (
 	ConfigFileExtension   = "yaml"
 	LogFilePath           = LogDir + "tac.log"
 	DefaultFilePermission = 0640
+	MaxPolicyFileSize     = 10240
 	ExplicitCLIName       = "Tenant CLI"
 	ApiKeyEnvVar          = "AMBER_API_KEY"
 	RootPath              = "/"
@@ -133,4 +134,5 @@ const (
 
 var (
 	ErrorInvalidPath = errors.New("Unsafe or invalid path specified")
+	ErrorInvalidSize = errors.New("Policy File size is  greater than allowed size")
 )
