@@ -14,6 +14,8 @@ Ubuntu LTS 20.04
    - Supported golang version is 1.20.x
    - Go through the following link to install golang: https://go.dev/doc/install
 
+3. Add the local binary path, namely $HOME/.local/bin/, to your PATH environment variable if not already present
+
 ### Build
 
 - git clone https://github.com/intel/amber-cli.git cli

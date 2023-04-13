@@ -52,7 +52,6 @@ func init() {
 	updateApiClientCmd.Flags().StringP(constants.ActivationStatus, "s", "", "Add activation status for api client, should be one of \"Active\", \"Inactive\" or \"Cancelled\"")
 	updateApiClientCmd.MarkFlagRequired(constants.ServiceIdParamName)
 	updateApiClientCmd.MarkFlagRequired(constants.ProductIdParamName)
-	updateApiClientCmd.MarkFlagRequired(constants.ApiClientNameParamName)
 	updateApiClientCmd.MarkFlagRequired(constants.ApiClientIdParamName)
 }
 
@@ -139,14 +138,20 @@ func updateApiClient(cmd *cobra.Command) (string, error) {
 		tagIdValues = append(tagIdValues, models.ApiClientTagIdValue{Key: splitTag[0], Value: splitTag[1]})
 	}
 
-	var status = models.ApiClientStatus(activationStatus)
 	var apiClientInfo = models.UpdateApiClient{
 		ProductId:    productId,
-		Name:         &apiClientName,
 		PolicyIds:    policyIds,
 		TagIdsValues: tagIdValues,
 		ServiceId:    serviceId,
-		Status:       &status,
+	}
+
+	if apiClientName != "" {
+		apiClientInfo.Name = &apiClientName
+	}
+
+	if activationStatus != "" {
+		var status = models.ApiClientStatus(activationStatus)
+		apiClientInfo.Status = &status
 	}
 
 	if err = validation.ValidateStrings([]string{apiClientName}); err != nil {
