@@ -31,8 +31,9 @@ func TestListServicesCmd(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			args:    []string{constants.ListCmd, constants.ServiceCmd, "-r", "invalid id"},
-			wantErr: true,
+			args:        []string{constants.ListCmd, constants.ServiceCmd, "-r", "invalid id"},
+			wantErr:     true,
+			description: "Invalid service id provided",
 		},
 	}
 

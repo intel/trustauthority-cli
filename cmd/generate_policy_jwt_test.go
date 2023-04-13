@@ -60,6 +60,27 @@ func TestGeneratePolicyJwtCmd(t *testing.T) {
 				"-c", certFile, "-s"},
 			wantErr: false,
 		},
+		{
+			args:        []string{constants.CreateCmd, constants.PolicyJwtCmd, "-f", "../test/resources/@rego-policy.txt"},
+			wantErr:     true,
+			description: "Test Invalid policy file path provided",
+		},
+		{
+			args:        []string{constants.CreateCmd, constants.PolicyJwtCmd, "-f", ""},
+			wantErr:     true,
+			description: "Test Policy file path cannot be empty",
+		},
+		{
+			args:        []string{constants.CreateCmd, constants.PolicyJwtCmd, "-f", "../test/resources/rego-policy1.txt"},
+			wantErr:     true,
+			description: "Test Policy file does not contain a rego policy",
+		},
+		{
+			args: []string{constants.CreateCmd, constants.PolicyJwtCmd, "-f", "../test/resources/rego-policy.txt", "-a",
+				"invalid algorithm"},
+			wantErr:     true,
+			description: "Test Input algorithm is not supported",
+		},
 	}
 
 	createCmd.AddCommand(createPolicyJwtCmd)

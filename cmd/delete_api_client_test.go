@@ -27,6 +27,18 @@ func TestDeleteApiClientCmd(t *testing.T) {
 				"3780cc39-cce2-4ec2-a47f-03e55b12e259"},
 			wantErr: false,
 		},
+		{
+			args: []string{constants.DeleteCmd, constants.ApiClientCmd, "-r", "invalid id", "-c",
+				"3780cc39-cce2-4ec2-a47f-03e55b12e259"},
+			wantErr:     true,
+			description: "Invalid service id provided",
+		},
+		{
+			args: []string{constants.DeleteCmd, constants.ApiClientCmd, "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777", "-c",
+				"invalid id"},
+			wantErr:     true,
+			description: "Invalid api client id provided",
+		},
 	}
 
 	deleteCmd.AddCommand(deleteApiClientCmd)

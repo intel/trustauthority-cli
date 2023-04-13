@@ -23,6 +23,24 @@ func TestCreateApiClientCmd(t *testing.T) {
 		description string
 	}{
 		{
+			args: []string{constants.CreateCmd, constants.ApiClientCmd, "-n", "Test Subs", "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777",
+				"-p", "invalid id"},
+			wantErr:     true,
+			description: "Test Invalid product id provided",
+		},
+		{
+			args: []string{constants.CreateCmd, constants.ApiClientCmd, "-n", "Test Subs", "-r", "invalid id",
+				"-p", "e169d34f-58ce-4717-9b3a-5c66abd33417"},
+			wantErr:     true,
+			description: "Test Invalid service id provided",
+		},
+		{
+			args: []string{constants.CreateCmd, constants.ApiClientCmd, "-n", "@@@@@@@", "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777",
+				"-p", "e169d34f-58ce-4717-9b3a-5c66abd33417"},
+			wantErr:     true,
+			description: "Test Invalid api client name provided",
+		},
+		{
 			args: []string{constants.CreateCmd, constants.ApiClientCmd, "-n", "Test Subs", "-p",
 				"e169d34f-58ce-4717-9b3a-5c66abd33417", "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777"},
 			wantErr:     false,
@@ -42,8 +60,8 @@ func TestCreateApiClientCmd(t *testing.T) {
 			description: "Test Create Api Client With Incorrect Tag UUID",
 		},
 		{
-			args: []string{constants.CreateCmd, constants.ApiClientCmd, "-a", "abc", "-d", "Test Subs", "-p",
-				"e169d34f-58ce-4717-9b3a-5c66abd33417", "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777", "-i", "abc"},
+			args: []string{constants.CreateCmd, constants.ApiClientCmd, "-n", "Test Subs", "-p",
+				"e169d34f-58ce-4717-9b3a-5c66abd33417", "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777", "-i", "invalid id"},
 			wantErr:     true,
 			description: "Test Create Api Client With Invalid Policy IDs",
 		},

@@ -63,6 +63,17 @@ func TestCreatePolicyCmd(t *testing.T) {
 			wantErr:     true,
 			description: "Test Create Policy With Invalid File Size",
 		},
+		{
+			args:        []string{constants.CreateCmd, constants.PolicyCmd, "-n", "Sample_Policy_SGX", "-t", "Appraisal policy", "-r", "invalid id", "-a", "SGX Attestation", "-f", "../test/resources/rego-policy.txt"},
+			wantErr:     true,
+			description: "Test Invalid service offer Id provided",
+		},
+		{
+			args: []string{constants.CreateCmd, constants.PolicyCmd, "-n", "Sample_Policy_SGX", "-t", "Appraisal policy",
+				"-r", "e8a72b7e-c4b1-4bdc-bf40-68f23c68a2aa", "-a", "SGX Attestation", "-f", "../test/resources/@rego-policy.txt"},
+			wantErr:     true,
+			description: "Test Unsafe or invalid path specified",
+		},
 	}
 
 	createCmd.AddCommand(createPolicyCmd)

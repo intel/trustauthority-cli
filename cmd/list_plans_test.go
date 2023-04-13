@@ -33,6 +33,18 @@ func TestListPlansCmd(t *testing.T) {
 				"a3ad72aa-86d6-49aa-b851-6a52caf0941b"},
 			wantErr: false,
 		},
+		{
+			args: []string{constants.ListCmd, constants.PlanCmd, "-r", "invalid id", "-p",
+				"a3ad72aa-86d6-49aa-b851-6a52caf0941b"},
+			wantErr:     true,
+			description: "Invalid service offer id provided",
+		},
+		{
+			args: []string{constants.ListCmd, constants.PlanCmd, "-r", "ee28f3c2-6f58-489d-aa46-1140565d4718", "-p",
+				"invalid id"},
+			wantErr:     true,
+			description: "Invalid plan id provided",
+		},
 	}
 
 	listCmd.AddCommand(getPlansCmd)

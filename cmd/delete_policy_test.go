@@ -26,6 +26,11 @@ func TestDeletePolicyCmd(t *testing.T) {
 			args:    []string{constants.DeleteCmd, constants.PolicyCmd, "-p", "e48dabc5-9608-4ff3-aaed-f25909ab9de1"},
 			wantErr: false,
 		},
+		{
+			args:        []string{constants.DeleteCmd, constants.PolicyCmd, "-p", "invalid id"},
+			wantErr:     true,
+			description: "Test Invalid policy id provided",
+		},
 	}
 
 	deleteCmd.AddCommand(deletePolicyCmd)

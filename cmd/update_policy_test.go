@@ -36,6 +36,24 @@ func TestUpdatePolicyCmd(t *testing.T) {
 			wantErr:     true,
 			description: "Test Create Policy With Invalid File Size",
 		},
+		{
+			args: []string{constants.UpdateCmd, constants.PolicyCmd, "-i", "invalid id",
+				"-n", "Sample_Policy_SGX", "-f", "../test/resources/rego-policy.txt"},
+			wantErr:     true,
+			description: "Test Invalid policy Id provided",
+		},
+		{
+			args: []string{constants.UpdateCmd, constants.PolicyCmd, "-i", "e48dabc5-9608-4ff3-aaed-f25909ab9de1",
+				"-n", "Sample_Policy_SGX", "-f", ""},
+			wantErr:     true,
+			description: "Test Policy file path cannot be empty",
+		},
+		{
+			args: []string{constants.UpdateCmd, constants.PolicyCmd, "-i", "e48dabc5-9608-4ff3-aaed-f25909ab9de1",
+				"-n", "Sample_Policy_SGX", "-f", "../test/resources/@rego-policy.txt"},
+			wantErr:     true,
+			description: "Test Unsafe or invalid path specified",
+		},
 	}
 
 	updateCmd.AddCommand(updatePolicyCmd)

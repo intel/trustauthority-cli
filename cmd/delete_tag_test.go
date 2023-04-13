@@ -27,7 +27,7 @@ func TestDeleteTagCmd(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			args:    []string{constants.DeleteCmd, constants.TagCmd, "-t", "abc"},
+			args:    []string{constants.DeleteCmd, constants.TagCmd, "-t", "invalid id"},
 			wantErr: true,
 		},
 		{

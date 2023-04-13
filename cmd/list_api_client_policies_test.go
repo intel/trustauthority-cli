@@ -30,12 +30,14 @@ func TestListApiClientsPoliciesCmd(t *testing.T) {
 		{
 			args: []string{constants.ListCmd, constants.ApiClientCmd, constants.PolicyCmd, "-r",
 				"invalid id", "-c", "3780cc39-cce2-4ec2-a47f-03e55b12e259"},
-			wantErr: true,
+			wantErr:     true,
+			description: "Test Invalid service id provided",
 		},
 		{
 			args: []string{constants.ListCmd, constants.ApiClientCmd, constants.PolicyCmd, "-r",
 				"5cfb6af4-59ac-4a14-8b83-bd65b1e11777", "-c", "invalid id"},
-			wantErr: true,
+			wantErr:     true,
+			description: "Test Invalid apiClient id provided",
 		},
 	}
 

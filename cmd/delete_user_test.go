@@ -26,6 +26,11 @@ func TestDeleteUserCmd(t *testing.T) {
 			args:    []string{constants.DeleteCmd, constants.UserCmd, "-u", "23011406-6f3b-4431-9363-4e1af9af6b13"},
 			wantErr: false,
 		},
+		{
+			args:        []string{constants.DeleteCmd, constants.UserCmd, "-u", "invalid id"},
+			wantErr:     true,
+			description: "Invalid user id provided",
+		},
 	}
 
 	deleteCmd.AddCommand(deleteUserCmd)
