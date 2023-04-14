@@ -45,8 +45,8 @@ func TestUpdatePolicyCmd(t *testing.T) {
 		{
 			args: []string{constants.UpdateCmd, constants.PolicyCmd, "-i", "e48dabc5-9608-4ff3-aaed-f25909ab9de1",
 				"-n", "Sample_Policy_SGX", "-f", ""},
-			wantErr:     true,
-			description: "Test Policy file path cannot be empty",
+			wantErr:     false,
+			description: "Test Policy file empty",
 		},
 		{
 			args: []string{constants.UpdateCmd, constants.PolicyCmd, "-i", "e48dabc5-9608-4ff3-aaed-f25909ab9de1",

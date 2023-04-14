@@ -88,26 +88,25 @@ func updatePolicy(cmd *cobra.Command) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if policyFilePath == "" {
-		return "", errors.New("Policy file path cannot be empty")
-	}
+	// policy file is not mandatory, skipping policy read if file path is empty
+	if policyFilePath != "" {
+		path, err := validation.ValidatePath(policyFilePath)
+		if err != nil {
+			return "", err
+		}
+		policyBytes, err := os.ReadFile(path)
+		if err != nil {
+			return "", errors.Wrap(err, "Error reading policy file")
+		}
 
-	path, err := validation.ValidatePath(policyFilePath)
-	if err != nil {
-		return "", err
-	}
-	policyBytes, err := os.ReadFile(path)
-	if err != nil {
-		return "", errors.Wrap(err, "Error reading policy file")
-	}
+		err = validation.ValidateSize(policyFilePath)
+		if err != nil {
+			return "", err
+		}
 
-	err = validation.ValidateSize(policyFilePath)
-	if err != nil {
-		return "", err
-	}
-
-	if string(policyBytes) != "" {
-		policyUpdateReq.Policy = string(policyBytes)
+		if string(policyBytes) != "" {
+			policyUpdateReq.Policy = string(policyBytes)
+		}
 	}
 
 	pmsClient := pms.NewPmsClient(client, pmsUrl, apiKey)
