@@ -11,6 +11,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
+	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
 	"intel/amber/tac/v1/test"
 	"os"
@@ -33,6 +34,31 @@ func init() {
 	viper.SetConfigName(constants.ConfigFileName)
 	viper.SetConfigType(constants.ConfigFileExtension)
 	viper.AddConfigPath(tempDir)
+}
+func TestCreatePolicyCommandWithInvalidUrl(t *testing.T) {
+	test.SetupMockConfiguration("invalid url", tempConfigFile)
+	load, err := config.LoadConfiguration()
+	assert.NoError(t, err)
+	viper.Set("amber-base-url", "bogus\nbase\nURL")
+
+	invalidUrlTc := struct {
+		args        []string
+		wantErr     bool
+		description string
+	}{
+
+		args: []string{constants.CreateCmd, constants.PolicyCmd, "-n", "Sample_Policy_SGX", "-t", "Appraisal policy",
+			"-r", "e8a72b7e-c4b1-4bdc-bf40-68f23c68a2aa", "-a", "SGX Attestation", "-f", "../test/resources/rego-policy.txt"},
+		wantErr:     true,
+		description: "Test Create Policy using invalid URL",
+	}
+
+	createCmd.AddCommand(createPolicyCmd)
+	tenantCmd.AddCommand(createCmd)
+
+	_, err = execute(t, tenantCmd, invalidUrlTc.args)
+	viper.Set("amber-base-url", load.AmberBaseUrl)
+	assert.Error(t, err)
 }
 
 func TestCreatePolicyCmd(t *testing.T) {
@@ -73,6 +99,12 @@ func TestCreatePolicyCmd(t *testing.T) {
 				"-r", "e8a72b7e-c4b1-4bdc-bf40-68f23c68a2aa", "-a", "SGX Attestation", "-f", "../test/resources/@rego-policy.txt"},
 			wantErr:     true,
 			description: "Test Unsafe or invalid path specified",
+		},
+		{
+			args: []string{constants.CreateCmd, constants.PolicyCmd, "-n", "Sample_Policy_SGX", "-t", "Appraisal policy",
+				"-r", "e8a72b7e-c4b1-4bdc-bf40-68f23c68a2aa", "-a", "SGX Attestation", "-f", "../test/"},
+			wantErr:     true,
+			description: "Test Error reading file",
 		},
 	}
 

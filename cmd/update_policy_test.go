@@ -18,7 +18,6 @@ func TestUpdatePolicyCmd(t *testing.T) {
 	defer server.Close()
 	test.SetupMockConfiguration(server.URL, tempConfigFile)
 	GenerateInvalidPolicyFile(t, tempPolicyFile)
-
 	tt := []struct {
 		args        []string
 		wantErr     bool
@@ -53,6 +52,12 @@ func TestUpdatePolicyCmd(t *testing.T) {
 				"-n", "Sample_Policy_SGX", "-f", "../test/resources/@rego-policy.txt"},
 			wantErr:     true,
 			description: "Test Unsafe or invalid path specified",
+		},
+		{
+			args: []string{constants.UpdateCmd, constants.PolicyCmd, "-i", "e48dabc5-9608-4ff3-aaed-f25909ab9de1",
+				"-n", "Sample_Policy_SGX", "-f", "../test/resources/"},
+			wantErr:     true,
+			description: "Test Error reading policy file",
 		},
 	}
 

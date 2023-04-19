@@ -31,7 +31,6 @@ func TestGeneratePolicyJwtCmd(t *testing.T) {
 	test.SetupMockConfiguration(server.URL, tempConfigFile)
 
 	generateKeyPairForTests(t, keyFile, certFile)
-
 	tt := []struct {
 		args        []string
 		wantErr     bool
@@ -61,6 +60,27 @@ func TestGeneratePolicyJwtCmd(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			args: []string{constants.CreateCmd, constants.PolicyJwtCmd, "-f", "../test/resources/rego-policy.txt",
+				"-p", keyFile,
+				"-c", "..test/", "-s"},
+			wantErr:     true,
+			description: "Test Invalid certificate file path",
+		},
+		{
+			args: []string{constants.CreateCmd, constants.PolicyJwtCmd, "-f", "../test/resources/rego-policy.txt",
+				"-p", "../test",
+				"-c", certFile, "-s"},
+			wantErr:     true,
+			description: "Test Invalid private key path",
+		},
+		{
+			args: []string{constants.CreateCmd, constants.PolicyJwtCmd, "-f", "../test/resources/rego-policy.txt",
+				"-p", keyFile,
+				"-c", certFile, "-a", constants.RS256},
+			wantErr:     true,
+			description: "Test Signing algorithm provided as input is not compatible with the private key type",
+		},
+		{
 			args:        []string{constants.CreateCmd, constants.PolicyJwtCmd, "-f", "../test/resources/@rego-policy.txt"},
 			wantErr:     true,
 			description: "Test Invalid policy file path provided",
@@ -70,6 +90,12 @@ func TestGeneratePolicyJwtCmd(t *testing.T) {
 			wantErr:     true,
 			description: "Test Policy file path cannot be empty",
 		},
+		{
+			args:        []string{constants.CreateCmd, constants.PolicyJwtCmd, "-f", "../test/resources/"},
+			wantErr:     true,
+			description: "Test Error reading policy file",
+		},
+
 		{
 			args:        []string{constants.CreateCmd, constants.PolicyJwtCmd, "-f", "../test/resources/rego-policy1.txt"},
 			wantErr:     true,
@@ -107,7 +133,6 @@ func TestGeneratePolicyJwtCmd(t *testing.T) {
 func generateKeyPairForTests(t *testing.T, keyFile, certFile string) {
 	keyPair, err := rsa.GenerateKey(rand.Reader, 3072)
 	assert.NoError(t, err)
-
 	privKeyBytes := x509.MarshalPKCS1PrivateKey(keyPair)
 	privateKeyBlock := &pem.Block{
 		Type:  "RSA PRIVATE KEY",
