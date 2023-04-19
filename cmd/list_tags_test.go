@@ -29,7 +29,7 @@ func TestListTagCmd(t *testing.T) {
 	}
 
 	listCmd.AddCommand(listTagCmd)
-	tenantCmd.AddCommand(createCmd)
+	tenantCmd.AddCommand(listCmd)
 
 	for _, tc := range tt {
 		_, err := execute(t, tenantCmd, tc.args)

@@ -15,7 +15,6 @@ import (
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
 	"intel/amber/tac/v1/models"
-	"intel/amber/tac/v1/validation"
 	"net/http"
 	"net/url"
 	"strings"
@@ -44,7 +43,6 @@ func init() {
 
 	updateApiClientCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the api client needs to be updated")
 	updateApiClientCmd.Flags().StringP(constants.ProductIdParamName, "p", "", "Id of the Amber Product for which the api client needs to be updated")
-	updateApiClientCmd.Flags().StringP(constants.ApiClientNameParamName, "n", "", "Description of the api client that needs to be updated")
 	updateApiClientCmd.Flags().StringP(constants.ApiClientIdParamName, "c", "", "Id of the api client that needs to be updated")
 	updateApiClientCmd.Flags().StringSliceP(constants.PolicyIdsParamName, "i", []string{}, "List of comma separated policy IDs to be linked to the api client")
 	updateApiClientCmd.Flags().StringSliceP(constants.TagKeyAndValuesParamName, "v", []string{}, "List of the comma separated tad Id and value pairs in the "+
@@ -88,11 +86,6 @@ func updateApiClient(cmd *cobra.Command) (string, error) {
 	productId, err := uuid.Parse(productIdString)
 	if err != nil {
 		return "", errors.Wrap(err, "Invalid product id provided")
-	}
-
-	apiClientName, err := cmd.Flags().GetString(constants.ApiClientNameParamName)
-	if err != nil {
-		return "", err
 	}
 
 	apiClientIdString, err := cmd.Flags().GetString(constants.ApiClientIdParamName)
@@ -145,17 +138,9 @@ func updateApiClient(cmd *cobra.Command) (string, error) {
 		ServiceId:    serviceId,
 	}
 
-	if apiClientName != "" {
-		apiClientInfo.Name = &apiClientName
-	}
-
 	if activationStatus != "" {
 		var status = models.ApiClientStatus(activationStatus)
 		apiClientInfo.Status = &status
-	}
-
-	if err = validation.ValidateStrings([]string{apiClientName}); err != nil {
-		return "", errors.Wrap(err, "Invalid api client name provided")
 	}
 
 	tmsClient := tms.NewTmsClient(client, tmsUrl, apiKey)
