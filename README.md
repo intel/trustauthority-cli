@@ -95,7 +95,7 @@ tenantctl list service -r < service Id >
 tenantctl create apiClient -r < service id > -p < product id > -n < api client name > -i "comma separated policy Ids" -v "tag-key1:tag-value1,tag-key2:tag-value2"
 
 ##### Update Api Client:
-tenantctl update apiClient -r < service id > -p < product id > -c < api client id > -n < api client name > -i "comma separated policy Ids" -v "tag-key1:tag-value1,tag-key2:tag-value2" -s < Active/Inactive/Cancelled >
+tenantctl update apiClient -r < service id > -p < product id > -c < api client id > -i "comma separated policy Ids" -v "tag-key1:tag-value1,tag-key2:tag-value2" -s < Active/Inactive/Cancelled >
 
 ##### Get Api Clients:
 tenantctl list apiClient -r < service id >
