@@ -18,6 +18,7 @@ tenantctl:
 		--target builder  \
 		--build-arg VERSION=${VERSION} \
 		--build-arg COMMIT=${GITCOMMIT} \
+		--build-arg BUILDDATE=${BUILDDATE} \
 		-t tenantcli-build:${VERSION} \
 		.
 		docker run --rm -v `pwd`/out:/tmp/ tenantcli-build:${VERSION}

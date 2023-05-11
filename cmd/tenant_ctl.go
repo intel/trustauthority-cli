@@ -7,15 +7,15 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
 	"intel/amber/tac/v1/utils"
+	"intel/amber/tac/v1/validation"
 	"os"
 	"path/filepath"
-	"strings"
+	"regexp"
 )
 
 var (
@@ -28,6 +28,10 @@ var tenantCmd = &cobra.Command{
 	Short: "Tenant CLI used to run the tasks for tenant admin/user",
 	Long:  ``,
 }
+
+// Regex to validate Amber API key. Key should contain characters between a-z, A-Z, 0-9
+// and should be of size between 30 and 128
+var apiKeyRegex = regexp.MustCompile(`^[a-zA-Z0-9]{30,128}$`)
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the tenantCmd.
@@ -61,8 +65,8 @@ func Execute() {
 		//API key is not needed for generating policy JWT or setting up config, API key check is skipped for these 2 commands
 		if ok := cmdListWithNoApiKey[cmd.Name()]; !ok {
 			apiKey = configValues.AmberApiKey
-			if strings.TrimSpace(apiKey) == "" {
-				return errors.Errorf("%s config variable needs to be set with a proper API Key before using CLI", constants.AmberApiKeyEnvVar)
+			if err := validation.ValidateAmberAPIKey(apiKey); err != nil {
+				return err
 			}
 		}
 		return nil

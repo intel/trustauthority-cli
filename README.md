@@ -140,7 +140,7 @@ Note: Policy file size should be <= 10KB
 ```bash
 default matches_sgx_policy = false 
 matches_sgx_policy = true 
-{  input.amber_sgx_is_debuggable == false 
+{  input.amber_tee_is_debuggable == false 
    input.amber_sgx_isvsvn == 0 
    input.amber_sgx_isvprodid == 0 
    input.amber_sgx_mrsigner ==  \"d412a4f07ef83892a5915fb2ab584be31e186e5a4f95ab5f6950fd4eb8694d7b\" 

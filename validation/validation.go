@@ -6,18 +6,22 @@
 package validation
 
 import (
-	"errors"
 	"fmt"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/constants"
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 )
 
 var (
 	stringReg = regexp.MustCompile("(^[a-zA-Z0-9_ \\/.-]*$)")
 	emailReg  = regexp.MustCompile("^[a-zA-Z0-9._%+\\-]+@[a-z0-9.\\-]+\\.[a-z]{2,4}$")
+	// Regex to validate Amber API key. Key should contain characters between a-z, A-Z, 0-9
+	// and should be of size between 30 and 128
+	apiKeyRegex = regexp.MustCompile(`^[a-zA-Z0-9]{30,128}$`)
 )
 
 // ValidateStrings method is used to validate input strings
@@ -54,6 +58,16 @@ func ValidateSize(path string) error {
 		return err
 	} else if fi.Size() > constants.MaxPolicyFileSize {
 		return fmt.Errorf("%s: %d", constants.ErrorInvalidSize, fi.Size())
+	}
+	return nil
+}
+
+func ValidateAmberAPIKey(apiKey string) error {
+	if strings.TrimSpace(apiKey) == "" {
+		return errors.Errorf("%s config variable needs to be set with a proper API Key before using CLI", constants.AmberApiKeyEnvVar)
+	}
+	if matched := apiKeyRegex.MatchString(apiKey); !matched {
+		return errors.New("Invalid API key found in configuration file. Please update it with a valid API key.")
 	}
 	return nil
 }
