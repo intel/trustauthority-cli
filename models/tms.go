@@ -258,4 +258,10 @@ type (
 		Ledger         bool      `json:"ledger"`
 		Products       []Product `json:"products"`
 	}
+
+	AttestationFailureEmail struct {
+		// Email address to which Attestation Failure need to be sent
+		// example: jane.doe@domain.com
+		AttestationFailureEmail string `json:"attest_failure_email"`
+	}
 )

@@ -44,9 +44,12 @@ type TmsClient interface {
 
 	GetPlans(serviceOfferId uuid.UUID) ([]models.Plan, error)
 	RetrievePlan(serviceOfferId, planId uuid.UUID) (*models.PlanProducts, error)
+
+	UpdateTenantSettings(settings *models.AttestationFailureEmail) (*models.AttestationFailureEmail, error)
+	GetTenantSettings() (*models.AttestationFailureEmail, error)
 }
 
-//Client Details for TMS client
+// Client Details for TMS client
 type tmsClient struct {
 	Client  *http.Client
 	BaseURL *url.URL
@@ -673,4 +676,70 @@ func (pc tmsClient) RetrievePlan(serviceOfferId, planId uuid.UUID) (*models.Plan
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
 	return &retrievePlanRes, nil
+}
+
+func (pc tmsClient) UpdateTenantSettings(request *models.AttestationFailureEmail) (*models.AttestationFailureEmail, error) {
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.TenantsApiEndpoint + constants.SettingsEndpoint)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
+	}
+
+	reqBytes, err := json.Marshal(request)
+	if err != nil {
+		return nil, errors.Wrap(err, " Error marshalling request")
+	}
+
+	// Create a new request using http
+	req, err := http.NewRequest(http.MethodPut, reqURL.String(), bytes.NewBuffer(reqBytes))
+	if err != nil {
+		return nil, errors.Wrap(err, "Error forming request")
+	}
+	req.Header.Add(constants.HTTPHeaderKeyContentType, constants.HTTPMediaTypeJson)
+	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
+	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+
+	response, err := client.SendRequest(pc.Client, req)
+	if err != nil {
+		return nil, errors.Wrap(err, "Error in response body")
+	}
+
+	// Parse response for validation
+	var notificationUpdateRes models.AttestationFailureEmail
+	dec := json.NewDecoder(bytes.NewReader(response))
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&notificationUpdateRes)
+	if err != nil {
+		return nil, errors.Wrap(err, "Error unmarshalling response")
+	}
+	return &notificationUpdateRes, nil
+}
+
+func (pc tmsClient) GetTenantSettings() (*models.AttestationFailureEmail, error) {
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.TenantsApiEndpoint + constants.SettingsEndpoint)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
+	}
+
+	// Create a new request using http
+	req, err := http.NewRequest(http.MethodGet, reqURL.String(), nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "Error forming request")
+	}
+	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
+	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+
+	response, err := client.SendRequest(pc.Client, req)
+	if err != nil {
+		return nil, errors.Wrap(err, "Error in response body")
+	}
+
+	// Parse response for validation
+	var notificationFetchRes models.AttestationFailureEmail
+	dec := json.NewDecoder(bytes.NewReader(response))
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&notificationFetchRes)
+	if err != nil {
+		return nil, errors.Wrap(err, "Error unmarshalling response")
+	}
+	return &notificationFetchRes, nil
 }

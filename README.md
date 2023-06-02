@@ -118,6 +118,15 @@ tenantctl list apiClient policy -r < service id > -c < api client id >
 ##### List Api Client Tags:
 tenantctl list apiClient tag -r < service id > -c < api client id >
 
+##### Update Tenant Settings:
+tenantctl update tenant-settings -e < email id >
+
+##### Update Tenant Settings (disable notification):
+tenantctl update tenant-settings -d
+
+##### List Tenant Settings:
+tenantctl list tenant-settings
+
 ##### Create Policy:
 tenantctl create policy -n < name of policy > -t < policy type > -a < attestation type > -r < service offer id > -f < rego policy file path >
 Note: Policy file size should be <= 10KB

@@ -6,10 +6,14 @@
 package test
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
 	"gopkg.in/yaml.v3"
 	"intel/amber/tac/v1/config"
+	"intel/amber/tac/v1/models"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -215,6 +219,10 @@ var (
       		"product_type": ""
 		}
  	  ]
+	}`
+
+	tenantSettings = `{
+			"attest_failure_email" : "dummy@email.com"
 	}`
 )
 
@@ -471,10 +479,36 @@ func MockServer(t *testing.T) *httptest.Server {
 		}
 	}).Methods(http.MethodGet)
 
+	r.HandleFunc("/management/v1/tenants/settings", func(w http.ResponseWriter, r *http.Request) {
+		request, _ := io.ReadAll(r.Body)
+		dec := json.NewDecoder(bytes.NewReader(request))
+		dec.DisallowUnknownFields()
+		var settings models.AttestationFailureEmail
+		err := dec.Decode(&settings)
+		if err != nil {
+			t.Log("test/test_utility:mockServer(): Unable to decode data")
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
+		_, err = w.Write(request)
+		if err != nil {
+			t.Log("test/test_utility:mockServer(): Unable to write data")
+		}
+	}).Methods(http.MethodPut)
+
+	r.HandleFunc("/management/v1/tenants/settings", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
+		_, err := w.Write([]byte(tenantSettings))
+		if err != nil {
+			t.Log("test/test_utility:mockServer(): Unable to write data")
+		}
+	}).Methods(http.MethodGet)
+
 	return httptest.NewServer(r)
 }
 
-//SetupMockConfiguration setting up mock CLI configurations
+// SetupMockConfiguration setting up mock CLI configurations
 func SetupMockConfiguration(serverUrl string, configFile *os.File) *config.Configuration {
 
 	c := &config.Configuration{

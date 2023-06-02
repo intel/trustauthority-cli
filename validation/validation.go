@@ -18,7 +18,7 @@ import (
 
 var (
 	stringReg = regexp.MustCompile("(^[a-zA-Z0-9_ \\/.-]*$)")
-	emailReg  = regexp.MustCompile("^[a-zA-Z0-9._%+\\-]+@[a-z0-9.\\-]+\\.[a-z]{2,4}$")
+	emailReg  = regexp.MustCompile(`^[a-zA-Z0-9.!#$%&'*+\/=?^_'{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$`)
 	// Regex to validate Amber API key. Key should contain characters between a-z, A-Z, 0-9
 	// and should be of size between 30 and 128
 	apiKeyRegex = regexp.MustCompile(`^[a-zA-Z0-9]{30,128}$`)
