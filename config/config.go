@@ -102,7 +102,7 @@ func SetupConfig(envFilePath string) error {
 	}
 
 	configValues.AmberApiKey = viper.GetString(constants.AmberApiKeyEnvVar)
-	if configValues.AmberApiKey == "" {
+	if err := validation.ValidateAmberAPIKey(configValues.AmberApiKey); err != nil {
 		return errors.Wrap(err, "Invalid API Key provided")
 	}
 

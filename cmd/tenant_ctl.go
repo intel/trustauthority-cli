@@ -51,9 +51,11 @@ func Execute() {
 	tenantCmd.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
 		configValues, err := config.LoadConfiguration()
 		if err != nil {
-			if err := utils.SetUpLogs(logFile, constants.DefaultLogLevel); err != nil {
-				return err
+			if logErr := utils.SetUpLogs(logFile, constants.DefaultLogLevel); logErr != nil {
+				return logErr
 			}
+			logrus.WithError(err).Error("Error loading configuration")
+			return err
 		} else {
 			if err := utils.SetUpLogs(logFile, configValues.LogLevel); err != nil {
 				return err
