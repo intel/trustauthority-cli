@@ -16,7 +16,6 @@ import (
 	"intel/amber/tac/v1/models"
 	"intel/amber/tac/v1/utils"
 	"intel/amber/tac/v1/validation"
-	"io/ioutil"
 	"os"
 )
 
@@ -58,7 +57,7 @@ func generatePolicyJwt(cmd *cobra.Command) error {
 	if policyFilePath == "" {
 		return errors.New("Policy file path cannot be empty")
 	}
-	
+
 	algorithms.Add(constants.RS256, constants.PS256, constants.RS384, constants.PS384)
 	path, err := validation.ValidatePath(policyFilePath)
 	if err != nil {
@@ -149,7 +148,7 @@ func generatePolicyJwt(cmd *cobra.Command) error {
 	generateConsoleOutput(string(policyBytes), algorithm, outputFile, tokenString)
 
 	// Output to file
-	err = ioutil.WriteFile(outputFile, []byte(tokenString), 0400)
+	err = os.WriteFile(outputFile, []byte(tokenString), 0400)
 	if err != nil {
 		return err
 	}

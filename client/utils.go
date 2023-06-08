@@ -6,7 +6,7 @@
 package client
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/pkg/errors"
@@ -31,7 +31,7 @@ func SendRequest(client *http.Client, req *http.Request) ([]byte, error) {
 	}
 
 	//create byte array of HTTP response body
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error reading response")
 	}

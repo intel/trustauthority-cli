@@ -31,6 +31,7 @@ echo "Installing Tenant CLI..."
 
 BIN_PATH=~/.local/bin
 CONFIG_PATH=~/.config/$COMPONENT_NAME
+CONFIG_FILE_PATH=$CONFIG_PATH/config.yaml
 LOG_PATH=$CONFIG_PATH/logs
 
 for directory in $BIN_PATH $CONFIG_PATH $LOG_PATH; do
@@ -48,6 +49,9 @@ chmod 700 $LOG_PATH
 
 cp $COMPONENT_NAME $BIN_PATH/
 chmod 700 $BIN_PATH/$COMPONENT_NAME
+
+touch $CONFIG_FILE_PATH
+chmod 600 $CONFIG_FILE_PATH
 
 tenantctl config -v $env_file
 if [ $? -ne 0 ]; then

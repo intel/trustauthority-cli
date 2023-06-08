@@ -19,7 +19,6 @@ import (
 	"intel/amber/tac/v1/constants"
 	"intel/amber/tac/v1/validation"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -119,7 +118,7 @@ func CheckKeyFiles(privKeyFilePath, certificateFilePath string) (*rsa.PrivateKey
 	if err != nil {
 		return nil, "", errors.Wrap(err, "Invalid certificateFilePath")
 	}
-	privKeyBytes, err := ioutil.ReadFile(filepath)
+	privKeyBytes, err := os.ReadFile(filepath)
 	if err != nil {
 		return nil, "", errors.Wrap(err, "Error reading private key file")
 	}
@@ -129,7 +128,7 @@ func CheckKeyFiles(privKeyFilePath, certificateFilePath string) (*rsa.PrivateKey
 		return nil, "", errors.Wrap(err, "Error parsing private key PEM file")
 	}
 
-	certBytes, err := ioutil.ReadFile(certfile)
+	certBytes, err := os.ReadFile(certfile)
 	if err != nil {
 		return nil, "", errors.Wrap(err, "Error reading certificate file")
 	}
