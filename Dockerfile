@@ -1,7 +1,7 @@
 # Copyright (C) 2022 Intel Corporation
 # SPDX-License-Identifier: BSD-3-Clause
 
-FROM golang:1.20.2 AS buildbase
+FROM golang:1.20.4 AS buildbase
 ARG VERSION
 ARG COMMIT
 WORKDIR /app
