@@ -93,6 +93,10 @@ func createApiClient(cmd *cobra.Command) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	err = validation.ValidateApiClientName(apiClientName)
+	if err != nil {
+		return "", err
+	}
 
 	policyIdsString, err := cmd.Flags().GetStringSlice(constants.PolicyIdsParamName)
 	if err != nil {
@@ -119,6 +123,12 @@ func createApiClient(cmd *cobra.Command) (string, error) {
 		if len(splitTag) != 2 {
 			return "", errors.New("Tag Id value pairs are not provided in proper format, please check help section for more details")
 		}
+		if err = validation.ValidateTagName(splitTag[0]); err != nil {
+			return "", err
+		}
+		if err = validation.ValidateTagValue(splitTag[1]); err != nil {
+			return "", err
+		}
 		tagKeyValues = append(tagKeyValues, models.ApiClientTagIdValue{Key: splitTag[0], Value: splitTag[1]})
 	}
 
@@ -129,10 +139,6 @@ func createApiClient(cmd *cobra.Command) (string, error) {
 		TagIdsValues: tagKeyValues,
 		ServiceId:    serviceId,
 		Status:       constants.ApiClientStatusActive,
-	}
-
-	if err = validation.ValidateStrings([]string{apiClientName}); err != nil {
-		return "", errors.Wrap(err, "Invalid api client name provided")
 	}
 
 	tmsClient := tms.NewTmsClient(client, tmsUrl, apiKey)

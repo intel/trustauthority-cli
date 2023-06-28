@@ -8,11 +8,13 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/client/tms"
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
 	"intel/amber/tac/v1/models"
+	"intel/amber/tac/v1/validation"
 	"net/http"
 	"net/url"
 	"time"
@@ -63,15 +65,22 @@ func createUser(cmd *cobra.Command) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	if err = validation.ValidateEmailAddress(emailId); err != nil {
+		return "", err
+	}
 
-	role, err := cmd.Flags().GetString(constants.UserRoleParamName)
+	userRole, err := cmd.Flags().GetString(constants.UserRoleParamName)
 	if err != nil {
 		return "", err
+	}
+	if userRole != constants.TenantAdminRole && userRole != constants.UserRole {
+		return "", errors.Errorf("%s is not a valid user role. Roles should be either %s or %s", userRole,
+			constants.TenantAdminRole, constants.UserRole)
 	}
 
 	var createUserInfo = &models.CreateTenantUser{
 		Email: emailId,
-		Role:  role,
+		Role:  userRole,
 	}
 
 	tmsClient := tms.NewTmsClient(client, tmsUrl, apiKey)

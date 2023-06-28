@@ -29,6 +29,12 @@ func TestUpdatePolicyCmd(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			args: []string{constants.CreateCmd, constants.PolicyCmd, "-n", "Sample Policy SGX", "-t", "Appraisal policy",
+				"-r", "e8a72b7e-c4b1-4bdc-bf40-68f23c68a2aa", "-a", "SGX Attestation", "-f", "../test/resources/rego-policy.txt"},
+			wantErr:     true,
+			description: "Test Create Policy with invalid policy name",
+		},
+		{
 
 			args: []string{constants.UpdateCmd, constants.PolicyCmd, "-i", "e48dabc5-9608-4ff3-aaed-f25909ab9de1",
 				"-n", "Sample_Policy_SGX", "-f", tempPolicyFile},

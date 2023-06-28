@@ -14,6 +14,7 @@ import (
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
 	"intel/amber/tac/v1/models"
+	"intel/amber/tac/v1/validation"
 	"net/http"
 	"net/url"
 	"time"
@@ -57,6 +58,9 @@ func createTag(cmd *cobra.Command) (string, error) {
 
 	tagName, err := cmd.Flags().GetString(constants.TagNameParamName)
 	if err != nil {
+		return "", err
+	}
+	if err = validation.ValidateTagName(tagName); err != nil {
 		return "", err
 	}
 

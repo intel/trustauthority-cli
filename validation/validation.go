@@ -21,7 +21,11 @@ var (
 	emailReg  = regexp.MustCompile(`^[a-zA-Z0-9.!#$%&'*+\/=?^_'{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$`)
 	// Regex to validate Amber API key. Key should contain characters between a-z, A-Z, 0-9
 	// and should be of size between 30 and 128
-	apiKeyRegex = regexp.MustCompile(`^[a-zA-Z0-9]{30,128}$`)
+	apiKeyRegex           = regexp.MustCompile(`^[a-zA-Z0-9]{30,128}$`)
+	subscriptionNameRegex = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9\-\_]{1,62}[a-zA-Z0-9]$`)
+	tagReg                = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9\-\_]{1,62}[a-zA-Z0-9]$`)
+	tagValueReg           = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9\-\_]{1,62}[a-zA-Z0-9]$`)
+	policyNameRegex       = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9_-]{1,62}[a-zA-Z0-9]$`)
 )
 
 // ValidateStrings method is used to validate input strings
@@ -56,7 +60,8 @@ func ValidateSize(path string) error {
 	fi, err := os.Stat(path)
 	if err != nil {
 		return err
-	} else if fi.Size() > constants.MaxPolicyFileSize {
+	}
+	if fi.Size() > constants.MaxPolicyFileSize {
 		return fmt.Errorf("%s: %d", constants.ErrorInvalidSize, fi.Size())
 	}
 	return nil
@@ -66,8 +71,52 @@ func ValidateAmberAPIKey(apiKey string) error {
 	if strings.TrimSpace(apiKey) == "" {
 		return errors.Errorf("%s config variable needs to be set with a proper API Key before using CLI", constants.AmberApiKeyEnvVar)
 	}
-	if matched := apiKeyRegex.MatchString(apiKey); !matched {
+	if !apiKeyRegex.MatchString(apiKey) {
 		return errors.New("Invalid API key found in configuration file. Please update it with a valid API key.")
+	}
+	return nil
+}
+
+func ValidateApiClientName(name string) error {
+	if strings.TrimSpace(name) == "" {
+		return errors.New("ApiClient name cannot be empty")
+	}
+	if !subscriptionNameRegex.Match([]byte(name)) {
+		return errors.New("ApiClient name should be alphanumeric and start with an alphanumeric character with " +
+			"_ or - as separator and should be at most 64 characters long")
+	}
+	return nil
+}
+
+func ValidateTagName(name string) error {
+	if strings.TrimSpace(name) == "" {
+		return errors.New("Tag name cannot be empty")
+	}
+	if !tagReg.Match([]byte(name)) {
+		return errors.New("Tag name should be alphanumeric and start with an alphanumeric character with " +
+			"_ or - as separator and should be at most 64 characters long")
+	}
+	return nil
+}
+
+func ValidateTagValue(value string) error {
+	if strings.TrimSpace(value) == "" {
+		return errors.New("Tag value cannot be empty")
+	}
+	if !tagValueReg.Match([]byte(value)) {
+		return errors.New("Tag value should be alphanumeric and start with an alphanumeric character with " +
+			"_ or - as separator and should be at most 64 characters long")
+	}
+	return nil
+}
+
+func ValidatePolicyName(policyName string) error {
+	if strings.TrimSpace(policyName) == "" {
+		return errors.New("Policy name cannot be empty")
+	}
+	if !policyNameRegex.Match([]byte(policyName)) {
+		return errors.New("Policy name is invalid. Policy name should be alpha numeric and have minimum 3 characters with no spaces between words (" +
+			"use \"_\" or \"-\" as separators)")
 	}
 	return nil
 }

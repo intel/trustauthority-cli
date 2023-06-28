@@ -73,10 +73,18 @@ func createPolicy(cmd *cobra.Command) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	if err = validation.ValidatePolicyName(policyName); err != nil {
+		return "", err
+	}
 
 	policyType, err := cmd.Flags().GetString(constants.PolicyTypeParamName)
 	if err != nil {
 		return "", err
+	}
+	if policyType != constants.AppraisalPolicyType &&
+		policyType != constants.TokenCustomizationPolicyType {
+		return "", errors.Errorf("Invalid policy type provided in request, should be one of %s or %s",
+			constants.AppraisalPolicyType, constants.TokenCustomizationPolicyType)
 	}
 
 	soIdString, err := cmd.Flags().GetString(constants.ServiceOfferIdParamName)
@@ -92,6 +100,11 @@ func createPolicy(cmd *cobra.Command) (string, error) {
 	attestationType, err := cmd.Flags().GetString(constants.AttestationTypeParamName)
 	if err != nil {
 		return "", err
+	}
+	if attestationType != constants.TdxAttestationType &&
+		attestationType != constants.SgxAttestationType {
+		return "", errors.Errorf("Invalid attestation type provided in request, should be one of %s or %s",
+			constants.TdxAttestationType, constants.SgxAttestationType)
 	}
 
 	policyFilePath, err := cmd.Flags().GetString(constants.PolicyFileParamName)

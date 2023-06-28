@@ -15,6 +15,7 @@ import (
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
 	"intel/amber/tac/v1/models"
+	"intel/amber/tac/v1/validation"
 	"net/http"
 	"net/url"
 	"strings"
@@ -126,7 +127,13 @@ func updateApiClient(cmd *cobra.Command) (string, error) {
 	for _, tagIdValue := range tagKeyValuesString {
 		splitTag := strings.Split(tagIdValue, ":")
 		if len(splitTag) != 2 {
-			return "", errors.New("Tag Id value pairs are not provided in proper format, please check hel section for more details")
+			return "", errors.New("Tag Id value pairs are not provided in proper format, please check help section for more details")
+		}
+		if err = validation.ValidateTagName(splitTag[0]); err != nil {
+			return "", err
+		}
+		if err = validation.ValidateTagValue(splitTag[1]); err != nil {
+			return "", err
 		}
 		tagIdValues = append(tagIdValues, models.ApiClientTagIdValue{Key: splitTag[0], Value: splitTag[1]})
 	}

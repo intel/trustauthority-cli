@@ -39,7 +39,6 @@ var deleteUserCmd = &cobra.Command{
 func init() {
 	deleteCmd.AddCommand(deleteUserCmd)
 	deleteUserCmd.Flags().StringP(constants.UserIdParamName, "u", "", "Id of the specific user, the details for whom needs to be deleted")
-
 	deleteUserCmd.MarkFlagRequired(constants.UserIdParamName)
 }
 

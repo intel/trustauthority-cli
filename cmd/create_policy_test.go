@@ -78,6 +78,24 @@ func TestCreatePolicyCmd(t *testing.T) {
 			description: "Test Create Policy",
 		},
 		{
+			args: []string{constants.CreateCmd, constants.PolicyCmd, "-n", "Sample Policy SGX", "-t", "Appraisal policy",
+				"-r", "e8a72b7e-c4b1-4bdc-bf40-68f23c68a2aa", "-a", "SGX Attestation", "-f", "../test/resources/rego-policy.txt"},
+			wantErr:     true,
+			description: "Test Create Policy with invalid policy name",
+		},
+		{
+			args: []string{constants.CreateCmd, constants.PolicyCmd, "-n", "Sample_Policy_SGX", "-t", "Invalid Policy Type",
+				"-r", "e8a72b7e-c4b1-4bdc-bf40-68f23c68a2aa", "-a", "SGX Attestation", "-f", "../test/resources/rego-policy.txt"},
+			wantErr:     true,
+			description: "Test Create Policy with invalid policy type",
+		},
+		{
+			args: []string{constants.CreateCmd, constants.PolicyCmd, "-n", "Sample_Policy_SGX", "-t", "Appraisal policy",
+				"-r", "e8a72b7e-c4b1-4bdc-bf40-68f23c68a2aa", "-a", "Invalid Attestation Type", "-f", "../test/resources/rego-policy.txt"},
+			wantErr:     true,
+			description: "Test Create Policy with invalid attestation type",
+		},
+		{
 			args: []string{constants.CreateCmd, constants.PolicyCmd, "-n", "Sample_Policy_SGX", "-t", "Appraisal policy",
 				"-r", "e8a72b7e-c4b1-4bdc-bf40-68f23c68a2aa", "-a", "SGX Attestation", "-f", ""},
 			wantErr:     true,
@@ -120,7 +138,6 @@ func TestCreatePolicyCmd(t *testing.T) {
 			assert.NoError(t, err)
 		}
 	}
-	//time.Sleep(5 * time.Second)
 	err = os.Remove(tempPolicyFile)
 	assert.NoError(t, err)
 }

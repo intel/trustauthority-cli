@@ -74,12 +74,12 @@ func deleteApiClient(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
-	tmsClient := tms.NewTmsClient(client, tmsUrl, apiKey)
-
 	apiClientId, err := uuid.Parse(apiClientIdString)
 	if err != nil {
 		return "", errors.Wrap(err, "Invalid api client id provided")
 	}
+
+	tmsClient := tms.NewTmsClient(client, tmsUrl, apiKey)
 
 	err = tmsClient.DeleteApiClient(serviceId, apiClientId)
 	if err != nil {

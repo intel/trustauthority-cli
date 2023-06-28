@@ -81,6 +81,9 @@ func updatePolicy(cmd *cobra.Command) (string, error) {
 	}
 
 	if policyName != "" {
+		if err = validation.ValidatePolicyName(policyName); err != nil {
+			return "", err
+		}
 		policyUpdateReq.PolicyName = policyName
 	}
 

@@ -49,8 +49,14 @@ func TestCreateTagCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args:    []string{constants.CreateCmd, constants.TagCmd, "-n", "Test Tag"},
-			wantErr: false,
+			args:        []string{constants.CreateCmd, constants.TagCmd, "-n", "Test_Tag"},
+			wantErr:     false,
+			description: "Create a tag",
+		},
+		{
+			args:        []string{constants.CreateCmd, constants.TagCmd, "-n", "Test @Tag"},
+			wantErr:     true,
+			description: "Create a tag using invalid tag name",
 		},
 	}
 

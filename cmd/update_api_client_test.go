@@ -47,6 +47,18 @@ func TestUpdateApiClientCmd(t *testing.T) {
 			description: "Test Create ApiClient With Incorrect Tag Format",
 		},
 		{
+			args: []string{constants.CreateCmd, constants.ApiClientCmd, "-a", "abc", "-n", "Test_Subs", "-p",
+				"e169d34f-58ce-4717-9b3a-5c66abd33417", "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777", "-v", "invalid Tag Name:tag1"},
+			wantErr:     true,
+			description: "Test Create Api Client With Incorrect Tag Name",
+		},
+		{
+			args: []string{constants.CreateCmd, constants.ApiClientCmd, "-a", "abc", "-n", "Test_Subs", "-p",
+				"e169d34f-58ce-4717-9b3a-5c66abd33417", "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777", "-v", "tagName:invalid value"},
+			wantErr:     true,
+			description: "Test Create Api Client With Incorrect Tag Value",
+		},
+		{
 			args: []string{constants.UpdateCmd, constants.ApiClientCmd, "-p",
 				"e169d34f-58ce-4717-9b3a-5c66abd33417", "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777", "-i", "abc"},
 			wantErr:     true,

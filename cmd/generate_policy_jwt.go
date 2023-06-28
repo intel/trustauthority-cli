@@ -58,11 +58,11 @@ func generatePolicyJwt(cmd *cobra.Command) error {
 		return errors.New("Policy file path cannot be empty")
 	}
 
-	algorithms.Add(constants.RS256, constants.PS256, constants.RS384, constants.PS384)
 	path, err := validation.ValidatePath(policyFilePath)
 	if err != nil {
 		return errors.Wrap(err, "Invalid policy file path provided")
 	}
+
 	policyBytes, err := os.ReadFile(path)
 	if err != nil {
 		return errors.Wrap(err, "Error reading policy file")
@@ -71,10 +71,11 @@ func generatePolicyJwt(cmd *cobra.Command) error {
 	if len(policyBytes) == 0 {
 		return errors.New("Policy file does not contain a rego policy")
 	}
-
 	claims := models.PolicyClaims{
 		AttestationPolicy: string(policyBytes),
 	}
+
+	algorithms.Add(constants.RS256, constants.PS256, constants.RS384, constants.PS384)
 
 	signJwt, err := cmd.Flags().GetBool(constants.SignObjectParamName)
 	if err != nil {
