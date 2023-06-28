@@ -1,3 +1,5 @@
+# Copyright (C) 2022 Intel Corporation
+# SPDX-License-Identifier: BSD-3-Clause
 SHELL := /bin/bash
 GITCOMMIT := $(shell git describe --always)
 BUILDDATE := $(shell TZ=UTC date +%Y-%m-%dT%H:%M:%S%z)
