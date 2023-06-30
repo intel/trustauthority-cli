@@ -116,7 +116,7 @@ func ValidatePolicyName(policyName string) error {
 	}
 	if !policyNameRegex.Match([]byte(policyName)) {
 		return errors.New("Policy name is invalid. Policy name should be alpha numeric and have minimum 3 characters with no spaces between words (" +
-			"use \"_\" or \"-\" as separators)")
+			"use \"_\" or \"-\" as separators) and should not be more than 64 characters")
 	}
 	return nil
 }
