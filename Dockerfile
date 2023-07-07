@@ -20,7 +20,7 @@ ARG COMMIT
 ARG BUILDDATE
 WORKDIR /app
 RUN export PATH=$PATH:/usr/local/go/bin/ && \
-    env GOOS=linux GOSUMDB=off GOPROXY=direct go build -buildmode=pie \
+    env GOOS=linux GOSUMDB=off GOPROXY=direct CGO_CPPFLAGS="-D_FORTIFY_SOURCE=2" go build -buildmode=pie \
     -ldflags "-X intel/amber/tac/v1/utils.BuildDate=${BUILDDATE} -X intel/amber/tac/v1/utils.Version=${VERSION} -X intel/amber/tac/v1/utils.GitHash=${COMMIT} -linkmode=external -s -extldflags '-Wl,-z,relro,-z,now'"\
     -o tenantctl
 CMD ["cp", "/app/tenantctl", "/tmp/"]
