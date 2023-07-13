@@ -22,6 +22,10 @@ func TestUpdateTenantSettingsCmd(t *testing.T) {
 		description string
 	}{
 		{
+			args:    []string{constants.UpdateCmd, constants.TenantSettingsCmd},
+			wantErr: true,
+		},
+		{
 			args:    []string{constants.UpdateCmd, constants.TenantSettingsCmd, "-e", "dummy@email.com"},
 			wantErr: false,
 		},

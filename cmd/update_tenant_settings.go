@@ -69,6 +69,10 @@ func updateTenantSettings(cmd *cobra.Command) (string, error) {
 		return "", errors.Wrap(err, "Error fetching value of disable parameter")
 	}
 
+	if disableNotification == false && emailId == "" {
+		return "", errors.New("Either notification needs to be disabled or a valid email id needs to be provided")
+	}
+
 	tenantSettings := &models.AttestationFailureEmail{}
 	if !disableNotification {
 		err = validation.ValidateEmailAddress(emailId)
