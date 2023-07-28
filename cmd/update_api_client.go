@@ -35,6 +35,8 @@ var updateApiClientCmd = &cobra.Command{
 			return err
 		}
 		fmt.Println("ApiClient: \n\n", response)
+		fmt.Println("\nNOTE: There may be a delay of up to two (2) minutes for the changes to the attestation API key to take effect.")
+		fmt.Print("\n")
 		return nil
 	},
 }

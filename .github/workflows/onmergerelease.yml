@@ -20,6 +20,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.20'
+
       - name: Style Checker
         run: |
           if [ $(make go-fmt | tail -n 1 | grep gofmt | wc -l)  -eq 0 ]; then
@@ -53,26 +57,9 @@ jobs:
           snyk auth ${{ secrets.SNYK_AUTH_TOKEN }}
           snyk test --insecure --all-projects --json-file-output=snyc-scan.json
 
-  artifact-installer:
+  cleanup-images-bins:
     runs-on: [ self-hosted ]
-    env:
-      http_proxy: ${{ secrets.HTTP_PROXY }}
-      https_proxy: ${{ secrets.HTTPS_PROXY }}
-      no_proxy: ${{ secrets.NO_PROXY }}
-      ARTIFACTORY: ${{ secrets.ARTIFACTORY }}
-      ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
-      ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD}}
-      PULL_KEY_FROM_ARTIFACTORY: true
-    needs: [ "build-test" ]
+    needs: [ "build-test", "snyk-scan" ]
     steps:
-      - name: Push Installer
-        run: make push-artifact
-
-  clenup-images-bins:
-    runs-on: [ self-hosted ]
-    needs: [ "build-test", "snyk-scan", "artifact-installer" ]
-    steps:
-      - name: Clean unused\untagged docker images.
-        run: docker rmi $(docker images --filter "dangling=true" -q --no-trunc) || true
       - name: Clean generated binaries.
         run: make clean

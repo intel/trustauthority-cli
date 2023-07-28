@@ -32,6 +32,8 @@ var deleteApiClientCmd = &cobra.Command{
 			return err
 		}
 		fmt.Printf("Deleted api client with Id: %s \n\n", serviceId)
+		fmt.Println("\nNOTE: There may be a delay of up to two (2) minutes for the changes to the attestation API key to take effect.")
+		fmt.Print("\n")
 		return nil
 	},
 }
