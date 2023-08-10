@@ -11,7 +11,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
-	client "intel/amber/tac/v1/client"
+	"intel/amber/tac/v1/client"
 	"intel/amber/tac/v1/constants"
 	models2 "intel/amber/tac/v1/internal/models"
 	"intel/amber/tac/v1/models"

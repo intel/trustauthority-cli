@@ -85,6 +85,9 @@ const (
 
 	DefaultLogLevel          = "info"
 	DefaultHttpClientTimeout = 10
+	DefaultRetryWaitMin      = 2  //minimum time to wait before retry
+	DefaultRetryWaitMax      = 10 //maximum time to wait before retry
+	DefaultRetryCount        = 2  // number of retries
 	ApiClientStatusActive    = "Active"
 	ApiClientStatusInactive  = "Inactive"
 	ApiClientStatusCancelled = "Cancelled"
@@ -145,6 +148,7 @@ const (
 )
 
 var (
-	ErrorInvalidPath = errors.New("Unsafe or invalid path specified")
-	ErrorInvalidSize = errors.New("Policy File size is  greater than allowed size")
+	ErrorInvalidPath        = errors.New("Unsafe or invalid path specified")
+	ErrorInvalidSize        = errors.New("Policy File size is  greater than allowed size")
+	ServiceUnavailableError = `service unavailable`
 )
