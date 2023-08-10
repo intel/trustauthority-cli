@@ -23,8 +23,13 @@ func TestListServiceOffersCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args:    []string{constants.ListCmd, constants.ServiceOfferCmd},
+			args:    []string{constants.ListCmd, constants.ServiceOfferCmd, "-q", "valid-id"},
 			wantErr: false,
+		},
+		{
+			args:        []string{constants.ListCmd, constants.ServiceOfferCmd, "-q", "@#$invalid-id"},
+			wantErr:     true,
+			description: "Test invalid request ID",
 		},
 	}
 

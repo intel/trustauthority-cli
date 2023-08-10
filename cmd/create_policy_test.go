@@ -72,7 +72,7 @@ func TestCreatePolicyCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args: []string{constants.CreateCmd, constants.PolicyCmd, "-n", "Sample_Policy_SGX", "-t", "Appraisal policy",
+			args: []string{constants.CreateCmd, constants.PolicyCmd, "-q", "valid-id", "-n", "Sample_Policy_SGX", "-t", "Appraisal policy",
 				"-r", "e8a72b7e-c4b1-4bdc-bf40-68f23c68a2aa", "-a", "SGX Attestation", "-f", "../test/resources/rego-policy.txt"},
 			wantErr:     false,
 			description: "Test Create Policy",
@@ -123,6 +123,12 @@ func TestCreatePolicyCmd(t *testing.T) {
 				"-r", "e8a72b7e-c4b1-4bdc-bf40-68f23c68a2aa", "-a", "SGX Attestation", "-f", "../test/"},
 			wantErr:     true,
 			description: "Test Error reading file",
+		},
+		{
+			args: []string{constants.CreateCmd, constants.PolicyCmd, "-q", "@#$invalid-id", "-n", "Sample_Policy_SGX", "-t", "Appraisal policy",
+				"-r", "e8a72b7e-c4b1-4bdc-bf40-68f23c68a2aa", "-a", "SGX Attestation", "-f", "../test/resources/rego-policy.txt"},
+			wantErr:     true,
+			description: "Test Create Policy using invalid request ID",
 		},
 	}
 

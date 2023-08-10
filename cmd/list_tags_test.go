@@ -47,8 +47,12 @@ func TestListTagCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args:    []string{constants.ListCmd, constants.TagCmd},
+			args:    []string{constants.ListCmd, constants.TagCmd, "-q", "valid-id"},
 			wantErr: false,
+		},
+		{
+			args:    []string{constants.ListCmd, constants.TagCmd, "-q", "@#$invalid-id"},
+			wantErr: true,
 		},
 	}
 

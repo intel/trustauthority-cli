@@ -17,6 +17,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"intel/amber/tac/v1/constants"
+	models2 "intel/amber/tac/v1/internal/models"
 	"intel/amber/tac/v1/validation"
 	"io"
 	"os"
@@ -158,6 +159,15 @@ func GenerateOutputFileName(inputFile string) (string, error) {
 	date := time.Now().Format(constants.TimeLayout)
 
 	return filename + ".signed." + date + ".txt", nil
+}
+
+func PrintRequestAndTraceId() {
+	if models2.RespHeaderFields.RequestId != "" {
+		fmt.Println(constants.HTTPHeaderKeyRequestId+": ", models2.RespHeaderFields.RequestId)
+	}
+	if models2.RespHeaderFields.TraceId != "" {
+		fmt.Println(constants.HTTPHeaderKeyTraceId+": ", models2.RespHeaderFields.TraceId)
+	}
 }
 
 // publicKeyToBytes public key to bytes

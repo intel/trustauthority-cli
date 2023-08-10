@@ -52,7 +52,7 @@ func TestCreateApiClientCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args: []string{constants.CreateCmd, constants.ApiClientCmd, "-n", "Test_Subs", "-p",
+			args: []string{constants.CreateCmd, constants.ApiClientCmd, "-q", "valid-id", "-n", "Test_Subs", "-p",
 				"e169d34f-58ce-4717-9b3a-5c66abd33417", "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777", "-i", "5f7eece7-ab3f-4f1f-98cd-31c6a44a9900",
 				"-v", "Workload:WorkloadAI,Workload:WorkloadEXE"},
 			wantErr:     false,
@@ -106,6 +106,13 @@ func TestCreateApiClientCmd(t *testing.T) {
 				"e169d34f-58ce-4717-9b3a-5c66abd33417", "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777", "-i", "invalid id"},
 			wantErr:     true,
 			description: "Test Create Api Client With Invalid Policy IDs",
+		},
+		{
+			args: []string{constants.CreateCmd, constants.ApiClientCmd, "-q", "@#$invalid-id", "Test_Subs", "-p",
+				"e169d34f-58ce-4717-9b3a-5c66abd33417", "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777", "-i", "5f7eece7-ab3f-4f1f-98cd-31c6a44a9900",
+				"-v", "Workload:WorkloadAI,Workload:WorkloadEXE"},
+			wantErr:     true,
+			description: "Test Create Api Client with invalid request ID",
 		},
 	}
 

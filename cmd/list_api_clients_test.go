@@ -23,7 +23,7 @@ func TestListApiClientsCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args:    []string{constants.ListCmd, constants.ApiClientCmd, "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777"},
+			args:    []string{constants.ListCmd, constants.ApiClientCmd, "-q", "valid-id", "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777"},
 			wantErr: false,
 		},
 		{
@@ -42,6 +42,11 @@ func TestListApiClientsCmd(t *testing.T) {
 				"invalid id"},
 			wantErr:     true,
 			description: "Test Invalid ApiClient Id provided",
+		},
+		{
+			args:        []string{constants.ListCmd, constants.ApiClientCmd, "-q", "@#$invalid-id", "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777"},
+			wantErr:     true,
+			description: "Test Invalid request Id provided",
 		},
 	}
 

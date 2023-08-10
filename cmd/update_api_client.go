@@ -15,6 +15,7 @@ import (
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
 	"intel/amber/tac/v1/models"
+	"intel/amber/tac/v1/utils"
 	"intel/amber/tac/v1/validation"
 	"net/http"
 	"net/url"
@@ -34,6 +35,7 @@ var updateApiClientCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		utils.PrintRequestAndTraceId()
 		fmt.Println("ApiClient: \n\n", response)
 		fmt.Println("\nNOTE: There may be a delay of up to two (2) minutes for the changes to the attestation API key to take effect.")
 		fmt.Print("\n")
@@ -51,6 +53,7 @@ func init() {
 	updateApiClientCmd.Flags().StringSliceP(constants.TagKeyAndValuesParamName, "v", []string{}, "List of the comma separated tad Id and value pairs in the "+
 		"following format:\n Workload:WorkloadAI,Workload:WorkloadEXE etc.")
 	updateApiClientCmd.Flags().StringP(constants.ActivationStatus, "s", "", "Add activation status for api client, should be one of \"Active\", \"Inactive\" or \"Cancelled\"")
+	updateApiClientCmd.Flags().StringP(constants.RequestIdParamName, "q", "", "Request ID to be associated with the specific request. This is optional.")
 	updateApiClientCmd.MarkFlagRequired(constants.ServiceIdParamName)
 	updateApiClientCmd.MarkFlagRequired(constants.ProductIdParamName)
 	updateApiClientCmd.MarkFlagRequired(constants.ApiClientIdParamName)
@@ -68,6 +71,10 @@ func updateApiClient(cmd *cobra.Command) (string, error) {
 
 	tmsUrl, err := url.Parse(configValues.AmberBaseUrl + constants.TmsBaseUrl)
 	if err != nil {
+		return "", err
+	}
+
+	if err = setRequestId(cmd); err != nil {
 		return "", err
 	}
 

@@ -48,7 +48,7 @@ func TestCreateUserCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args:        []string{constants.CreateCmd, constants.UserCmd, "-e", "test@mail.com", "-r", "User"},
+			args:        []string{constants.CreateCmd, constants.UserCmd, "-q", "valid-id", "-e", "test@mail.com", "-r", "User"},
 			wantErr:     false,
 			description: "Create user",
 		},
@@ -61,6 +61,11 @@ func TestCreateUserCmd(t *testing.T) {
 			args:        []string{constants.CreateCmd, constants.UserCmd, "-e", "test@mail.com", "-r", "Administrator"},
 			wantErr:     true,
 			description: "Create user using invalid role",
+		},
+		{
+			args:        []string{constants.CreateCmd, constants.UserCmd, "-q", "@#$invalid-id", "-e", "test@mail.com", "-r", "User"},
+			wantErr:     true,
+			description: "Create user using invalid request ID",
 		},
 	}
 

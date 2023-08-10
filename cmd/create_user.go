@@ -14,6 +14,7 @@ import (
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
 	"intel/amber/tac/v1/models"
+	"intel/amber/tac/v1/utils"
 	"intel/amber/tac/v1/validation"
 	"net/http"
 	"net/url"
@@ -33,6 +34,7 @@ var createUserCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		utils.PrintRequestAndTraceId()
 		fmt.Println("User: \n\n", response)
 		return nil
 	},
@@ -43,6 +45,7 @@ func init() {
 
 	createUserCmd.Flags().StringP(constants.EmailIdParamName, "e", "", "Email id of the tenant user to be created")
 	createUserCmd.Flags().StringP(constants.UserRoleParamName, "r", "", "Role of the tenant user to be created, should be one of Tenant Admin/User")
+	createUserCmd.Flags().StringP(constants.RequestIdParamName, "q", "", "Request ID to be associated with the specific request. This is optional.")
 	createUserCmd.MarkFlagRequired(constants.EmailIdParamName)
 	createUserCmd.MarkFlagRequired(constants.UserRoleParamName)
 }
@@ -58,6 +61,10 @@ func createUser(cmd *cobra.Command) (string, error) {
 
 	tmsUrl, err := url.Parse(configValues.AmberBaseUrl + constants.TmsBaseUrl)
 	if err != nil {
+		return "", err
+	}
+
+	if err = setRequestId(cmd); err != nil {
 		return "", err
 	}
 

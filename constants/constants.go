@@ -25,6 +25,7 @@ const (
 
 // Command and parameter names
 const (
+	RequestIdParamName           = "request-id"
 	UserIdParamName              = "user-id"
 	ServiceIdParamName           = "service-id"
 	ServiceOfferIdParamName      = "service-offer-id"
@@ -110,7 +111,9 @@ const (
 	HTTPMediaTypeJson        = "application/json"
 	HTTPHeaderKeyContentType = "Content-Type"
 	HTTPHeaderKeyAccept      = "Accept"
-	HTTPHeaderKeyApiKey      = "X-API-KEY"
+	HTTPHeaderKeyApiKey      = "x-api-key"
+	HTTPHeaderKeyRequestId   = "x-amber-request-id"
+	HTTPHeaderKeyTraceId     = "x-amber-trace-id"
 )
 
 // API endpoint

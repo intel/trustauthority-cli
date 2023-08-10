@@ -16,6 +16,7 @@ import (
 	"intel/amber/tac/v1/client/tms"
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
+	"intel/amber/tac/v1/utils"
 	"net/http"
 	"net/url"
 	"time"
@@ -31,6 +32,7 @@ var deleteApiClientCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		utils.PrintRequestAndTraceId()
 		fmt.Printf("Deleted api client with Id: %s \n\n", serviceId)
 		fmt.Println("\nNOTE: There may be a delay of up to two (2) minutes for the changes to the attestation API key to take effect.")
 		fmt.Print("\n")
@@ -43,6 +45,7 @@ func init() {
 
 	deleteApiClientCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the api client needs to be created")
 	deleteApiClientCmd.Flags().StringP(constants.ApiClientIdParamName, "c", "", "Id of the api client which needs to be fetched (optional)")
+	deleteApiClientCmd.Flags().StringP(constants.RequestIdParamName, "q", "", "Request ID to be associated with the specific request. This is optional.")
 	deleteApiClientCmd.MarkFlagRequired(constants.ServiceIdParamName)
 	deleteApiClientCmd.MarkFlagRequired(constants.ApiClientIdParamName)
 }
@@ -58,6 +61,10 @@ func deleteApiClient(cmd *cobra.Command) (string, error) {
 
 	tmsUrl, err := url.Parse(configValues.AmberBaseUrl + constants.TmsBaseUrl)
 	if err != nil {
+		return "", err
+	}
+
+	if err = setRequestId(cmd); err != nil {
 		return "", err
 	}
 

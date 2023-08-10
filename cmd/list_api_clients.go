@@ -14,6 +14,7 @@ import (
 	"intel/amber/tac/v1/client/tms"
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
+	"intel/amber/tac/v1/utils"
 	"net/http"
 	"net/url"
 	"time"
@@ -32,6 +33,7 @@ var getApiClientsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		utils.PrintRequestAndTraceId()
 		fmt.Println("ApiClients: \n\n", response)
 		return nil
 	},
@@ -42,6 +44,7 @@ func init() {
 
 	getApiClientsCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the apiClient needs to be created")
 	getApiClientsCmd.Flags().StringP(constants.ApiClientIdParamName, "c", "", "Id of the apiClient which needs to be fetched (optional)")
+	getApiClientsCmd.Flags().StringP(constants.RequestIdParamName, "q", "", "Request ID to be associated with the specific request. This is optional.")
 	getApiClientsCmd.MarkFlagRequired(constants.ServiceIdParamName)
 }
 
@@ -56,6 +59,10 @@ func getApiClients(cmd *cobra.Command) (string, error) {
 
 	tmsUrl, err := url.Parse(configValues.AmberBaseUrl + constants.TmsBaseUrl)
 	if err != nil {
+		return "", err
+	}
+
+	if err = setRequestId(cmd); err != nil {
 		return "", err
 	}
 

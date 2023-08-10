@@ -14,6 +14,7 @@ import (
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
 	"intel/amber/tac/v1/models"
+	"intel/amber/tac/v1/utils"
 	"intel/amber/tac/v1/validation"
 	"net/http"
 	"net/url"
@@ -33,6 +34,7 @@ var updateTenantSettingsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		utils.PrintRequestAndTraceId()
 		fmt.Println("Updated Tenant Settings: \n", response)
 		return nil
 	},
@@ -43,6 +45,7 @@ func init() {
 
 	updateTenantSettingsCmd.Flags().StringP(constants.EmailIdParamName, "e", "", "The Email Id where the attestation failure notifications need to be sent")
 	updateTenantSettingsCmd.Flags().BoolP(constants.DisableNotificationParamName, "d", false, "This parameter needs to be set to disable notification")
+	updateTenantSettingsCmd.Flags().StringP(constants.RequestIdParamName, "q", "", "Request ID to be associated with the specific request. This is optional.")
 }
 
 func updateTenantSettings(cmd *cobra.Command) (string, error) {
@@ -56,6 +59,10 @@ func updateTenantSettings(cmd *cobra.Command) (string, error) {
 
 	tmsUrl, err := url.Parse(configValues.AmberBaseUrl + constants.TmsBaseUrl)
 	if err != nil {
+		return "", err
+	}
+
+	if err = setRequestId(cmd); err != nil {
 		return "", err
 	}
 

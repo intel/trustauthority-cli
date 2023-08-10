@@ -14,6 +14,7 @@ import (
 	"intel/amber/tac/v1/client/pms"
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
+	"intel/amber/tac/v1/utils"
 	"net/http"
 	"net/url"
 	"time"
@@ -32,6 +33,7 @@ var getPoliciesCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		utils.PrintRequestAndTraceId()
 		fmt.Println("Policies: \n\n", response)
 		return nil
 	},
@@ -41,6 +43,7 @@ func init() {
 	listCmd.AddCommand(getPoliciesCmd)
 
 	getPoliciesCmd.Flags().StringP(constants.PolicyIdParamName, "p", "", "Path of the file containing the policy to be uploaded")
+	getPoliciesCmd.Flags().StringP(constants.RequestIdParamName, "q", "", "Request ID to be associated with the specific request. This is optional.")
 }
 
 func getPolicies(cmd *cobra.Command) (string, error) {
@@ -55,6 +58,10 @@ func getPolicies(cmd *cobra.Command) (string, error) {
 
 	pmsUrl, err := url.Parse(configValues.AmberBaseUrl + constants.PmsBaseUrl)
 	if err != nil {
+		return "", err
+	}
+
+	if err = setRequestId(cmd); err != nil {
 		return "", err
 	}
 

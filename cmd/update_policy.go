@@ -15,6 +15,7 @@ import (
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
 	"intel/amber/tac/v1/models"
+	"intel/amber/tac/v1/utils"
 	"intel/amber/tac/v1/validation"
 	"net/http"
 	"net/url"
@@ -35,6 +36,7 @@ var updatePolicyCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		utils.PrintRequestAndTraceId()
 		fmt.Println("Updated policy: \n\n", response)
 		return nil
 	},
@@ -46,6 +48,7 @@ func init() {
 	updatePolicyCmd.Flags().StringP(constants.PolicyIdParamName, "i", "", "Id of the policy to be updated")
 	updatePolicyCmd.Flags().StringP(constants.PolicyNameParamName, "n", "", "Name of the policy to be updated")
 	updatePolicyCmd.Flags().StringP(constants.PolicyFileParamName, "f", "", "Path of the file containing the rego policy to be uploaded. The file size should be <= 10 KB")
+	updatePolicyCmd.Flags().StringP(constants.RequestIdParamName, "q", "", "Request ID to be associated with the specific request. This is optional.")
 	updatePolicyCmd.MarkFlagRequired(constants.PolicyIdParamName)
 }
 
@@ -60,6 +63,10 @@ func updatePolicy(cmd *cobra.Command) (string, error) {
 
 	pmsUrl, err := url.Parse(configValues.AmberBaseUrl + constants.PmsBaseUrl)
 	if err != nil {
+		return "", err
+	}
+
+	if err = setRequestId(cmd); err != nil {
 		return "", err
 	}
 

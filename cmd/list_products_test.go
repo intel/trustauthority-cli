@@ -23,13 +23,18 @@ func TestListProductsCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args:    []string{constants.ListCmd, constants.ProductCmd, "-r", "ae3d7720-08ab-421c-b8d4-1725c358f03e"},
+			args:    []string{constants.ListCmd, constants.ProductCmd, "-q", "valid-id", "-r", "ae3d7720-08ab-421c-b8d4-1725c358f03e"},
 			wantErr: false,
 		},
 		{
 			args:        []string{constants.ListCmd, constants.ProductCmd, "-r", "invalid id"},
 			wantErr:     true,
 			description: "Test Invalid Service offer Id provided",
+		},
+		{
+			args:        []string{constants.ListCmd, constants.ProductCmd, "-q", "@#$invalid-id", "-r", "ae3d7720-08ab-421c-b8d4-1725c358f03e"},
+			wantErr:     true,
+			description: "Test Invalid Request Id provided",
 		},
 	}
 

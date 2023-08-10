@@ -12,6 +12,7 @@ import (
 	"github.com/pkg/errors"
 	"intel/amber/tac/v1/client"
 	"intel/amber/tac/v1/constants"
+	models2 "intel/amber/tac/v1/internal/models"
 	"intel/amber/tac/v1/models"
 	"net/http"
 	"net/url"
@@ -84,6 +85,7 @@ func (pc tmsClient) CreateApiClient(request *models.CreateApiClient) (*models.Ap
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyContentType, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
@@ -121,6 +123,7 @@ func (pc tmsClient) UpdateApiClient(request *models.UpdateApiClient, apiClientId
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyContentType, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
@@ -152,6 +155,7 @@ func (pc tmsClient) GetApiClient(serviceId uuid.UUID) ([]models.ApiClient, error
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
@@ -183,6 +187,7 @@ func (pc tmsClient) RetrieveApiClient(serviceId uuid.UUID, apiClientId uuid.UUID
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
@@ -214,6 +219,7 @@ func (pc tmsClient) GetApiClientPolicies(serviceId, apiClientId uuid.UUID) (*mod
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
@@ -245,6 +251,7 @@ func (pc tmsClient) GetApiClientTagValues(serviceId, apiClientId uuid.UUID) (*mo
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
@@ -276,6 +283,7 @@ func (pc tmsClient) DeleteApiClient(serviceId, apiClientId uuid.UUID) error {
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
 
 	_, err = client.SendRequest(pc.Client, req)
 	if err != nil {
@@ -304,6 +312,7 @@ func (pc tmsClient) CreateUser(user *models.CreateTenantUser) (*models.TenantUse
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyContentType, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
@@ -341,6 +350,7 @@ func (pc tmsClient) UpdateTenantUserRole(request *models.UpdateTenantUserRoles) 
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyContentType, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
@@ -371,6 +381,7 @@ func (pc tmsClient) GetUsers() ([]models.TenantUser, error) {
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
@@ -400,6 +411,7 @@ func (pc tmsClient) DeleteUser(userId uuid.UUID) error {
 		return errors.Wrap(err, "Error forming request")
 	}
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
 
 	_, err = client.SendRequest(pc.Client, req)
 	if err != nil {
@@ -422,6 +434,7 @@ func (pc tmsClient) GetServices() ([]models.Service, error) {
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
@@ -452,6 +465,7 @@ func (pc tmsClient) RetrieveService(id uuid.UUID) (*models.ServiceDetail, error)
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
@@ -482,6 +496,7 @@ func (pc tmsClient) GetProducts(serviceOfferId uuid.UUID) ([]models.Product, err
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
@@ -512,6 +527,7 @@ func (pc tmsClient) GetServiceOffers() ([]models.ServiceOffer, error) {
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
@@ -548,6 +564,7 @@ func (pc tmsClient) CreateTenantTag(request *models.TagCreate) (*models.Tag, err
 	req.Header.Add(constants.HTTPHeaderKeyContentType, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
@@ -578,6 +595,7 @@ func (pc tmsClient) GetTenantTags() (*models.Tags, error) {
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
@@ -607,6 +625,7 @@ func (pc tmsClient) DeleteTenantTag(tagId uuid.UUID) error {
 		return errors.Wrap(err, "Error forming request")
 	}
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
 
 	_, err = client.SendRequest(pc.Client, req)
 	if err != nil {
@@ -630,6 +649,7 @@ func (pc tmsClient) GetPlans(serviceOfferId uuid.UUID) ([]models.Plan, error) {
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
@@ -661,6 +681,7 @@ func (pc tmsClient) RetrievePlan(serviceOfferId, planId uuid.UUID) (*models.Plan
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
@@ -697,6 +718,7 @@ func (pc tmsClient) UpdateTenantSettings(request *models.AttestationFailureEmail
 	req.Header.Add(constants.HTTPHeaderKeyContentType, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
@@ -727,6 +749,7 @@ func (pc tmsClient) GetTenantSettings() (*models.AttestationFailureEmail, error)
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {

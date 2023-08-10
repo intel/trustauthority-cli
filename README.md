@@ -41,6 +41,9 @@ Note: If you cannot access the command, add the binary path to the PATH env vari
 
 ## Commands
 
+Note: Request ID could be a randomly generated string of at most 128 bytes which can work as a unique 
+identifier for each CRUD operation. This can be provided as an optional parameter to all the CRUD commands only.
+
 ### Uninstall 
 - tenantctl uninstall
 
@@ -56,92 +59,92 @@ Note: If you cannot access the command, add the binary path to the PATH env vari
 ### Commands Usage examples (please see help for more details ):
 
 ##### Create User:
-tenantctl create user -e < email Id> -r < Role (Tenant Admin/User) >
+tenantctl create user -q < request id > -e < email Id> -r < Role (Tenant Admin/User) >
 
 ##### Get Users:               
-tenantctl list user
+tenantctl list user -q < request id >
 
 ##### Get Users by email id:
-tenantctl list user -e <email id>
+tenantctl list user -q < request id > -e <email id>
 
 ##### Update User Role:
-tenantctl update user role -u < user id > -r < Role (Tenant Admin/User) >
+tenantctl update user role -q < request id > -u < user id > -r < Role (Tenant Admin/User) >
 
 ##### Delete User:
-tenantctl delete user -u < user id >
+tenantctl delete user -q < request id > -u < user id >
 
 ##### Delete Tag:
-tenantctl delete tag -t < tag id >
+tenantctl delete tag -q < request id > -t < tag id >
 
 ##### Get Service Offers:
 tenantctl list serviceOffer
 
 ##### Get Plans:
-tenantctl list plan -r < service offer id >
+tenantctl list plan -q < request id > -r < service offer id >
 
 ##### Get Plan By Id:
-tenantctl list plan -r < service offer id > -p < plan id >
+tenantctl list plan -q < request id > -r < service offer id > -p < plan id >
 
 ##### Get Products:            
-tenantctl list product -r < service offer id >
+tenantctl list product -q < request id > -r < service offer id >
 
 ##### Get Services:
-tenantctl list service
+tenantctl list service -q < request id >
 
 ##### Get Service By Id:
-tenantctl list service -r < service Id >
+tenantctl list service -q < request id > -r < service Id >
 
 ##### Create Api Client:
-tenantctl create apiClient -r < service id > -p < product id > -n < api client name > -i "comma separated policy Ids" -v "tag-key1:tag-value1,tag-key2:tag-value2"
+tenantctl create apiClient -q < request id > -r < service id > -p < product id > -n < api client name > -i "comma separated policy Ids" -v "tag-key1:tag-value1,tag-key2:tag-value2"
 
 ##### Update Api Client:
-tenantctl update apiClient -r < service id > -p < product id > -c < api client id > -i "comma separated policy Ids" -v "tag-key1:tag-value1,tag-key2:tag-value2" -s < Active/Inactive/Cancelled >
+tenantctl update apiClient -q < request id > -r < service id > -p < product id > -c < api client id > -i "comma separated policy Ids" -v "tag-key1:tag-value1,tag-key2:tag-value2" -s < Active/Inactive/Cancelled >
 
 ##### Get Api Clients:
-tenantctl list apiClient -r < service id >
+tenantctl list apiClient -q < request id > -r < service id >
 
 ##### Get Api Client by id:
-tenantctl list apiClient -r < service id > -c < api client id >
+tenantctl list apiClient -q < request id > -r < service id > -c < api client id >
 
 ##### Delete an Api Client:
-tenantctl delete apiClient -r < service id > -c < api client id >
+tenantctl delete apiClient -q < request id > -r < service id > -c < api client id >
 
 ##### Create tag:
-tenantctl create tag -n < tag name >
+tenantctl create tag -q < request id > -n < tag name >
 
 ##### List tags:
-tenantctl list tag
+tenantctl list tag -q < request id >
 
 ##### List Api Client Policies:
-tenantctl list apiClient policy -r < service id > -c < api client id >
+tenantctl list apiClient policy -q < request id > -r < service id > -c < api client id >
 
 ##### List Api Client Tags:
-tenantctl list apiClient tag -r < service id > -c < api client id >
+tenantctl list apiClient tag -q < request id > -r < service id > -c < api client id >
 
 ##### Update Tenant Settings:
-tenantctl update tenant-settings -e < email id >
+tenantctl update tenant-settings -q < request id > -e < email id >
 
 ##### Update Tenant Settings (disable notification):
-tenantctl update tenant-settings -d
+tenantctl update tenant-settings -q < request id > -d
 
 ##### List Tenant Settings:
-tenantctl list tenant-settings
+tenantctl list tenant-settings -q < request id >
 
 ##### Create Policy:
-tenantctl create policy -n < name of policy > -t < policy type > -a < attestation type > -r < service offer id > -f < rego policy file path >
+tenantctl create policy -q < request id > -n < name of policy > -t < policy type > -a < attestation type > -r < service offer id > -f < rego policy file path >
 Note: Policy file size should be <= 10KB
 
 ##### Get policies:
-tenantctl list policy
+tenantctl list policy -q < request id >
 
 ##### Get policy by id:
-tenantctl list policy -p < policy id >
+tenantctl list policy -q < request id > -p < policy id >
 
 ##### Delete policy:
-tenantctl delete policy -p < policy id >
+tenantctl delete policy -q < request id > -p < policy id >
 
 ##### Update policy:
-tenantctl update policy -i < policy id > -n < name of policy > -f < rego policy file path >
+tenantctl update policy -q < request id > -i < policy id > -n < name of policy > -f < rego policy file path >
 Note: Policy file size should be <= 10KB
 
 -  Sample rego policy for create/update policy command:
@@ -158,7 +161,7 @@ matches_sgx_policy = true
 ```
 
 ### Create Policy JWT
-tenantctl create policy-jwt -f < rego policy file path > -p < signing key path > -c < cert path > -a < algorithm > -s
+tenantctl create policy-jwt -q < request id > -f < rego policy file path > -p < signing key path > -c < cert path > -a < algorithm > -s
 
 #### Prerequisites: 
 Create self signed key and certificate for policy JWT token creation:

@@ -13,6 +13,7 @@ import (
 	"intel/amber/tac/v1/client/tms"
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
+	"intel/amber/tac/v1/utils"
 	"intel/amber/tac/v1/validation"
 	"net/http"
 	"net/url"
@@ -32,6 +33,7 @@ var getUsersCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		utils.PrintRequestAndTraceId()
 		fmt.Println("Users: \n\n", response)
 		return nil
 	},
@@ -41,6 +43,7 @@ func init() {
 	listCmd.AddCommand(getUsersCmd)
 
 	getUsersCmd.Flags().StringP(constants.EmailIdParamName, "e", "", "Email Id of the Tenant User to be retrieved")
+	getUsersCmd.Flags().StringP(constants.RequestIdParamName, "q", "", "Request ID to be associated with the specific request. This is optional.")
 }
 
 func getUsers(cmd *cobra.Command) (string, error) {
@@ -54,6 +57,10 @@ func getUsers(cmd *cobra.Command) (string, error) {
 
 	tmsUrl, err := url.Parse(configValues.AmberBaseUrl + constants.TmsBaseUrl)
 	if err != nil {
+		return "", err
+	}
+
+	if err = setRequestId(cmd); err != nil {
 		return "", err
 	}
 

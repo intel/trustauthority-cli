@@ -15,6 +15,7 @@ import (
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
 	"intel/amber/tac/v1/models"
+	"intel/amber/tac/v1/utils"
 	"intel/amber/tac/v1/validation"
 	"net/http"
 	"net/url"
@@ -35,6 +36,7 @@ var createPolicyCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		utils.PrintRequestAndTraceId()
 		fmt.Println("Policy: \n\n", response)
 		return nil
 	},
@@ -48,6 +50,7 @@ func init() {
 	createPolicyCmd.Flags().StringP(constants.ServiceOfferIdParamName, "r", "", "Service offer id for which the policy needs to be uploaded")
 	createPolicyCmd.Flags().StringP(constants.AttestationTypeParamName, "a", "", "Attestation type of policy to be uploaded, should be one of \"SGX Attestation\" or \"TDX Attestation\"")
 	createPolicyCmd.Flags().StringP(constants.PolicyFileParamName, "f", "", "Path of the file containing the rego policy to be uploaded. The file size should be <= 10 KB")
+	createPolicyCmd.Flags().StringP(constants.RequestIdParamName, "q", "", "Request ID to be associated with the specific request. This is optional.")
 	createPolicyCmd.MarkFlagRequired(constants.PolicyNameParamName)
 	createPolicyCmd.MarkFlagRequired(constants.PolicyTypeParamName)
 	createPolicyCmd.MarkFlagRequired(constants.ServiceOfferIdParamName)
@@ -66,6 +69,10 @@ func createPolicy(cmd *cobra.Command) (string, error) {
 
 	pmsUrl, err := url.Parse(configValues.AmberBaseUrl + constants.PmsBaseUrl)
 	if err != nil {
+		return "", err
+	}
+
+	if err = setRequestId(cmd); err != nil {
 		return "", err
 	}
 

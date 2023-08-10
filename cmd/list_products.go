@@ -14,6 +14,7 @@ import (
 	"intel/amber/tac/v1/client/tms"
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
+	"intel/amber/tac/v1/utils"
 	"net/http"
 	"net/url"
 	"time"
@@ -32,6 +33,7 @@ var getProductsCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		utils.PrintRequestAndTraceId()
 		fmt.Println("Products: \n\n", response)
 		return nil
 	},
@@ -42,6 +44,7 @@ func init() {
 
 	getProductsCmd.Flags().StringP(constants.ServiceOfferIdParamName, "r", "", "Id of the Amber "+
 		"service offer for which the product list needs to be fetched")
+	getProductsCmd.Flags().StringP(constants.RequestIdParamName, "q", "", "Request ID to be associated with the specific request. This is optional.")
 	getProductsCmd.MarkFlagRequired(constants.ServiceOfferIdParamName)
 }
 
@@ -56,6 +59,10 @@ func getProducts(cmd *cobra.Command) (string, error) {
 
 	tmsUrl, err := url.Parse(configValues.AmberBaseUrl + constants.TmsBaseUrl)
 	if err != nil {
+		return "", err
+	}
+
+	if err = setRequestId(cmd); err != nil {
 		return "", err
 	}
 

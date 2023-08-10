@@ -47,7 +47,7 @@ func TestListUsersCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args:    []string{constants.ListCmd, constants.UserCmd},
+			args:    []string{constants.ListCmd, constants.UserCmd, "-q", "valid-id"},
 			wantErr: false,
 		},
 		{
@@ -57,6 +57,10 @@ func TestListUsersCmd(t *testing.T) {
 		{
 			args:    []string{constants.ListCmd, constants.UserCmd, "-e", "arijitgh@gmail.com"},
 			wantErr: false,
+		},
+		{
+			args:    []string{constants.ListCmd, constants.UserCmd, "-q", "@#$invalid-id"},
+			wantErr: true,
 		},
 	}
 

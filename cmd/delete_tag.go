@@ -13,6 +13,7 @@ import (
 	"intel/amber/tac/v1/client/tms"
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
+	"intel/amber/tac/v1/utils"
 	"net/http"
 	"net/url"
 	"time"
@@ -31,6 +32,7 @@ var deleteTagCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		utils.PrintRequestAndTraceId()
 		fmt.Printf("\nTag %s deleted \n", tagId)
 		return nil
 	},
@@ -40,6 +42,7 @@ func init() {
 	deleteCmd.AddCommand(deleteTagCmd)
 
 	deleteTagCmd.Flags().StringP(constants.TagIdParamName, "t", "", "Id of the specific user defined tag which needs to be deleted")
+	deleteTagCmd.Flags().StringP(constants.RequestIdParamName, "q", "", "Request ID to be associated with the specific request. This is optional.")
 	deleteTagCmd.MarkFlagRequired(constants.TagIdParamName)
 }
 
@@ -54,6 +57,10 @@ func deleteTag(cmd *cobra.Command) (string, error) {
 
 	tmsUrl, err := url.Parse(configValues.AmberBaseUrl + constants.TmsBaseUrl)
 	if err != nil {
+		return "", err
+	}
+
+	if err = setRequestId(cmd); err != nil {
 		return "", err
 	}
 

@@ -14,7 +14,9 @@ import (
 	"intel/amber/tac/v1/client/tms"
 	"intel/amber/tac/v1/config"
 	"intel/amber/tac/v1/constants"
+	models2 "intel/amber/tac/v1/internal/models"
 	"intel/amber/tac/v1/models"
+	"intel/amber/tac/v1/utils"
 	"intel/amber/tac/v1/validation"
 	"net/http"
 	"net/url"
@@ -35,6 +37,7 @@ var createApiClientCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		utils.PrintRequestAndTraceId()
 		fmt.Println("ApiClient: \n\n", response)
 		fmt.Println("\nNOTE: There may be a delay of up to two (2) minutes before a new attestation API key is active.")
 		fmt.Print("\n")
@@ -51,6 +54,7 @@ func init() {
 	createApiClientCmd.Flags().StringSliceP(constants.PolicyIdsParamName, "i", []string{}, "List of comma separated policy IDs to be linked to the api client")
 	createApiClientCmd.Flags().StringSliceP(constants.TagKeyAndValuesParamName, "v", []string{}, "List of the comma separated tad Id and value pairs in the "+
 		"following format:\n Workload:WorkloadAI,Workload:WorkloadEXE etc.")
+	createApiClientCmd.Flags().StringP(constants.RequestIdParamName, "q", "", "Request ID to be associated with the specific request. This is optional.")
 	createApiClientCmd.MarkFlagRequired(constants.ServiceIdParamName)
 	createApiClientCmd.MarkFlagRequired(constants.ProductIdParamName)
 	createApiClientCmd.MarkFlagRequired(constants.ApiClientNameParamName)
@@ -68,6 +72,10 @@ func createApiClient(cmd *cobra.Command) (string, error) {
 
 	tmsUrl, err := url.Parse(configValues.AmberBaseUrl + constants.TmsBaseUrl)
 	if err != nil {
+		return "", err
+	}
+
+	if err = setRequestId(cmd); err != nil {
 		return "", err
 	}
 
@@ -155,4 +163,17 @@ func createApiClient(cmd *cobra.Command) (string, error) {
 	}
 
 	return string(responseBytes), nil
+}
+
+func setRequestId(cmd *cobra.Command) error {
+	var err error
+	models2.RespHeaderFields.RequestId, err = cmd.Flags().GetString(constants.RequestIdParamName)
+	if err != nil {
+		return err
+	}
+
+	if err = validation.ValidateRequestId(models2.RespHeaderFields.RequestId); err != nil {
+		return err
+	}
+	return nil
 }

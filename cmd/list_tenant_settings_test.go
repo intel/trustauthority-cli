@@ -22,8 +22,13 @@ func TestListTenantSettingsCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args:    []string{constants.ListCmd, constants.TenantSettingsCmd},
+			args:    []string{constants.ListCmd, constants.TenantSettingsCmd, "-q", "valid-id"},
 			wantErr: false,
+		},
+		{
+			args:        []string{constants.ListCmd, constants.TenantSettingsCmd, "-q", "@#$invalid-id"},
+			wantErr:     true,
+			description: "Test invalid request id provided",
 		},
 	}
 

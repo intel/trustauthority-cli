@@ -26,6 +26,7 @@ var (
 	tagReg                = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9\-\_]{1,62}[a-zA-Z0-9]$`)
 	tagValueReg           = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9\-\_]{1,62}[a-zA-Z0-9]$`)
 	policyNameRegex       = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9_-]{1,62}[a-zA-Z0-9]$`)
+	requestIdRegex        = regexp.MustCompile(`^[a-zA-Z0-9_ \/.-]{1,128}$`)
 )
 
 // ValidateStrings method is used to validate input strings
@@ -117,6 +118,14 @@ func ValidatePolicyName(policyName string) error {
 	if !policyNameRegex.Match([]byte(policyName)) {
 		return errors.New("Policy name is invalid. Policy name should be alpha numeric and have minimum 3 characters with no spaces between words (" +
 			"use \"_\" or \"-\" as separators) and should not be more than 64 characters")
+	}
+	return nil
+}
+
+func ValidateRequestId(requestId string) error {
+	if strings.TrimSpace(requestId) != "" && !requestIdRegex.Match([]byte(requestId)) {
+		return errors.New("Request ID should be at most 128 characters long and should contain only " +
+			"alphanumeric characters, _, space, - or \\")
 	}
 	return nil
 }

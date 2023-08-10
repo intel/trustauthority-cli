@@ -13,6 +13,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	client "intel/amber/tac/v1/client"
 	"intel/amber/tac/v1/constants"
+	models2 "intel/amber/tac/v1/internal/models"
 	"intel/amber/tac/v1/models"
 	"net/http"
 	"net/url"
@@ -26,7 +27,7 @@ type PmsClient interface {
 	SearchPolicy() ([]models.PolicyResponse, error)
 }
 
-//Client Details for PMS client
+// Client Details for PMS client
 type pmsClient struct {
 	Client  *http.Client
 	BaseURL *url.URL
@@ -60,6 +61,7 @@ func (pc pmsClient) CreatePolicy(request *models.PolicyRequest) (*models.PolicyR
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyContentType, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
@@ -91,6 +93,7 @@ func (pc pmsClient) DeletePolicy(policyID uuid.UUID) error {
 		return errors.Wrap(err, " Error forming request")
 	}
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
 
 	_, err = client.SendRequest(pc.Client, req)
 	if err != nil {
@@ -116,6 +119,7 @@ func (pc pmsClient) GetPolicy(policyID uuid.UUID) (*models.PolicyResponse, error
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
@@ -147,6 +151,7 @@ func (pc pmsClient) SearchPolicy() ([]models.PolicyResponse, error) {
 	}
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {
@@ -185,6 +190,7 @@ func (pc pmsClient) UpdatePolicy(request *models.PolicyUpdateRequest) (*models.P
 	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyContentType, constants.HTTPMediaTypeJson)
 	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
 
 	response, err := client.SendRequest(pc.Client, req)
 	if err != nil {

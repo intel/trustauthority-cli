@@ -47,7 +47,7 @@ func TestDeleteTagCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args:    []string{constants.DeleteCmd, constants.TagCmd, "-t", "23011406-6f3b-4431-9363-4e1af9af6b13"},
+			args:    []string{constants.DeleteCmd, constants.TagCmd, "-q", "valid-id", "-t", "23011406-6f3b-4431-9363-4e1af9af6b13"},
 			wantErr: false,
 		},
 		{
@@ -56,6 +56,10 @@ func TestDeleteTagCmd(t *testing.T) {
 		},
 		{
 			args:    []string{constants.DeleteCmd, constants.TagCmd, "-t", ""},
+			wantErr: true,
+		},
+		{
+			args:    []string{constants.DeleteCmd, constants.TagCmd, "-q", "@#$invalid-id", "-t", "23011406-6f3b-4431-9363-4e1af9af6b13"},
 			wantErr: true,
 		},
 	}

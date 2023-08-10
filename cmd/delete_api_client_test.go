@@ -48,7 +48,7 @@ func TestDeleteApiClientCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args: []string{constants.DeleteCmd, constants.ApiClientCmd, "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777", "-c",
+			args: []string{constants.DeleteCmd, constants.ApiClientCmd, "-q", "valid-id", "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777", "-c",
 				"3780cc39-cce2-4ec2-a47f-03e55b12e259"},
 			wantErr: false,
 		},
@@ -63,6 +63,12 @@ func TestDeleteApiClientCmd(t *testing.T) {
 				"invalid id"},
 			wantErr:     true,
 			description: "Invalid api client id provided",
+		},
+		{
+			args: []string{constants.DeleteCmd, constants.ApiClientCmd, "-q", "@#$invalid-id", "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777", "-c",
+				"3780cc39-cce2-4ec2-a47f-03e55b12e259"},
+			wantErr:     true,
+			description: "Invalid request id provided",
 		},
 	}
 

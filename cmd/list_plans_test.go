@@ -25,7 +25,7 @@ func TestListPlansCmd(t *testing.T) {
 		description string
 	}{
 		{
-			args:    []string{constants.ListCmd, constants.PlanCmd, "-r", "ee28f3c2-6f58-489d-aa46-1140565d4718"},
+			args:    []string{constants.ListCmd, constants.PlanCmd, "-q", "valid-id", "-r", "ee28f3c2-6f58-489d-aa46-1140565d4718"},
 			wantErr: false,
 		},
 		{
@@ -44,6 +44,11 @@ func TestListPlansCmd(t *testing.T) {
 				"invalid id"},
 			wantErr:     true,
 			description: "Invalid plan id provided",
+		},
+		{
+			args:        []string{constants.ListCmd, constants.PlanCmd, "-q", "@#$valid-id", "-r", "ee28f3c2-6f58-489d-aa46-1140565d4718"},
+			wantErr:     true,
+			description: "Invalid request id provided",
 		},
 	}
 
