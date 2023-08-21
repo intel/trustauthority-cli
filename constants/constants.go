@@ -115,8 +115,8 @@ const (
 	HTTPHeaderKeyContentType = "Content-Type"
 	HTTPHeaderKeyAccept      = "Accept"
 	HTTPHeaderKeyApiKey      = "x-api-key"
-	HTTPHeaderKeyRequestId   = "x-amber-request-id"
-	HTTPHeaderKeyTraceId     = "x-amber-trace-id"
+	HTTPHeaderKeyRequestId   = "request-id"
+	HTTPHeaderKeyTraceId     = "trace-id"
 )
 
 // API endpoint
