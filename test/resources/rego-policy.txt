@@ -1,9 +1,9 @@
 default matches_sgx_policy = false
 matches_sgx_policy = true
 {
- input.amber_tee_is_debuggable == false
- input.amber_sgx_isvsvn == 0
- input.amber_sgx_isvprodid == 0
- input.amber_sgx_mrsigner ==  "d412a4f07ef83892a5915fb2ab584be31e186e5a4f95ab5f6950fd4eb8694d7b"
- input.amber_sgx_mrenclave == "bab91f200038076ac25f87de0ca67472443c2ebe17ed9ba95314e609038f51ab"
+ input.sgx_is_debuggable == false
+ input.sgx_isvsvn == 0
+ input.sgx_isvprodid == 0
+ input.sgx_mrsigner ==  "d412a4f07ef83892a5915fb2ab584be31e186e5a4f95ab5f6950fd4eb8694d7b"
+ input.sgx_mrenclave == "bab91f200038076ac25f87de0ca67472443c2ebe17ed9ba95314e609038f51ab"
 }

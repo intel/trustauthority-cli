@@ -23,7 +23,7 @@ import (
 var (
 	policy = `{
     "policy_id": "e48dabc5-9608-4ff3-aaed-f25909ab9de1",
-    "policy": "default matches_sgx_policy = false \n\n matches_sgx_policy = true { \n \n input.amber_sgx_isvsvn == 0 \n\n } ",
+    "policy": "default matches_sgx_policy = false \n\n matches_sgx_policy = true { \n \n input.sgx_isvsvn == 0 \n\n } ",
     "policy_name": "Sample_Policy_SGX",
     "policy_type": "Appraisal policy",
     "attestation_type": "SGX Attestation",
@@ -31,7 +31,7 @@ var (
 
 	policyList = `[{
     "policy_id": "e48dabc5-9608-4ff3-aaed-f25909ab9de1",
-    "policy": "default matches_sgx_policy = false \n\n matches_sgx_policy = true { \n \n input.amber_sgx_isvsvn == 0 \n\n } ",
+    "policy": "default matches_sgx_policy = false \n\n matches_sgx_policy = true { \n \n input.sgx_isvsvn == 0 \n\n } ",
 	"policy_name": "Sample_Policy_SGX",
     "policy_type": "Appraisal policy",
     "attestation_type": "SGX Attestation",
