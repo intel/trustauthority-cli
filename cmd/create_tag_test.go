@@ -8,9 +8,9 @@ package cmd
 import (
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
-	"intel/amber/tac/v1/config"
-	"intel/amber/tac/v1/constants"
-	"intel/amber/tac/v1/test"
+	"intel/tac/v1/config"
+	"intel/tac/v1/constants"
+	"intel/tac/v1/test"
 	"testing"
 )
 
@@ -18,7 +18,7 @@ func TestCreateTagWithInvalidUrl(t *testing.T) {
 	test.SetupMockConfiguration("invalid url", tempConfigFile)
 	load, err := config.LoadConfiguration()
 	assert.NoError(t, err)
-	viper.Set("amber-base-url", "bogus\nbase\nURL")
+	viper.Set("trustauthority-url", "bogus\nbase\nURL")
 
 	invalidUrlTc := struct {
 		args        []string
@@ -34,7 +34,7 @@ func TestCreateTagWithInvalidUrl(t *testing.T) {
 	tenantCmd.AddCommand(createCmd)
 
 	_, err = execute(t, tenantCmd, invalidUrlTc.args)
-	viper.Set("amber-base-url", load.AmberBaseUrl)
+	viper.Set("trustauthority-url", load.TrustAuthorityBaseUrl)
 	assert.Error(t, err)
 }
 

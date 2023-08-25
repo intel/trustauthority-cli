@@ -10,9 +10,9 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v3"
-	"intel/amber/tac/v1/constants"
-	"intel/amber/tac/v1/utils"
-	"intel/amber/tac/v1/validation"
+	"intel/tac/v1/constants"
+	"intel/tac/v1/utils"
+	"intel/tac/v1/validation"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -20,10 +20,10 @@ import (
 )
 
 type Configuration struct {
-	AmberBaseUrl      string `yaml:"amber-base-url" mapstructure:"amber-base-url"`
-	AmberApiKey       string `yaml:"amber-api-key" mapstructure:"amber-api-key"`
-	LogLevel          string `yaml:"log-level" mapstructure:"log-level"`
-	HTTPClientTimeout int    `yaml:"http-client-timeout" mapstructure:"http-client-timeout"`
+	TrustAuthorityBaseUrl string `yaml:"trustauthority-url" mapstructure:"trustauthority-url"`
+	TrustAuthorityApiKey  string `yaml:"trustauthority-api-key" mapstructure:"trustauthority-api-key"`
+	LogLevel              string `yaml:"log-level" mapstructure:"log-level"`
+	HTTPClientTimeout     int    `yaml:"http-client-timeout" mapstructure:"http-client-timeout"`
 }
 
 // this function sets the configuration file name and type
@@ -91,18 +91,18 @@ func SetupConfig(envFilePath string) error {
 
 	configValues := &Configuration{}
 
-	configValues.AmberBaseUrl = viper.GetString(constants.AmberBaseUrl)
-	if configValues.AmberBaseUrl == "" {
-		return errors.New("Amber base URL needs to be provided in configuration")
+	configValues.TrustAuthorityBaseUrl = viper.GetString(constants.TrustAuthBaseUrl)
+	if configValues.TrustAuthorityBaseUrl == "" {
+		return errors.New("Trust Authority base URL needs to be provided in configuration")
 	}
 
-	_, err = url.Parse(configValues.AmberBaseUrl)
+	_, err = url.Parse(configValues.TrustAuthorityBaseUrl)
 	if err != nil {
-		return errors.Wrap(err, "Invalid Amber Base URL")
+		return errors.Wrap(err, "Invalid Trust Authority Base URL")
 	}
 
-	configValues.AmberApiKey = viper.GetString(constants.AmberApiKeyEnvVar)
-	if err := validation.ValidateAmberAPIKey(configValues.AmberApiKey); err != nil {
+	configValues.TrustAuthorityApiKey = viper.GetString(constants.TrustAuthApiKeyEnvVar)
+	if err := validation.ValidateTrustAuthorityAPIKey(configValues.TrustAuthorityApiKey); err != nil {
 		return errors.Wrap(err, "Invalid API Key provided")
 	}
 

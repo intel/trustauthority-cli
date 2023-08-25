@@ -6,20 +6,22 @@ BUILDDATE := $(shell TZ=UTC date +%Y-%m-%dT%H:%M:%S%z)
 VERSION := v0.6.0
 PROXY_EXISTS := $(shell if [[ "${https_proxy}" || "${http_proxy}" || "${no_proxy}" ]]; then echo 1; else echo 0; fi)
 
-tenantctl:
+trustauthorityctl:
 	mkdir -p out/
 	 env GOOS=linux CGO_CPPFLAGS="-D_FORTIFY_SOURCE=2" go build -buildmode=pie \
-        -ldflags "-X intel/amber/tac/v1/utils.BuildDate=${BUILDDATE} -X intel/amber/tac/v1/utils.Version=${VERSION} -X intel/amber/tac/v1/utils.GitHash=${GITCOMMIT} -linkmode=external -s -extldflags '-Wl,-z,relro,-z,now'"\
-        -o out/tenantctl
+        -ldflags "-X intel/tac/v1/utils.BuildDate=${BUILDDATE} -X intel/tac/v1/utils.Version=${VERSION} -X intel/tac/v1/utils.GitHash=${GITCOMMIT} -linkmode=external -s -extldflags '-Wl,-z,relro,-z,now'"\
+        -o out/trustauthorityctl
 
-installer: tenantctl
+installer: trustauthorityctl
 	mkdir -p out/installer
 	cp dist/linux/install.sh out/installer/install.sh && chmod +x out/installer/install.sh
-	cp out/tenantctl out/installer/tenantctl
-	makeself out/installer out/tenantctl-$(VERSION)-$(GITCOMMIT).bin "Tenant CLI $(VERSION)" ./install.sh
-	rm -rf installer
+	cp out/trustauthorityctl out/installer/trustauthorityctl
+	makeself out/installer out/trustauthorityctl-$(VERSION)-$(GITCOMMIT).bin "Intel Trust Authority $(VERSION)" ./install.sh
+	rm -rf out/installer
 
-#This target once will work in CI
+push-artifact: installer
+	curl -sSf --user "$(ARTIFACTORY_USERNAME):$(ARTIFACTORY_PASSWORD)" -X PUT -T ./out/trustauthorityctl-$(VERSION)-$(GITCOMMIT).bin  $(ARTIFACTORY)/releases/trust-authority-cli/trustauthorityctl-$(VERSION)-$(GITCOMMIT).bin
+
 go-fmt:
 	gofmt -l .
 
@@ -31,4 +33,4 @@ all: clean test installer test-coverage
 clean:
 	rm -rf out/*
 
-.PHONY: installer all test clean go-fmt test-coverage
+.PHONY: installer all test clean go-fmt test-coverage push-artifact

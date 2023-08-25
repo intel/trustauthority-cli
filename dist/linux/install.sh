@@ -1,7 +1,7 @@
 #!/bin/bash
 
-COMPONENT_NAME=tenantctl
-SERVICE_ENV=tac.env
+COMPONENT_NAME=trustauthorityctl
+SERVICE_ENV=$COMPONENT_NAME.env
 
 # Check OS and VERSION
 OS=$(cat /etc/os-release | grep ^ID= | cut -d'=' -f2)
@@ -27,7 +27,7 @@ else
     if [ -n "$env_file_exports" ]; then eval export $env_file_exports; fi
 fi
 
-echo "Installing Tenant CLI..."
+echo "Installing Intel Trust Authority CLI..."
 
 BIN_PATH=~/.local/bin
 CONFIG_PATH=~/.config/$COMPONENT_NAME
@@ -53,9 +53,9 @@ chmod 700 $BIN_PATH/$COMPONENT_NAME
 touch $CONFIG_FILE_PATH
 chmod 600 $CONFIG_FILE_PATH
 
-tenantctl config -v $env_file
+trustauthorityctl config -v $env_file
 if [ $? -ne 0 ]; then
-  echo "Failed to update Tenant CLI configuration file"
+  echo "Failed to update Intel Trust Authority CLI configuration file"
   exit 1
 fi
 echo "Installation completed successfully!"

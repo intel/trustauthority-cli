@@ -11,8 +11,8 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"gopkg.in/yaml.v3"
-	"intel/amber/tac/v1/config"
-	"intel/amber/tac/v1/models"
+	"intel/tac/v1/config"
+	"intel/tac/v1/models"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -512,7 +512,7 @@ func MockServer(t *testing.T) *httptest.Server {
 func SetupMockConfiguration(serverUrl string, configFile *os.File) *config.Configuration {
 
 	c := &config.Configuration{
-		AmberBaseUrl: serverUrl,
+		TrustAuthorityBaseUrl: serverUrl,
 	}
 
 	fileInfo, _ := os.Stat(configFile.Name())

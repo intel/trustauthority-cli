@@ -7,7 +7,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"intel/amber/tac/v1/constants"
+	"intel/tac/v1/constants"
 )
 
 // deleteCmd represents the delete command

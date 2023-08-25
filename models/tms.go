@@ -7,7 +7,7 @@ package models
 
 import (
 	"github.com/google/uuid"
-	"intel/amber/tac/v1/constants"
+	"intel/tac/v1/constants"
 	"time"
 )
 

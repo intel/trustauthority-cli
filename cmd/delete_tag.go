@@ -10,10 +10,10 @@ import (
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
-	"intel/amber/tac/v1/client/tms"
-	"intel/amber/tac/v1/config"
-	"intel/amber/tac/v1/constants"
-	"intel/amber/tac/v1/utils"
+	"intel/tac/v1/client/tms"
+	"intel/tac/v1/config"
+	"intel/tac/v1/constants"
+	"intel/tac/v1/utils"
 	"net/http"
 	"net/url"
 	"time"
@@ -55,7 +55,7 @@ func deleteTag(cmd *cobra.Command) (string, error) {
 		Timeout: time.Duration(configValues.HTTPClientTimeout) * time.Second,
 	}
 
-	tmsUrl, err := url.Parse(configValues.AmberBaseUrl + constants.TmsBaseUrl)
+	tmsUrl, err := url.Parse(configValues.TrustAuthorityBaseUrl + constants.TmsBaseUrl)
 	if err != nil {
 		return "", err
 	}

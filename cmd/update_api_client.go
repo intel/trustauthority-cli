@@ -11,12 +11,12 @@ import (
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
-	"intel/amber/tac/v1/client/tms"
-	"intel/amber/tac/v1/config"
-	"intel/amber/tac/v1/constants"
-	"intel/amber/tac/v1/models"
-	"intel/amber/tac/v1/utils"
-	"intel/amber/tac/v1/validation"
+	"intel/tac/v1/client/tms"
+	"intel/tac/v1/config"
+	"intel/tac/v1/constants"
+	"intel/tac/v1/models"
+	"intel/tac/v1/utils"
+	"intel/tac/v1/validation"
 	"net/http"
 	"net/url"
 	"strings"
@@ -46,8 +46,8 @@ var updateApiClientCmd = &cobra.Command{
 func init() {
 	updateCmd.AddCommand(updateApiClientCmd)
 
-	updateApiClientCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the api client needs to be updated")
-	updateApiClientCmd.Flags().StringP(constants.ProductIdParamName, "p", "", "Id of the Amber Product for which the api client needs to be updated")
+	updateApiClientCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Trust Authority service for which the api client needs to be updated")
+	updateApiClientCmd.Flags().StringP(constants.ProductIdParamName, "p", "", "Id of the Trust Authority Product for which the api client needs to be updated")
 	updateApiClientCmd.Flags().StringP(constants.ApiClientIdParamName, "c", "", "Id of the api client that needs to be updated")
 	updateApiClientCmd.Flags().StringSliceP(constants.PolicyIdsParamName, "i", []string{}, "List of comma separated policy IDs to be linked to the api client")
 	updateApiClientCmd.Flags().StringSliceP(constants.TagKeyAndValuesParamName, "v", []string{}, "List of the comma separated tad Id and value pairs in the "+
@@ -69,7 +69,7 @@ func updateApiClient(cmd *cobra.Command) (string, error) {
 		Timeout: time.Duration(configValues.HTTPClientTimeout) * time.Second,
 	}
 
-	tmsUrl, err := url.Parse(configValues.AmberBaseUrl + constants.TmsBaseUrl)
+	tmsUrl, err := url.Parse(configValues.TrustAuthorityBaseUrl + constants.TmsBaseUrl)
 	if err != nil {
 		return "", err
 	}

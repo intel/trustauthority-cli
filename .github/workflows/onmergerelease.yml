@@ -57,9 +57,23 @@ jobs:
           snyk auth ${{ secrets.SNYK_AUTH_TOKEN }}
           snyk test --insecure --all-projects --json-file-output=snyc-scan.json
 
+  artifact-installer:
+    runs-on: [ self-hosted ]
+    env:
+      http_proxy: ${{ secrets.HTTP_PROXY }}
+      https_proxy: ${{ secrets.HTTPS_PROXY }}
+      no_proxy: ${{ secrets.NO_PROXY }}
+      ARTIFACTORY: ${{ secrets.ARTIFACTORY }}
+      ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
+      ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD}}
+    needs: [ "build-test" ]
+    steps:
+      - name: Push Installer
+        run: make push-artifact
+
   cleanup-images-bins:
     runs-on: [ self-hosted ]
-    needs: [ "build-test", "snyk-scan" ]
+    needs: [ "build-test", "snyk-scan", "artifact-installer" ]
     steps:
       - name: Clean generated binaries.
         run: make clean

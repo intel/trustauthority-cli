@@ -10,17 +10,16 @@ import (
 )
 
 const (
-	BinDir                = "/.local/bin/tenantctl"
-	ConfigDir             = "/.config/tenantctl/"
+	BinDir                = "/.local/bin/trustauthorityctl"
+	ConfigDir             = "/.config/trustauthorityctl/"
 	LogDir                = ConfigDir + "logs/"
 	DefaultConfigFilePath = ConfigDir + "config.yaml"
 	ConfigFileName        = "config"
 	ConfigFileExtension   = "yaml"
-	LogFilePath           = LogDir + "tac.log"
+	LogFilePath           = LogDir + "trustauthorityctl.log"
 	DefaultFilePermission = 0640
 	MaxPolicyFileSize     = 10240
-	ExplicitCLIName       = "Tenant CLI"
-	AmberApiKeyEnvVar     = "amber-api-key"
+	ExplicitCLIName       = "Intel Trust Authority CLI"
 )
 
 // Command and parameter names
@@ -52,7 +51,7 @@ const (
 	AlgorithmParamName           = "algorithm"
 	DisableNotificationParamName = "disable-notification"
 
-	RootCmd        = "tenantctl"
+	RootCmd        = "trustauthorityctl"
 	CreateCmd      = "create"
 	ListCmd        = "list"
 	DeleteCmd      = "delete"
@@ -78,10 +77,10 @@ const (
 )
 
 const (
-	AmberBaseUrl      = "amber-base-url"
-	TenantId          = "tenant-id"
-	HttpClientTimeout = "http-client-timeout"
-	Loglevel          = "log-level"
+	TrustAuthBaseUrl      = "trustauthority-url"
+	TrustAuthApiKeyEnvVar = "trustauthority-api-key"
+	HttpClientTimeout     = "http-client-timeout"
+	Loglevel              = "log-level"
 
 	DefaultLogLevel          = "info"
 	DefaultHttpClientTimeout = 10
@@ -105,8 +104,6 @@ const (
 	NonAlg      = "None"
 	KeyHeader   = "x5c"
 	TimeLayout  = "20060102150405"
-
-	EmptyString = ""
 )
 
 // HTTP constants

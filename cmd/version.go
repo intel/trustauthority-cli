@@ -8,13 +8,13 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"intel/amber/tac/v1/constants"
-	"intel/amber/tac/v1/utils"
+	"intel/tac/v1/constants"
+	"intel/tac/v1/utils"
 )
 
 var versionCmd = &cobra.Command{
 	Use:   constants.VersionCmd,
-	Short: "Get version of Tenant CLI",
+	Short: "Get version of Intel Trust Authority CLI",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		version, err := utils.GetVersion()

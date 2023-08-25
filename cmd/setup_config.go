@@ -8,15 +8,15 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"intel/amber/tac/v1/config"
-	"intel/amber/tac/v1/constants"
+	"intel/tac/v1/config"
+	"intel/tac/v1/constants"
 )
 
 // setupConfigCmd represents the setup command
 var (
 	setupConfigCmd = &cobra.Command{
 		Use:   constants.SetupConfigCmd,
-		Short: "Setup configuration for Amber CLI",
+		Short: "Setup configuration for Trust Authority CLI",
 		Long:  ``,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			fmt.Println("setup called")

@@ -9,10 +9,10 @@ import (
 	"encoding/json"
 	"fmt"
 	log "github.com/sirupsen/logrus"
-	"intel/amber/tac/v1/client/tms"
-	"intel/amber/tac/v1/config"
-	"intel/amber/tac/v1/constants"
-	"intel/amber/tac/v1/utils"
+	"intel/tac/v1/client/tms"
+	"intel/tac/v1/config"
+	"intel/tac/v1/constants"
+	"intel/tac/v1/utils"
 	"net/http"
 	"net/url"
 	"time"
@@ -23,7 +23,7 @@ import (
 // getServiceOffersCmd represents the getServiceOffers command
 var getServiceOffersCmd = &cobra.Command{
 	Use:   constants.ServiceOfferCmd,
-	Short: "List all the service offers provided by Amber",
+	Short: "List all the service offers provided by Trust Authority",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("list serviceOffers called")
@@ -51,7 +51,7 @@ func getServiceOffers(cmd *cobra.Command) (string, error) {
 		Timeout: time.Duration(configValues.HTTPClientTimeout) * time.Second,
 	}
 
-	tmsUrl, err := url.Parse(configValues.AmberBaseUrl + constants.TmsBaseUrl)
+	tmsUrl, err := url.Parse(configValues.TrustAuthorityBaseUrl + constants.TmsBaseUrl)
 	if err != nil {
 		return "", err
 	}

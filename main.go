@@ -5,7 +5,7 @@
 
 package main
 
-import "intel/amber/tac/v1/cmd"
+import "intel/tac/v1/cmd"
 
 func main() {
 	cmd.Execute()

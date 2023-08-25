@@ -12,10 +12,10 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"intel/amber/tac/v1/constants"
-	"intel/amber/tac/v1/models"
-	"intel/amber/tac/v1/utils"
-	"intel/amber/tac/v1/validation"
+	"intel/tac/v1/constants"
+	"intel/tac/v1/models"
+	"intel/tac/v1/utils"
+	"intel/tac/v1/validation"
 	"os"
 )
 
@@ -42,7 +42,7 @@ func init() {
 	createPolicyJwtCmd.Flags().BoolP(constants.SignObjectParamName, "s", false, "Determines if the JWT needs to be signed. Generates a JWS when this parameter is set")
 	createPolicyJwtCmd.Flags().StringP(constants.PrivateKeyFileParamName, "p", "", "Path of the file containing the private key to be used to sign the policy. To be used only if -s (sign) parameter is set, else it is ignored")
 	createPolicyJwtCmd.Flags().StringP(constants.CertificateFileParamName, "c", "", "Path of the file containing the certificate to be added to the JWT. To be used only if -s (sign) parameter is set, else it is ignored")
-	createPolicyJwtCmd.Flags().StringP(constants.AlgorithmParamName, "a", constants.PS384, "Algorithm to be used to sign Amber JWT policy (RS256|PS256|RS384|PS384). To be used only if -s (sign) parameter is set, else it is ignored")
+	createPolicyJwtCmd.Flags().StringP(constants.AlgorithmParamName, "a", constants.PS384, "Algorithm to be used to sign Trust Authority JWT policy (RS256|PS256|RS384|PS384). To be used only if -s (sign) parameter is set, else it is ignored")
 	createPolicyJwtCmd.MarkFlagRequired(constants.PolicyFileParamName)
 }
 

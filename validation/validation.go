@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	"intel/amber/tac/v1/constants"
+	"intel/tac/v1/constants"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -19,7 +19,7 @@ import (
 var (
 	stringReg = regexp.MustCompile("(^[a-zA-Z0-9_ \\/.-]*$)")
 	emailReg  = regexp.MustCompile(`^[a-zA-Z0-9.!#$%&'*+\/=?^_'{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$`)
-	// Regex to validate Amber API key. Key should contain characters between a-z, A-Z, 0-9
+	// Regex to validate TA API key. Key should contain characters between a-z, A-Z, 0-9
 	// and should be of size between 30 and 128
 	apiKeyRegex           = regexp.MustCompile(`^[a-zA-Z0-9]{30,128}$`)
 	subscriptionNameRegex = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9\-\_]{1,62}[a-zA-Z0-9]$`)
@@ -68,9 +68,9 @@ func ValidateSize(path string) error {
 	return nil
 }
 
-func ValidateAmberAPIKey(apiKey string) error {
+func ValidateTrustAuthorityAPIKey(apiKey string) error {
 	if strings.TrimSpace(apiKey) == "" {
-		return errors.Errorf("%s config variable needs to be set with a proper API Key before using CLI", constants.AmberApiKeyEnvVar)
+		return errors.Errorf("%s config variable needs to be set with a proper API Key before using CLI", constants.TrustAuthApiKeyEnvVar)
 	}
 	if !apiKeyRegex.MatchString(apiKey) {
 		return errors.New("Invalid API key found in configuration file. Please update it with a valid API key.")

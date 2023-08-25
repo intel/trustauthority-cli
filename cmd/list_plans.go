@@ -14,10 +14,10 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"intel/amber/tac/v1/client/tms"
-	"intel/amber/tac/v1/config"
-	"intel/amber/tac/v1/constants"
-	"intel/amber/tac/v1/utils"
+	"intel/tac/v1/client/tms"
+	"intel/tac/v1/config"
+	"intel/tac/v1/constants"
+	"intel/tac/v1/utils"
 	"net/http"
 	"net/url"
 	"time"
@@ -42,8 +42,8 @@ var getPlansCmd = &cobra.Command{
 
 func init() {
 	listCmd.AddCommand(getPlansCmd)
-	getPlansCmd.Flags().StringP(constants.ServiceOfferIdParamName, "r", "", "Id of the Amber service offer for which the plan needs to be fetched")
-	getPlansCmd.Flags().StringP(constants.PlanIdParamName, "p", "", "Id of the Amber plan which needs to be fetched")
+	getPlansCmd.Flags().StringP(constants.ServiceOfferIdParamName, "r", "", "Id of the Trust Authority service offer for which the plan needs to be fetched")
+	getPlansCmd.Flags().StringP(constants.PlanIdParamName, "p", "", "Id of the Trust Authority plan which needs to be fetched")
 	getPlansCmd.Flags().StringP(constants.RequestIdParamName, "q", "", "Request ID to be associated with the specific request. This is optional.")
 	getPlansCmd.MarkFlagRequired(constants.ServiceOfferIdParamName)
 }
@@ -57,7 +57,7 @@ func getPlans(cmd *cobra.Command) (string, error) {
 		Timeout: time.Duration(configValues.HTTPClientTimeout) * time.Second,
 	}
 
-	tmsUrl, err := url.Parse(configValues.AmberBaseUrl + constants.TmsBaseUrl)
+	tmsUrl, err := url.Parse(configValues.TrustAuthorityBaseUrl + constants.TmsBaseUrl)
 	if err != nil {
 		return "", err
 	}

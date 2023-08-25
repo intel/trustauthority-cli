@@ -7,8 +7,8 @@ package cmd
 
 import (
 	"github.com/stretchr/testify/assert"
-	"intel/amber/tac/v1/constants"
-	"intel/amber/tac/v1/test"
+	"intel/tac/v1/constants"
+	"intel/tac/v1/test"
 	"testing"
 )
 

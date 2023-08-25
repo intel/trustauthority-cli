@@ -8,7 +8,7 @@ package cmd
 import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
-	"intel/amber/tac/v1/constants"
+	"intel/tac/v1/constants"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -17,10 +17,10 @@ import (
 // uninstallCmd represents the uninstall command
 var uninstallCmd = &cobra.Command{
 	Use:   constants.UninstallCmd,
-	Short: "Uninstall Tenant CLI",
+	Short: "Uninstall Intel Trust Authority CLI",
 	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("Uninstalling Tenant CLI")
+		fmt.Println("Uninstalling Intel Trust Authority CLI")
 		if err := uninstall(); err != nil {
 			return err
 		}
@@ -57,6 +57,6 @@ func uninstall() error {
 		log.WithError(err).Error("Error removing log dir: ", userHomeDir+constants.LogDir)
 	}
 
-	fmt.Println("Tenant CLI uninstalled successfully")
+	fmt.Println("Intel Trust Authority CLI uninstalled successfully")
 	return nil
 }

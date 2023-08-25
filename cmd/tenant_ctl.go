@@ -9,11 +9,11 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"intel/amber/tac/v1/config"
-	"intel/amber/tac/v1/constants"
-	"intel/amber/tac/v1/internal/models"
-	"intel/amber/tac/v1/utils"
-	"intel/amber/tac/v1/validation"
+	"intel/tac/v1/config"
+	"intel/tac/v1/constants"
+	"intel/tac/v1/internal/models"
+	"intel/tac/v1/utils"
+	"intel/tac/v1/validation"
 	"os"
 	"path/filepath"
 )
@@ -25,7 +25,7 @@ var (
 // tenantCmd represents the base command when called without any subcommands
 var tenantCmd = &cobra.Command{
 	Use:   constants.RootCmd,
-	Short: "Tenant CLI used to run the tasks for tenant admin/user",
+	Short: "Intel Trust Authority CLI used to run the tasks for tenant admin/user",
 	Long:  ``,
 }
 
@@ -62,8 +62,8 @@ func Execute() {
 			constants.UninstallCmd: true}
 		//API key is not needed for generating policy JWT or setting up config, API key check is skipped for these 2 commands
 		if ok := cmdListWithNoApiKey[cmd.Name()]; !ok {
-			apiKey = configValues.AmberApiKey
-			if err := validation.ValidateAmberAPIKey(apiKey); err != nil {
+			apiKey = configValues.TrustAuthorityApiKey
+			if err := validation.ValidateTrustAuthorityAPIKey(apiKey); err != nil {
 				return err
 			}
 		}
@@ -71,6 +71,8 @@ func Execute() {
 	}
 	err = tenantCmd.Execute()
 	if err != nil {
+		//Need to set it here separately as well since previously we are setting it only for the executed command
+		logrus.SetOutput(logFile)
 		logrus.WithField(constants.HTTPHeaderKeyRequestId, models.RespHeaderFields.RequestId).
 			WithField(constants.HTTPHeaderKeyTraceId, models.RespHeaderFields.TraceId).Error(err)
 		os.Exit(1)

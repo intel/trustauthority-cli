@@ -11,10 +11,10 @@ import (
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
-	"intel/amber/tac/v1/client/tms"
-	"intel/amber/tac/v1/config"
-	"intel/amber/tac/v1/constants"
-	"intel/amber/tac/v1/utils"
+	"intel/tac/v1/client/tms"
+	"intel/tac/v1/config"
+	"intel/tac/v1/constants"
+	"intel/tac/v1/utils"
 	"net/http"
 	"net/url"
 	"time"
@@ -41,7 +41,7 @@ var getApiClientTagsValuesCmd = &cobra.Command{
 func init() {
 	getApiClientsCmd.AddCommand(getApiClientTagsValuesCmd)
 
-	getApiClientTagsValuesCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Amber service for which the apiClient policies are to be fetched")
+	getApiClientTagsValuesCmd.Flags().StringP(constants.ServiceIdParamName, "r", "", "Id of the Trust Authority service for which the apiClient policies are to be fetched")
 	getApiClientTagsValuesCmd.Flags().StringP(constants.ApiClientIdParamName, "c", "", "Id of the apiClient for which the policies are to be fetched")
 	getApiClientTagsValuesCmd.Flags().StringP(constants.RequestIdParamName, "q", "", "Request ID to be associated with the specific request. This is optional.")
 	getApiClientTagsValuesCmd.MarkFlagRequired(constants.ServiceIdParamName)
@@ -57,7 +57,7 @@ func getApiClientTagsAndValues(cmd *cobra.Command) (string, error) {
 		Timeout: time.Duration(configValues.HTTPClientTimeout) * time.Second,
 	}
 
-	tmsUrl, err := url.Parse(configValues.AmberBaseUrl + constants.TmsBaseUrl)
+	tmsUrl, err := url.Parse(configValues.TrustAuthorityBaseUrl + constants.TmsBaseUrl)
 	if err != nil {
 		return "", err
 	}

@@ -16,9 +16,9 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-	"intel/amber/tac/v1/constants"
-	models2 "intel/amber/tac/v1/internal/models"
-	"intel/amber/tac/v1/validation"
+	"intel/tac/v1/constants"
+	models2 "intel/tac/v1/internal/models"
+	"intel/tac/v1/validation"
 	"io"
 	"os"
 	"path/filepath"
@@ -63,8 +63,8 @@ func ReadAnswerFileToEnv(filename string) error {
 }
 func isValidEnvVariable(lookup string) bool {
 	envMap := map[string]bool{
-		"AMBER_BASE_URL": true,
-		"AMBER_API_KEY":  true,
+		"TRUSTAUTHORITY_URL":     true,
+		"TRUSTAUTHORITY_API_KEY": true,
 	}
 	if _, ok := envMap[lookup]; ok {
 		return true

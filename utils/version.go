@@ -9,7 +9,7 @@ package utils
 
 import (
 	"encoding/json"
-	"intel/amber/tac/v1/constants"
+	"intel/tac/v1/constants"
 )
 
 var Version = ""
