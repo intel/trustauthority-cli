@@ -32,7 +32,6 @@ var createTagCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		utils.PrintRequestAndTraceId()
 		fmt.Println("Tag: \n\n", response)
 		return nil
 	},

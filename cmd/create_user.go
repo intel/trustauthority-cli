@@ -35,7 +35,6 @@ var createUserCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		utils.PrintRequestAndTraceId()
 		fmt.Println("User: \n\n", response)
 		return nil
 	},
