@@ -30,10 +30,10 @@ var getPoliciesCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("list policies called")
 		response, err := getPolicies(cmd)
+		utils.PrintRequestAndTraceId()
 		if err != nil {
 			return err
 		}
-		utils.PrintRequestAndTraceId()
 		fmt.Println("Policies: \n\n", response)
 		return nil
 	},

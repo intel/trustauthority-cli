@@ -29,10 +29,10 @@ var getApiClientPoliciesCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("list apiClient policy called")
 		response, err := getApiClientPolicies(cmd)
+		utils.PrintRequestAndTraceId()
 		if err != nil {
 			return err
 		}
-		utils.PrintRequestAndTraceId()
 		fmt.Println("Policy IDs: \n\n", response)
 		return nil
 	},

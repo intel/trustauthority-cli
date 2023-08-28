@@ -29,10 +29,10 @@ var deleteUserCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("delete user called")
 		userId, err := deleteUser(cmd)
+		utils.PrintRequestAndTraceId()
 		if err != nil {
 			return err
 		}
-		utils.PrintRequestAndTraceId()
 		fmt.Printf("\nUser %s deleted \n", userId)
 		return nil
 	},

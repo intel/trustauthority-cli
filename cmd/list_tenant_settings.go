@@ -28,10 +28,10 @@ var listTenantSettingsCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("list tenant settings command called")
 		response, err := listTenantSettings(cmd)
+		utils.PrintRequestAndTraceId()
 		if err != nil {
 			return err
 		}
-		utils.PrintRequestAndTraceId()
 		fmt.Println("Tenant Settings: \n", response)
 		return nil
 	},

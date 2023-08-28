@@ -32,10 +32,10 @@ var updateApiClientCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("update apiClient called")
 		response, err := updateApiClient(cmd)
+		utils.PrintRequestAndTraceId()
 		if err != nil {
 			return err
 		}
-		utils.PrintRequestAndTraceId()
 		fmt.Println("ApiClient: \n\n", response)
 		fmt.Println("\nNOTE: There may be a delay of up to two (2) minutes for the changes to the attestation API key to take effect.")
 		fmt.Print("\n")

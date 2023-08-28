@@ -31,6 +31,7 @@ var createUserCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("create user called")
 		response, err := createUser(cmd)
+		utils.PrintRequestAndTraceId()
 		if err != nil {
 			return err
 		}

@@ -28,6 +28,7 @@ var createTagCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("create tag called")
 		response, err := createTag(cmd)
+		utils.PrintRequestAndTraceId()
 		if err != nil {
 			return err
 		}

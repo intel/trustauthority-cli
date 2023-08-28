@@ -30,10 +30,10 @@ var getUsersCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("list users called")
 		response, err := getUsers(cmd)
+		utils.PrintRequestAndTraceId()
 		if err != nil {
 			return err
 		}
-		utils.PrintRequestAndTraceId()
 		fmt.Println("Users: \n\n", response)
 		return nil
 	},

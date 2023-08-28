@@ -33,10 +33,10 @@ var createPolicyCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("create policy called")
 		response, err := createPolicy(cmd)
+		utils.PrintRequestAndTraceId()
 		if err != nil {
 			return err
 		}
-		utils.PrintRequestAndTraceId()
 		fmt.Println("Policy: \n\n", response)
 		return nil
 	},

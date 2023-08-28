@@ -26,10 +26,10 @@ var listTagCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("list tag called")
 		response, err := getTag(cmd)
+		utils.PrintRequestAndTraceId()
 		if err != nil {
 			return err
 		}
-		utils.PrintRequestAndTraceId()
 		fmt.Println("Tags: \n\n", response)
 		return nil
 	},

@@ -31,10 +31,10 @@ var updateTenantSettingsCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("update tenant settings command called")
 		response, err := updateTenantSettings(cmd)
+		utils.PrintRequestAndTraceId()
 		if err != nil {
 			return err
 		}
-		utils.PrintRequestAndTraceId()
 		fmt.Println("Updated Tenant Settings: \n", response)
 		return nil
 	},

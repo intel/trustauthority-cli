@@ -30,10 +30,10 @@ var getApiClientsCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("list apiClients called")
 		response, err := getApiClients(cmd)
+		utils.PrintRequestAndTraceId()
 		if err != nil {
 			return err
 		}
-		utils.PrintRequestAndTraceId()
 		fmt.Println("ApiClients: \n\n", response)
 		return nil
 	},

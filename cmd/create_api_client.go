@@ -34,10 +34,10 @@ var createApiClientCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("create apiClient called")
 		response, err := createApiClient(cmd)
+		utils.PrintRequestAndTraceId()
 		if err != nil {
 			return err
 		}
-		utils.PrintRequestAndTraceId()
 		fmt.Println("ApiClient: \n\n", response)
 		fmt.Println("\nNOTE: There may be a delay of up to two (2) minutes before a new attestation API key is active.")
 		fmt.Print("\n")

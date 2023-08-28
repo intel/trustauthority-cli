@@ -37,10 +37,10 @@ var (
 		RunE: func(cmd *cobra.Command, args []string) error {
 			log.Info("update user role called")
 			userId, err := updateUserRole(cmd)
+			utils.PrintRequestAndTraceId()
 			if err != nil {
 				return err
 			}
-			utils.PrintRequestAndTraceId()
 			fmt.Printf("\nUpdated User: %s \n\n", userId)
 			return nil
 		},

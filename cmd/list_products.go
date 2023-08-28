@@ -30,10 +30,10 @@ var getProductsCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("list products called")
 		response, err := getProducts(cmd)
+		utils.PrintRequestAndTraceId()
 		if err != nil {
 			return err
 		}
-		utils.PrintRequestAndTraceId()
 		fmt.Println("Products: \n\n", response)
 		return nil
 	},

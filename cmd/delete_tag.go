@@ -29,10 +29,10 @@ var deleteTagCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("delete tag called")
 		tagId, err := deleteTag(cmd)
+		utils.PrintRequestAndTraceId()
 		if err != nil {
 			return err
 		}
-		utils.PrintRequestAndTraceId()
 		fmt.Printf("\nTag %s deleted \n", tagId)
 		return nil
 	},

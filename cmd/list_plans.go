@@ -31,10 +31,10 @@ var getPlansCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("list plan called")
 		response, err := getPlans(cmd)
+		utils.PrintRequestAndTraceId()
 		if err != nil {
 			return err
 		}
-		utils.PrintRequestAndTraceId()
 		fmt.Println("Plans: \n\n", response)
 		return nil
 	},

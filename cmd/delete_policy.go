@@ -29,10 +29,10 @@ var deletePolicyCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("delete policy called")
 		policyId, err := deletePolicy(cmd)
+		utils.PrintRequestAndTraceId()
 		if err != nil {
 			return err
 		}
-		utils.PrintRequestAndTraceId()
 		fmt.Printf("\nPolicy %s deleted", policyId)
 		return nil
 	},

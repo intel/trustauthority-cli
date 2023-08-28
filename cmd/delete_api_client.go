@@ -29,10 +29,10 @@ var deleteApiClientCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("delete apiClient called")
 		serviceId, err := deleteApiClient(cmd)
+		utils.PrintRequestAndTraceId()
 		if err != nil {
 			return err
 		}
-		utils.PrintRequestAndTraceId()
 		fmt.Printf("Deleted api client with Id: %s \n\n", serviceId)
 		fmt.Println("\nNOTE: There may be a delay of up to two (2) minutes for the changes to the attestation API key to take effect.")
 		fmt.Print("\n")

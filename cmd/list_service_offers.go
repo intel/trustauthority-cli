@@ -28,10 +28,10 @@ var getServiceOffersCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("list serviceOffers called")
 		response, err := getServiceOffers(cmd)
+		utils.PrintRequestAndTraceId()
 		if err != nil {
 			return err
 		}
-		utils.PrintRequestAndTraceId()
 		fmt.Println("Service offers: \n\n", response)
 		return nil
 	},
