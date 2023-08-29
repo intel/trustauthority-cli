@@ -66,22 +66,26 @@ func getUsers(cmd *cobra.Command) (string, error) {
 
 	tmsClient := tms.NewTmsClient(client, tmsUrl, apiKey)
 
+	emailIdString, err := cmd.Flags().GetString(constants.EmailIdParamName)
+	if err != nil {
+		return "", err
+	}
+
+	//Validate the email id before making a remote request
+	if emailIdString != "" {
+		err = validation.ValidateEmailAddress(emailIdString)
+		if err != nil {
+			return "", err
+		}
+	}
+
 	var responseBytes []byte
 	response, err := tmsClient.GetUsers()
 	if err != nil {
 		return "", err
 	}
 
-	emailIdString, err := cmd.Flags().GetString(constants.EmailIdParamName)
-	if err != nil {
-		return "", err
-	}
-
 	if emailIdString != "" {
-		err := validation.ValidateEmailAddress(emailIdString)
-		if err != nil {
-			return "", err
-		}
 		for _, user := range response {
 			if user.Email == emailIdString {
 				responseBytes, err = json.MarshalIndent(user, "", "  ")
