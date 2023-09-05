@@ -15,7 +15,7 @@ trustauthorityctl:
 installer: trustauthorityctl
 	mkdir -p out/installer
 	cp dist/linux/install.sh out/installer/install.sh && chmod +x out/installer/install.sh
-	cp out/trustauthorityctl out/installer/trustauthorityctl
+	mv out/trustauthorityctl out/installer/trustauthorityctl
 	makeself out/installer out/trustauthorityctl-$(VERSION)-$(GITCOMMIT).bin "Intel Trust Authority $(VERSION)" ./install.sh
 	rm -rf out/installer
 

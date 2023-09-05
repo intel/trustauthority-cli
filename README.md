@@ -18,8 +18,8 @@ Ubuntu LTS 20.04
 
 ### Build
 
-- git clone https://github.com/intel/trust-authority-cli.git trust-authority-cli
-- cd trust-authority-cli and run "make installer"
+- git clone https://github.com/intel/trustauthority-cli.git trustauthority-cli
+- cd trustauthority-cli and run "make installer"
 - copy the binary installer trustauthorityctl-{version}.bin to the system where it needs to be deployed
 - create an env file trustauthorityctl.env in your home directory and add the following mandatory contents:<br>
   a. TRUSTAUTHORITY_URL=< URL for Intel Trust Authority > <br>
