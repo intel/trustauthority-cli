@@ -38,25 +38,9 @@ jobs:
       - name: Build Installer
         run: make installer
 
-  snyk-scan:
-    runs-on: [ self-hosted ]
-    env:
-      http_proxy: ${{ secrets.HTTP_PROXY }}
-      https_proxy: ${{ secrets.HTTPS_PROXY }}
-      no_proxy: ${{ secrets.NO_PROXY }}
-    needs: [ "build-test" ]
-    steps:
-      - name: Snyk Scan
-        run: |
-          snyk config set endpoint=${{ secrets.SNYK_URL }}
-          snyk config set api=${{ secrets.SYNK_API_TOKEN }}
-          snyk config set org=${{ secrets.ORG_NAME }}
-          snyk auth ${{ secrets.SNYK_AUTH_TOKEN }}
-          snyk test --insecure --all-projects --json-file-output=snyc-scan.json
-
   cleanup-images-bins:
     runs-on: [ self-hosted ]
-    needs: [ "build-test", "snyk-scan" ]
+    needs: [ "build-test" ]
     steps:
       - name: Clean generated binaries.
         run: make clean

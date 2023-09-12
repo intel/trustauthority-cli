@@ -1,0 +1,38 @@
+name: OnScheduleRunCIScans
+
+on:
+  schedule:
+    branches:
+      - 'main'
+    - cron: '0 9 * * 0'
+  workflow_dispatch:
+    
+jobs:
+  bdba-scan:
+    runs-on: [ self-hosted ]
+    env:
+      http_proxy: ${{ secrets.HTTP_PROXY }}
+      https_proxy: ${{ secrets.HTTPS_PROXY }}
+      no_proxy: ${{ secrets.NO_PROXY }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '1.21.0'
+      - name: Build Installer
+        run: make installer
+      - name: BDBA Scan
+        uses: intel-innersource/frameworks.devops.github.actions.bdba@main
+        with:
+          username: ${{ secrets.BDBA_USERNAME }}
+          password: ${{ secrets.BDBA_PASSWORD }}
+          group: ${{ secrets.BDBA_GROUP_ID }}
+          scan_path: ./out
+          report_path: artifacts/trustauthority-cli/bdba
+
+  cleanup-images-bins:
+    runs-on: [ self-hosted ]
+    needs: [ "bdba-scan" ]
+    steps:
+      - name: Clean generated binaries.
+        run: make clean
