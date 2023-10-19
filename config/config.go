@@ -97,7 +97,7 @@ func SetupConfig(envFilePath string) error {
 	}
 
 	if !strings.HasPrefix(configValues.TrustAuthorityBaseUrl, "https://") {
-		return errors.New("Invalid base URL, must start with 'https://'")
+		return errors.New("Invalid Trust Authority base URL, must start with 'https://'")
 	}
 
 	_, err = url.Parse(configValues.TrustAuthorityBaseUrl)
