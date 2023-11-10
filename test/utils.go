@@ -22,20 +22,40 @@ import (
 
 var (
 	policy = `{
-    "policy_id": "e48dabc5-9608-4ff3-aaed-f25909ab9de1",
-    "policy": "default matches_sgx_policy = false \n\n matches_sgx_policy = true { \n \n input.sgx_isvsvn == 0 \n\n } ",
-    "policy_name": "Sample_Policy_SGX",
-    "policy_type": "Appraisal policy",
-    "attestation_type": "SGX Attestation",
-    "service_offer_id": "e8a72b7e-c4b1-4bdc-bf40-68f23c68a2aa" }`
+        "policy_id": "52135615-3881-4b94-91ff-49f01e626e7b",
+        "policy": "default matches_sgx_policy = true \n matches_sgx_policy = true { \n input.sgx_mrenclave == \"83f4e819861adef6ffb2a4865efea9337b91ed30fa33491b17f0d5d9e8204423\" \n input.sgx_mrsigner == \"83d719e77deaca1470f6baf62a4d774303c899db69020f9c70ee1dfc08c7ce9f\" \n }",
+        "policy_name": "test-custom4",
+        "policy_type": "Appraisal policy",
+        "service_offer_id": "736c0281-f13f-4013-a1d2-7ecb92bca0e3",
+        "attestation_type": "SGX Attestation",
+        "creator_id": "cbb41ee7-e2d2-4b3e-b9f1-37f686f65b34",
+        "updater_id": "cbb41ee7-e2d2-4b3e-b9f1-37f686f65b34",
+        "deleted": false,
+        "created_time": "2023-11-03T12:15:38.181923+05:30",
+        "modified_time": "2023-11-03T12:18:11.324105+05:30",
+        "policy_hash": "z4yZUmv2fccp8jiRkY3dtkotfDrrCkVSXKRli1O6IKmIS7zlm5qfHJJIGnNpKasP",
+        "policy_signature": "hMoTHsLKDRuKkTYOjkv04paXTJmRTEbUDNS9BJcq86iGudgb3j9gUbBGsXH0H7dpz0+5KmuigEbPttan6O/RmwA4xXGrYCQtG4+NB9eM/amNgWNPW7gL482XA18BgJdu4I/f+XGWPbraq+1X2U7yGRi4ise0KM75mTAPdnUBBKq6sk8TgYJGH7n8+ohKbrFyz/IRHvKrwcmnsw7T55ZqU8p1M3N4KSmLz1onKRUXkM5V/6NNYRWFFNytlDFD9P7xU6ns/Ix/FQ1oHCP5WPmTPbnlb512Fy9Ugv2uFr1XUplocjSdL0D18WCedzXcsUwrRrPy2b11drB8TCDMeDVrX+x7zU60r7xICjFaHLJ+K1qDBnfCEQb8uy9XhR/VjQixDZWtAk/hSdCFnOssi+Agrcv3OesXCda1a6yFoinYXDxJqMjryi5vow04yhPkNzR8iiUnIuKLZfTMTM7GRauKXbi2BwA6LWucxa2rhyanuqqO4WB48GJOzIxMYTqz13nP",
+        "version": "v2",
+        "signed_by_tenant": false
+    }`
 
 	policyList = `[{
-    "policy_id": "e48dabc5-9608-4ff3-aaed-f25909ab9de1",
-    "policy": "default matches_sgx_policy = false \n\n matches_sgx_policy = true { \n \n input.sgx_isvsvn == 0 \n\n } ",
-	"policy_name": "Sample_Policy_SGX",
-    "policy_type": "Appraisal policy",
-    "attestation_type": "SGX Attestation",
-    "service_offer_id": "e8a72b7e-c4b1-4bdc-bf40-68f23c68a2aa" }]`
+        "policy_id": "52135615-3881-4b94-91ff-49f01e626e7b",
+        "policy": "default matches_sgx_policy = true \n matches_sgx_policy = true { \n input.sgx_mrenclave == \"83f4e819861adef6ffb2a4865efea9337b91ed30fa33491b17f0d5d9e8204423\" \n input.sgx_mrsigner == \"83d719e77deaca1470f6baf62a4d774303c899db69020f9c70ee1dfc08c7ce9f\" \n }",
+        "policy_name": "test-custom4",
+        "policy_type": "Appraisal policy",
+        "service_offer_id": "736c0281-f13f-4013-a1d2-7ecb92bca0e3",
+        "attestation_type": "SGX Attestation",
+        "creator_id": "cbb41ee7-e2d2-4b3e-b9f1-37f686f65b34",
+        "updater_id": "cbb41ee7-e2d2-4b3e-b9f1-37f686f65b34",
+        "deleted": false,
+        "created_time": "2023-11-03T12:15:38.181923+05:30",
+        "modified_time": "2023-11-03T12:18:11.324105+05:30",
+        "policy_hash": "z4yZUmv2fccp8jiRkY3dtkotfDrrCkVSXKRli1O6IKmIS7zlm5qfHJJIGnNpKasP",
+        "policy_signature": "hMoTHsLKDRuKkTYOjkv04paXTJmRTEbUDNS9BJcq86iGudgb3j9gUbBGsXH0H7dpz0+5KmuigEbPttan6O/RmwA4xXGrYCQtG4+NB9eM/amNgWNPW7gL482XA18BgJdu4I/f+XGWPbraq+1X2U7yGRi4ise0KM75mTAPdnUBBKq6sk8TgYJGH7n8+ohKbrFyz/IRHvKrwcmnsw7T55ZqU8p1M3N4KSmLz1onKRUXkM5V/6NNYRWFFNytlDFD9P7xU6ns/Ix/FQ1oHCP5WPmTPbnlb512Fy9Ugv2uFr1XUplocjSdL0D18WCedzXcsUwrRrPy2b11drB8TCDMeDVrX+x7zU60r7xICjFaHLJ+K1qDBnfCEQb8uy9XhR/VjQixDZWtAk/hSdCFnOssi+Agrcv3OesXCda1a6yFoinYXDxJqMjryi5vow04yhPkNzR8iiUnIuKLZfTMTM7GRauKXbi2BwA6LWucxa2rhyanuqqO4WB48GJOzIxMYTqz13nP",
+        "version": "v2",
+        "signed_by_tenant": false
+    }]`
 
 	user = `{
         "id": "23011406-6f3b-4431-9363-4e1af9af6b13",
