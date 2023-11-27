@@ -11,7 +11,7 @@ Ubuntu LTS 20.04
    apt -y install make makeself
    ```
 2. Installing golang
-   - Supported golang version is 1.21.0
+   - Supported golang version is 1.21.4
    - Go through the following link to install golang: https://go.dev/doc/install
 
 3. Add the local binary path, namely $HOME/.local/bin/, to your PATH environment variable if not already present
