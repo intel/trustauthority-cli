@@ -57,14 +57,22 @@ func Execute() {
 				return err
 			}
 		}
+
 		//API key is not needed for generating policy JWT or setting up config, API key check is skipped for these commands
 		cmdListWithNoApiKey := map[string]bool{constants.PolicyJwtCmd: true, constants.SetupConfigCmd: true,
-			constants.UninstallCmd: true}
+			constants.UninstallCmd: true, constants.VersionCmd: true}
 		//API key is not needed for generating policy JWT or setting up config, API key check is skipped for these 2 commands
 		if ok := cmdListWithNoApiKey[cmd.Name()]; !ok {
 			apiKey = configValues.TrustAuthorityApiKey
 			if err := validation.ValidateTrustAuthorityAPIKey(apiKey); err != nil {
 				return err
+			}
+
+			if configValues.TrustAuthorityBaseUrl != "" {
+				err = validation.ValidateURL(configValues.TrustAuthorityBaseUrl)
+				if err != nil {
+					return err
+				}
 			}
 		}
 		return nil

@@ -10,6 +10,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"intel/tac/v1/constants"
+	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -126,6 +127,17 @@ func ValidateRequestId(requestId string) error {
 	if strings.TrimSpace(requestId) != "" && !requestIdRegex.Match([]byte(requestId)) {
 		return errors.New("Request ID should be at most 128 characters long and should contain only " +
 			"alphanumeric characters, _, space, - or \\")
+	}
+	return nil
+}
+
+func ValidateURL(baseURL string) error {
+	baseUrl, err := url.Parse(baseURL)
+	if err != nil {
+		return errors.Wrap(err, "Invalid Trust Authority Base URL")
+	}
+	if baseUrl.Scheme != constants.HTTPScheme {
+		return errors.New("Invalid Trust Authority base URL, URL scheme must be https")
 	}
 	return nil
 }

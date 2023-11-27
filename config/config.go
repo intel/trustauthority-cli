@@ -13,7 +13,6 @@ import (
 	"intel/tac/v1/constants"
 	"intel/tac/v1/utils"
 	"intel/tac/v1/validation"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -96,9 +95,9 @@ func SetupConfig(envFilePath string) error {
 		return errors.New("Trust Authority base URL needs to be provided in configuration")
 	}
 
-	_, err = url.Parse(configValues.TrustAuthorityBaseUrl)
+	err = validation.ValidateURL(configValues.TrustAuthorityBaseUrl)
 	if err != nil {
-		return errors.Wrap(err, "Invalid Trust Authority Base URL")
+		return err
 	}
 
 	configValues.TrustAuthorityApiKey = viper.GetString(constants.TrustAuthApiKeyEnvVar)

@@ -114,6 +114,7 @@ const (
 	HTTPHeaderKeyApiKey      = "x-api-key"
 	HTTPHeaderKeyRequestId   = "request-id"
 	HTTPHeaderKeyTraceId     = "trace-id"
+	HTTPScheme               = "https"
 )
 
 // API endpoint
