@@ -19,6 +19,7 @@ const (
 	LogFilePath           = LogDir + "trustauthorityctl.log"
 	DefaultFilePermission = 0640
 	MaxPolicyFileSize     = 10240
+	LinuxFilePathSize     = 4096
 	ExplicitCLIName       = "Intel Trust Authority CLI"
 )
 
@@ -146,7 +147,6 @@ const (
 )
 
 var (
-	ErrorInvalidPath        = errors.New("Unsafe or invalid path specified")
-	ErrorInvalidSize        = errors.New("Policy File size is  greater than allowed size")
+	ErrorInvalidSize        = errors.New("Policy File size is greater than allowed size")
 	ServiceUnavailableError = `service unavailable`
 )

@@ -28,6 +28,10 @@ var (
 	tagValueReg           = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9\-\_]{1,62}[a-zA-Z0-9]$`)
 	policyNameRegex       = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9_-]{1,62}[a-zA-Z0-9]$`)
 	requestIdRegex        = regexp.MustCompile(`^[a-zA-Z0-9_ \/.-]{1,128}$`)
+	//max length of file name to be allowed in 255 bytes and characters allowed are a-z, A-Z, 0-9, _, ., -
+	fileNameRegex = regexp.MustCompile(`^[a-zA-Z0-9_. -]{1,255}$`)
+	//in file path, characters allowed are a-z, A-Z, 0-9, _, ., -, \, /, :
+	filePathRegex = regexp.MustCompile(`^[a-zA-Z0-9_. :/\\-]*$`)
 )
 
 // ValidateStrings method is used to validate input strings
@@ -50,10 +54,16 @@ func ValidateEmailAddress(email string) error {
 }
 
 func ValidatePath(path string) (string, error) {
-	c := filepath.Clean(path)
-	r, err := filepath.EvalSymlinks(c)
+	cleanedPath := filepath.Clean(path)
+	if err := checkFilePathForInvalidChars(cleanedPath); err != nil {
+		return "", err
+	}
+	r, err := filepath.EvalSymlinks(cleanedPath)
 	if err != nil {
-		return c, fmt.Errorf("%s: %s", constants.ErrorInvalidPath, path)
+		return "", fmt.Errorf("Unsafe symlink detected in path")
+	}
+	if err = checkFilePathForInvalidChars(r); err != nil {
+		return "", err
 	}
 	return r, nil
 }
@@ -138,6 +148,18 @@ func ValidateURL(baseURL string) error {
 	}
 	if baseUrl.Scheme != constants.HTTPScheme {
 		return errors.New("Invalid Trust Authority base URL, URL scheme must be https")
+	}
+	return nil
+}
+
+func checkFilePathForInvalidChars(path string) error {
+	filePath, fileName := filepath.Split(path)
+	//Max file path length allowed in linux is 4096 characters
+	if len(path) > constants.LinuxFilePathSize || !filePathRegex.MatchString(filePath) {
+		return errors.New("Invalid linux file path provided")
+	}
+	if !fileNameRegex.MatchString(fileName) {
+		return errors.New("Invalid file name provided")
 	}
 	return nil
 }

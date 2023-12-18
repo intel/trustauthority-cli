@@ -63,6 +63,11 @@ func generatePolicyJwt(cmd *cobra.Command) error {
 		return errors.Wrap(err, "Invalid policy file path provided")
 	}
 
+	err = validation.ValidateSize(policyFilePath)
+	if err != nil {
+		return err
+	}
+
 	policyBytes, err := os.ReadFile(path)
 	if err != nil {
 		return errors.Wrap(err, "Error reading policy file")
