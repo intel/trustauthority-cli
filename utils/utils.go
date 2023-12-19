@@ -48,14 +48,14 @@ func ReadAnswerFileToEnv(filename string) error {
 			val := line[equalSign+1:]
 			if key != "" &&
 				val != "" {
+				isValid := isValidEnvVariable(key)
+				if !isValid {
+					return errors.Errorf("Invalid ENV variable: %s", key)
+				}
 				err = os.Setenv(key, val)
 				if err != nil {
 					return errors.Wrap(err, "Failed to set ENV")
 				}
-			}
-			isValid := isValidEnvVariable(key)
-			if !isValid {
-				return errors.Errorf("Invalid ENV variable: %s", key)
 			}
 		}
 	}
