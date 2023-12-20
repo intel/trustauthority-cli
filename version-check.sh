@@ -17,7 +17,7 @@ if [ $(echo $version | cut -d '.' -f 1) -lt $(echo $latest_tag_version | cut -d 
     echo "version bump required - major version $version must always be higher than or equal to latest tag major version $latest_tag_version"
     exit 1
 # if major version of local is equal to major of latest tag version, check minor version
-elif [ $(echo $version | cut -d '.' -f 1) -eq $(echo $latest_tag_version | cut -d '.' -f 1) ] && [ $(echo $version | cut -d '.' -f 2) -lt $(echo $latest_tag_version | cut -d '.' -f 1) ]; then
+elif [ $(echo $version | cut -d '.' -f 1) -eq $(echo $latest_tag_version | cut -d '.' -f 1) ] && [ $(echo $version | cut -d '.' -f 2) -lt $(echo $latest_tag_version | cut -d '.' -f 2) ]; then
     echo "version bump required - minor version $version must always be equal or higher than latest tag minor version $latest_tag_version"
     exit 1
 # if major version of local is equal to major of latest tag version, and minor version of both are equal, then check the patch version
