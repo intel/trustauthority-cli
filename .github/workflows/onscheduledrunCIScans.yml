@@ -1,0 +1,67 @@
+name: "Security Scans"
+on:
+   workflow_dispatch:
+   schedule:
+    # scheduled to poll every saturday.
+     - cron: '0 9 * * 6'
+
+jobs:
+  Trivy:
+    runs-on: [ self-hosted, taas ]
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Checkout Golang
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.21.0'
+
+      - name: Build code
+        id: step_build
+        run: |
+          make installer
+          
+      - name: Run Trivy vulnerability scanner
+        uses: intel-innersource/frameworks.actions.trivy@main
+        with:
+          TRIVY_REPORT_FORMAT: 'table'
+          TRIVY_SCAN_TYPE: 'fs'
+          TRIVY_SCAN_PATH: '.'
+          TRIVY_EXIT_CODE: '1'
+          TRIVY_VULN_TYPE: 'os,library'
+          TRIVY_SEVERITY: 'CRITICAL,HIGH,MEDIUM,LOW'
+  McAfee:
+    runs-on: [ self-hosted, taas ]
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Checkout Golang
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.21.0'
+
+      - name: Build code
+        id: step_build
+        run: |
+          make installer
+
+      -  name: McAfee Scan for Code + Binary.
+         uses: intel-innersource/frameworks.devops.github.actions.mcafee@main
+        
+  CheckMarx:
+    runs-on: [ self-hosted, taas ]
+    steps:
+      - name: CheckMarx Scan
+        uses: intel-innersource/frameworks.devops.github.actions.checkmarx@main
+        with:
+          username: ${{ secrets.CHECKMARX_USERNAME }}
+          password: ${{ secrets.CHECKMARX_PASSWORD }}
+          project: Amber Client
+          team: /CxServer/SP/Intel/IntelProjects/IAP/36221
+          
