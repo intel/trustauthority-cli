@@ -82,7 +82,7 @@ type (
 	}
 
 	TagCreate struct {
-		ID          uuid.UUID `json:"id,omitempty"`
+		ID          uuid.UUID `json:"-"`
 		Name        string    `json:"name"`
 		TenantId    uuid.UUID `json:"-"`
 		Predefined  bool      `json:"-"`
