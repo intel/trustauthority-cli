@@ -20,9 +20,9 @@ import (
 var (
 	stringReg = regexp.MustCompile("(^[a-zA-Z0-9_ \\/.-]*$)")
 	emailReg  = regexp.MustCompile(`^[a-zA-Z0-9.!#$%&'*+\/=?^_'{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$`)
-	// Regex to validate TA API key. Key should contain characters between a-z, A-Z, 0-9
+	// Regex to validate TA API key. Key should contain characters between a-z, A-Z, 0-9, +, /, =, _, -
 	// and should be of size between 30 and 128
-	apiKeyRegex           = regexp.MustCompile(`^[a-zA-Z0-9=]{30,250}$`)
+	apiKeyRegex           = regexp.MustCompile(`^[A-Za-z0-9+/=_-]{30,250}$`)
 	subscriptionNameRegex = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9\-\_]{1,62}[a-zA-Z0-9]$`)
 	tagReg                = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9\-\_]{1,62}[a-zA-Z0-9]$`)
 	tagValueReg           = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9\-\_]{1,62}[a-zA-Z0-9]$`)
