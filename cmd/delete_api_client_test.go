@@ -18,24 +18,41 @@ func TestDeleteApiClientCommandWithInvalidUrl(t *testing.T) {
 	test.SetupMockConfiguration("invalid url", tempConfigFile)
 	load, err := config.LoadConfiguration()
 	assert.NoError(t, err)
-	viper.Set("trustauthority-url", "bogus\nbase\nURL")
 
-	invalidUrlTc := struct {
+	invalidUrlTc := []struct {
 		args        []string
 		wantErr     bool
+		url         string
 		description string
 	}{
-		args: []string{constants.DeleteCmd, constants.ApiClientCmd, "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777", "-c",
-			"3780cc39-cce2-4ec2-a47f-03e55b12e259"},
-		wantErr:     true,
-		description: "Test delete api client using invalid URL",
+		{
+			args: []string{constants.DeleteCmd, constants.ApiClientCmd, "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777", "-c",
+				"3780cc39-cce2-4ec2-a47f-03e55b12e259"},
+			wantErr:     true,
+			url:         "bogus\nbase\nURL",
+			description: "Test delete api client using invalid URL",
+		},
+		{
+			args: []string{constants.DeleteCmd, constants.ApiClientCmd, "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777", "-c",
+				"3780cc39-cce2-4ec2-a47f-03e55b12e259"},
+			wantErr:     true,
+			url:         "a/b/c",
+			description: "Invalid send request provided for delete api client command",
+		},
 	}
 	deleteCmd.AddCommand(deleteApiClientCmd)
 	tenantCmd.AddCommand(deleteCmd)
 
-	_, err = execute(t, tenantCmd, invalidUrlTc.args)
+	for _, tc := range invalidUrlTc {
+		viper.Set("trustauthority-url", tc.url)
+		_, err := execute(t, tenantCmd, tc.args)
+		if tc.wantErr == true {
+			assert.Error(t, err)
+		} else {
+			assert.NoError(t, err)
+		}
+	}
 	viper.Set("trustauthority-url", load.TrustAuthorityBaseUrl)
-	assert.Error(t, err)
 }
 func TestDeleteApiClientCmd(t *testing.T) {
 	server := test.MockServer(t)

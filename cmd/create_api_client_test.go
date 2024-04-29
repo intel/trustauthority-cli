@@ -20,26 +20,42 @@ func TestCreateApiClientCommandWithInvalidUrl(t *testing.T) {
 	test.SetupMockConfiguration(server_r.URL, tempConfigFile)
 	load, err := config.LoadConfiguration()
 	assert.NoError(t, err)
-	viper.Set("trustauthority-url", "bogus\nbase\nURL")
 
-	invalidUrlTc := struct {
+	invalidUrlTc := []struct {
 		args        []string
 		wantErr     bool
+		url         string
 		description string
 	}{
-		args: []string{constants.CreateCmd, constants.ApiClientCmd, "-n", "Test_Subs", "-p",
-			"e169d34f-58ce-4717-9b3a-5c66abd33417", "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777", "-i", "5f7eece7-ab3f-4f1f-98cd-31c6a44a9900",
-			"-v", "Workload:WorkloadAI,Workload:WorkloadEXE"},
-		wantErr:     true,
-		description: "Test Create Api Client using invalid URL",
+		{
+			args: []string{constants.CreateCmd, constants.ApiClientCmd, "-n", "Test_Subs", "-p",
+				"e169d34f-58ce-4717-9b3a-5c66abd33417", "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777", "-i", "5f7eece7-ab3f-4f1f-98cd-31c6a44a9900",
+				"-v", "Workload:WorkloadAI,Workload:WorkloadEXE"},
+			wantErr:     true,
+			url:         "bogus\nbase\nURL",
+			description: "Test Create Api Client using invalid URL",
+		},
+		{
+			args: []string{constants.CreateCmd, constants.ApiClientCmd, "-n", "Test_Subs", "-p",
+				"e169d34f-58ce-4717-9b3a-5c66abd33417", "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777"},
+			wantErr:     true,
+			description: "Invalid send request provided for create api client command",
+			url:         "a/b/c",
+		},
 	}
-
 	createCmd.AddCommand(createApiClientCmd)
 	tenantCmd.AddCommand(createCmd)
 
-	_, err = execute(t, tenantCmd, invalidUrlTc.args)
+	for _, tc := range invalidUrlTc {
+		viper.Set("trustauthority-url", tc.url)
+		_, err := execute(t, tenantCmd, tc.args)
+		if tc.wantErr == true {
+			assert.Error(t, err)
+		} else {
+			assert.NoError(t, err)
+		}
+	}
 	viper.Set("trustauthority-url", load.TrustAuthorityBaseUrl)
-	assert.Error(t, err)
 }
 
 func TestCreateApiClientCmd(t *testing.T) {

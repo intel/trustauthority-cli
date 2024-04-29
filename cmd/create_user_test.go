@@ -18,23 +18,40 @@ func TestCreateUserCommandWithInvalidUrl(t *testing.T) {
 	test.SetupMockConfiguration("invalid url", tempConfigFile)
 	load, err := config.LoadConfiguration()
 	assert.NoError(t, err)
-	viper.Set("trustauthority-url", "bogus\nbase\nURL")
 
-	invalidUrlTc := struct {
+	invalidUrlTc := []struct {
 		args        []string
 		wantErr     bool
+		url         string
 		description string
 	}{
-		args:        []string{constants.CreateCmd, constants.UserCmd, "-e", "test@mail.com", "-r", "User"},
-		wantErr:     true,
-		description: "Test Create user using invalid URL",
+
+		{
+			args:        []string{constants.CreateCmd, constants.UserCmd, "-e", "test@mail.com", "-r", "User"},
+			wantErr:     true,
+			url:         "bogus\nbase\nURL",
+			description: "Test Create user using invalid URL",
+		},
+		{
+			args:        []string{constants.CreateCmd, constants.UserCmd, "-e", "test@mail.com", "-r", "User"},
+			wantErr:     true,
+			url:         "a/b/c",
+			description: "Invalid send request provided for create user command",
+		},
 	}
 	createCmd.AddCommand(createUserCmd)
 	tenantCmd.AddCommand(createCmd)
 
-	_, err = execute(t, tenantCmd, invalidUrlTc.args)
+	for _, tc := range invalidUrlTc {
+		viper.Set("trustauthority-url", tc.url)
+		_, err := execute(t, tenantCmd, tc.args)
+		if tc.wantErr == true {
+			assert.Error(t, err)
+		} else {
+			assert.NoError(t, err)
+		}
+	}
 	viper.Set("trustauthority-url", load.TrustAuthorityBaseUrl)
-	assert.Error(t, err)
 }
 
 func TestCreateUserCmd(t *testing.T) {

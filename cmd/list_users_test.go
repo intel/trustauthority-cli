@@ -18,24 +18,41 @@ func TestListUsersCommandWithInvalidUrl(t *testing.T) {
 	test.SetupMockConfiguration("invalid url", tempConfigFile)
 	load, err := config.LoadConfiguration()
 	assert.NoError(t, err)
-	viper.Set("trustauthority-url", "bogus\nbase\nURL")
 
-	invalidUrlTc := struct {
+	invalidUrlTc := []struct {
 		args        []string
 		wantErr     bool
+		url         string
 		description string
 	}{
-		args:        []string{constants.ListCmd, constants.UserCmd},
-		wantErr:     false,
-		description: "Test list users using invalid URL",
+		{
+			args:        []string{constants.ListCmd, constants.UserCmd},
+			wantErr:     true,
+			url:         "bogus\nbase\nURL",
+			description: "Test list users using invalid URL",
+		},
+		{
+			args:        []string{constants.ListCmd, constants.UserCmd, "-q", "valid-id"},
+			wantErr:     true,
+			url:         "a/b/c",
+			description: "Invalid send request provided for list users command ",
+		},
 	}
 	listCmd.AddCommand(getUsersCmd)
 	tenantCmd.AddCommand(listCmd)
 
-	_, err = execute(t, tenantCmd, invalidUrlTc.args)
+	for _, tc := range invalidUrlTc {
+		viper.Set("trustauthority-url", tc.url)
+		_, err := execute(t, tenantCmd, tc.args)
+		if tc.wantErr == true {
+			assert.Error(t, err)
+		} else {
+			assert.NoError(t, err)
+		}
+	}
 	viper.Set("trustauthority-url", load.TrustAuthorityBaseUrl)
-	assert.Error(t, err)
 }
+
 func TestListUsersCmd(t *testing.T) {
 	server := test.MockServer(t)
 	defer server.Close()

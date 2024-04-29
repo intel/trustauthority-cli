@@ -18,23 +18,40 @@ func TestDeleteTagCommandWithInvalidUrl(t *testing.T) {
 	test.SetupMockConfiguration("invalid url", tempConfigFile)
 	load, err := config.LoadConfiguration()
 	assert.NoError(t, err)
-	viper.Set("trustauthority-url", "bogus\nbase\nURL")
 
-	invalidUrlTc := struct {
+	invalidUrlTc := []struct {
 		args        []string
 		wantErr     bool
+		url         string
 		description string
 	}{
-		args:        []string{constants.DeleteCmd, constants.TagCmd, "-t", "23011406-6f3b-4431-9363-4e1af9af6b13"},
-		wantErr:     true,
-		description: "Test delete tag using invalid URL",
+		{
+			args:        []string{constants.DeleteCmd, constants.TagCmd, "-t", "23011406-6f3b-4431-9363-4e1af9af6b13"},
+			wantErr:     true,
+			url:         "bogus\nbase\nURL",
+			description: "Test delete tag using invalid URL",
+		},
+		{
+			args:        []string{constants.DeleteCmd, constants.TagCmd, "-t", "23011406-6f3b-4431-9363-4e1af9af6b13"},
+			wantErr:     true,
+			url:         "a/b/c",
+			description: "Invalid send request provided for delete tag command",
+		},
 	}
+
 	deleteCmd.AddCommand(deleteTagCmd)
 	tenantCmd.AddCommand(deleteCmd)
 
-	_, err = execute(t, tenantCmd, invalidUrlTc.args)
+	for _, tc := range invalidUrlTc {
+		viper.Set("trustauthority-url", tc.url)
+		_, err := execute(t, tenantCmd, tc.args)
+		if tc.wantErr == true {
+			assert.Error(t, err)
+		} else {
+			assert.NoError(t, err)
+		}
+	}
 	viper.Set("trustauthority-url", load.TrustAuthorityBaseUrl)
-	assert.Error(t, err)
 }
 func TestDeleteTagCmd(t *testing.T) {
 	server := test.MockServer(t)

@@ -39,26 +39,42 @@ func TestCreatePolicyCommandWithInvalidUrl(t *testing.T) {
 	test.SetupMockConfiguration("invalid url", tempConfigFile)
 	load, err := config.LoadConfiguration()
 	assert.NoError(t, err)
-	viper.Set("trustauthority-url", "bogus\nbase\nURL")
 
-	invalidUrlTc := struct {
+	invalidUrlTc := []struct {
 		args        []string
 		wantErr     bool
+		url         string
 		description string
 	}{
-
-		args: []string{constants.CreateCmd, constants.PolicyCmd, "-n", "Sample_Policy_SGX", "-t", "Appraisal policy",
-			"-r", "e8a72b7e-c4b1-4bdc-bf40-68f23c68a2aa", "-a", "SGX Attestation", "-f", "../test/resources/rego-policy.txt"},
-		wantErr:     true,
-		description: "Test Create Policy using invalid URL",
+		{
+			args: []string{constants.CreateCmd, constants.PolicyCmd, "-q", "valid-id", "-n", "Sample_Policy_SGX", "-t", "Appraisal policy",
+				"-r", "e8a72b7e-c4b1-4bdc-bf40-68f23c68a2aa", "-a", "SGX Attestation", "-f", "../test/resources/rego-policy.txt"},
+			wantErr:     true,
+			url:         "bogus\nbase\nURL",
+			description: "Test Create policy using invalid URL",
+		},
+		{
+			args: []string{constants.CreateCmd, constants.PolicyCmd, "-q", "valid-id", "-n", "Sample_Policy_SGX", "-t", "Appraisal policy",
+				"-r", "e8a72b7e-c4b1-4bdc-bf40-68f23c68a2aa", "-a", "SGX Attestation", "-f", "../test/resources/rego-policy.txt"},
+			wantErr:     true,
+			url:         "a/b/c",
+			description: "Invalid send request provided for create policy command",
+		},
 	}
 
 	createCmd.AddCommand(createPolicyCmd)
 	tenantCmd.AddCommand(createCmd)
 
-	_, err = execute(t, tenantCmd, invalidUrlTc.args)
+	for _, tc := range invalidUrlTc {
+		viper.Set("trustauthority-url", tc.url)
+		_, err := execute(t, tenantCmd, tc.args)
+		if tc.wantErr == true {
+			assert.Error(t, err)
+		} else {
+			assert.NoError(t, err)
+		}
+	}
 	viper.Set("trustauthority-url", load.TrustAuthorityBaseUrl)
-	assert.Error(t, err)
 }
 
 func TestCreatePolicyCmd(t *testing.T) {

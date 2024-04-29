@@ -6,7 +6,9 @@
 package cmd
 
 import (
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
+	"intel/tac/v1/config"
 	"intel/tac/v1/constants"
 	"intel/tac/v1/test"
 	"testing"
@@ -62,4 +64,44 @@ func TestListApiClientsCmd(t *testing.T) {
 			assert.NoError(t, err)
 		}
 	}
+}
+
+func TestListApiClientCommandWithInvalidUrl(t *testing.T) {
+	test.SetupMockConfiguration("invalid url", tempConfigFile)
+	load, err := config.LoadConfiguration()
+	assert.NoError(t, err)
+
+	invalidUrlTc := []struct {
+		args        []string
+		wantErr     bool
+		url         string
+		description string
+	}{
+		{
+			args:        []string{constants.ListCmd, constants.ApiClientCmd, "-q", "valid-id", "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777"},
+			wantErr:     true,
+			url:         "bogus\nbase\nURL",
+			description: "Test list api clients using invalid URL",
+		},
+		{
+			args:        []string{constants.ListCmd, constants.ApiClientCmd, "-q", "valid-id", "-r", "5cfb6af4-59ac-4a14-8b83-bd65b1e11777"},
+			wantErr:     true,
+			url:         "a/b/c",
+			description: "Invalid send request provided for list api clients command ",
+		},
+	}
+
+	listCmd.AddCommand(getApiClientsCmd)
+	tenantCmd.AddCommand(listCmd)
+
+	for _, tc := range invalidUrlTc {
+		viper.Set("trustauthority-url", tc.url)
+		_, err := execute(t, tenantCmd, tc.args)
+		if tc.wantErr == true {
+			assert.Error(t, err)
+		} else {
+			assert.NoError(t, err)
+		}
+	}
+	viper.Set("trustauthority-url", load.TrustAuthorityBaseUrl)
 }

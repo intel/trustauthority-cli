@@ -34,16 +34,6 @@ var (
 	filePathRegex = regexp.MustCompile(`^[a-zA-Z0-9_. :/\\-]*$`)
 )
 
-// ValidateStrings method is used to validate input strings
-func ValidateStrings(strings []string) error {
-	for _, stringValue := range strings {
-		if !stringReg.MatchString(stringValue) {
-			return errors.New("Invalid string formatted input")
-		}
-	}
-	return nil
-}
-
 func ValidateEmailAddress(email string) error {
 	if !emailReg.Match([]byte(email)) {
 		logrus.Error("Invalid email id provided")

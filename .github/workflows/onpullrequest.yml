@@ -46,8 +46,8 @@ jobs:
           make test-coverage
           COVERAGE=$(make test-coverage | grep 'total' | awk '{print $3}' | awk -F. '{print $1}')
           echo "Unit test coverage is - $COVERAGE%"
-          if [[ $COVERAGE -lt 75 ]]; then
-            echo "Unit test coverage must be above 75% "
+          if [[ $COVERAGE -lt 80 ]]; then
+            echo "Unit test coverage must be above 80% "
             exit 1
           fi
 

@@ -18,24 +18,40 @@ func TestCreateTagWithInvalidUrl(t *testing.T) {
 	test.SetupMockConfiguration("invalid url", tempConfigFile)
 	load, err := config.LoadConfiguration()
 	assert.NoError(t, err)
-	viper.Set("trustauthority-url", "bogus\nbase\nURL")
 
-	invalidUrlTc := struct {
+	invalidUrlTc := []struct {
 		args        []string
 		wantErr     bool
+		url         string
 		description string
 	}{
-		args:        []string{constants.CreateCmd, constants.TagCmd, "-n", "Test Tag"},
-		wantErr:     true,
-		description: "Test Create tag using invalid URL",
-	}
 
+		{
+			args:        []string{constants.CreateCmd, constants.TagCmd, "-n", "Test Tag"},
+			wantErr:     true,
+			url:         "bogus\nbase\nURL",
+			description: "Test Create tag using invalid URL",
+		},
+		{
+			args:        []string{constants.CreateCmd, constants.TagCmd, "-q", "valid-id", "-n", "Test_Tag"},
+			wantErr:     true,
+			url:         "a/b/c",
+			description: "Invalid send request provided for create tag command",
+		},
+	}
 	createCmd.AddCommand(createTagCmd)
 	tenantCmd.AddCommand(createCmd)
 
-	_, err = execute(t, tenantCmd, invalidUrlTc.args)
+	for _, tc := range invalidUrlTc {
+		_, err := execute(t, tenantCmd, tc.args)
+		viper.Set("trustauthority-url", tc.url)
+		if tc.wantErr == true {
+			assert.Error(t, err)
+		} else {
+			assert.NoError(t, err)
+		}
+	}
 	viper.Set("trustauthority-url", load.TrustAuthorityBaseUrl)
-	assert.Error(t, err)
 }
 
 func TestCreateTagCmd(t *testing.T) {
