@@ -126,7 +126,7 @@ func ValidatePolicyName(policyName string) error {
 func ValidateRequestId(requestId string) error {
 	if strings.TrimSpace(requestId) != "" && !requestIdRegex.Match([]byte(requestId)) {
 		return errors.New("Request ID should be at most 128 characters long and should contain only " +
-			"alphanumeric characters, _, space, - or \\")
+			"alphanumeric characters, _, space, - or /")
 	}
 	return nil
 }
