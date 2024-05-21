@@ -13,7 +13,7 @@ The make, makeself, and golang packages are required before installing the Intel
    apt -y install make makeself
    ```
 2. Installing golang.
-    - Supported golang version is 1.22.0
+    - Supported golang version is 1.22.2
     - To install golang, follow the instructions at the following link:https://go.dev/doc/install
 
 3. Add the local binary path, `$HOME/.local/bin/`, to your PATH environment variable if not already present.
