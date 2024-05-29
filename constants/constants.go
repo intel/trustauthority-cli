@@ -139,11 +139,6 @@ type ProductType string
 const (
 	Attestation ProductType = "attestation"
 	Management  ProductType = "management"
-
-	SgxAttestationType           = "SGX Attestation"
-	TdxAttestationType           = "TDX Attestation"
-	AppraisalPolicyType          = "Appraisal policy"
-	TokenCustomizationPolicyType = "Token customization policy"
 )
 
 var (
