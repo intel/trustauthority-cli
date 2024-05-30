@@ -52,7 +52,6 @@ func init() {
 	createPolicyCmd.Flags().StringP(constants.PolicyFileParamName, "f", "", "Path of the file containing the rego policy to be uploaded. The file size should be <= 10 KB")
 	createPolicyCmd.Flags().StringP(constants.RequestIdParamName, "q", "", "Request ID to be associated with the specific request. This is optional.")
 	createPolicyCmd.MarkFlagRequired(constants.PolicyNameParamName)
-	createPolicyCmd.MarkFlagRequired(constants.PolicyTypeParamName)
 	createPolicyCmd.MarkFlagRequired(constants.ServiceOfferIdParamName)
 	createPolicyCmd.MarkFlagRequired(constants.AttestationTypeParamName)
 	createPolicyCmd.MarkFlagRequired(constants.PolicyFileParamName)
