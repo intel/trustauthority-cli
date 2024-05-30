@@ -40,7 +40,7 @@ Static code analysis tool
 
 Build and push image to private registry
 
-Build Docker image with following Dockerfile and psuh it to private registry
+Build Docker image with following Dockerfile and push it to private registry
 ```shell
 FROM docker.io/checkmarx/cx-flow
 
