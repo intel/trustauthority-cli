@@ -158,9 +158,24 @@ var (
 
 	productList = `[
     {
-        "id": "e169d34f-58ce-4717-9b3a-5c66abd33417",
-        "service_offer_id": "ae3d7720-08ab-421c-b8d4-1725c358f03e",
-        "name": "Developer"
+        "id": "828c0ac6-2e5c-4258-a7b3-116c198da5c7",
+        "service_offer_id": "6d4015f0-c3b5-4bf0-a06d-51b2b4f11a9c",
+        "name": "Enterprise",
+        "policy": {
+            "limit": 2,
+            "quota": 5000000,
+            "limit_renewal_period": 60,
+            "quota_renewal_period": 604801
+        },
+        "plan_ids": [
+            "50e93657-ef37-4fb1-8093-0f470cd7edef",
+            "7ae0a26c-e777-4785-9711-2da4aabfc31f",
+            "ce53274d-65bb-4812-b309-8edaf1747229",
+            "989a3aee-dbd5-45d6-baa4-6a52cd0a4239",
+            "5da43d7c-e1b5-4b9d-bcd2-0144ff9b3e51"
+        ],
+        "product_type": "attestation"
+
     }]`
 
 	tag = `{
@@ -235,7 +250,9 @@ var (
         			"limit_renewal_period": 60,
         			"quota_renewal_period": 2592000
       		},
-			"plan_id": "838c41b7-8c75-466e-9753-d6c3424662f2",
+			"plan_ids": [
+            	"50e93657-ef37-4fb1-8093-0f470cd7edef"
+        	],
       		"product_type": ""
 		}
  	  ]

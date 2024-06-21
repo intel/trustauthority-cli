@@ -113,7 +113,7 @@ type (
 		Name           string                `json:"name"`
 		Policy         *ProductPolicy        `json:"policy"`
 		ExternalId     string                `json:"-"`
-		PlanId         uuid.UUID             `json:"plan_id"`
+		PlanIds        []uuid.UUID           `json:"plan_ids"`
 		ProductType    constants.ProductType `json:"product_type"`
 	}
 
