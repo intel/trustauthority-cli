@@ -17,7 +17,7 @@ jobs:
       - name: Checkout Golang
         uses: actions/setup-go@v2
         with:
-          go-version: '1.22.3'
+          go-version: '1.22.5'
 
       - name: Build code
         id: step_build
