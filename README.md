@@ -25,7 +25,7 @@ Follow the steps below to build the Intel Trust Authority CLI.
 2. Clone the trustauthority-cli repository by running the following command.
    `git clone https://github.com/intel/trustauthority-cli.git trustauthority-cli`
 2. Create the CLI installer in the cli directory.
-   `cd trustauthority-cli and run "make installer"`
+   `cd trustauthority-cli && make installer`
 3. Copy the binary installer trustauthorityctl-{version}.bin to the system where it needs to be deployed.
 4. Create an env file trustauthorityctl.env in your home directory and add the following mandatory contents:<br>
    a. TRUSTAUTHORITY_URL=< URL for Intel Trust Authority > <br>
