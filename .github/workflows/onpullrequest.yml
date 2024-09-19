@@ -18,6 +18,20 @@ jobs:
             echo "version check failed"
             exit 1
           fi
+
+ security-file-check:
+    runs-on: [ self-hosted ]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Check Security.md file
+        run: |
+          if [ ! -f ./Security.md ]; then
+            echo "Security.md file is missing"
+            exit 1
+          fi
           
  build-test:
     runs-on: [ self-hosted ]
