@@ -8,22 +8,28 @@ on:
     tags:
       - '**'
 
+permissions: read-all
+
 jobs:
+  setup:
+    runs-on: [ ubuntu-20.04 ]
+    steps:
+      - uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2.7.0
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-go@93397bea11091df50f3d7e59dc26a7711a8bcfbe # v4.1.0
+        with:
+          go-version: '1.22.3'
+
   build-test:
-    runs-on: [ self-hosted ]
+    runs-on: [ ubuntu-20.04 ]
+    needs: ["setup"]
     env:
       http_proxy: ${{ secrets.HTTP_PROXY }}
       https_proxy: ${{ secrets.HTTPS_PROXY }}
       no_proxy: ${{ secrets.NO_PROXY }}
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - uses: actions/setup-go@v2
-        with:
-          go-version: '1.22.3'
-
       - name: Style Checker
         run: |
           if [ $(make go-fmt | tail -n 1 | grep gofmt | wc -l)  -eq 0 ]; then
@@ -41,7 +47,8 @@ jobs:
           fi
 
   artifact-installer:
-    runs-on: [ self-hosted ]
+    runs-on: [ ubuntu-20.04 ]
+    needs: ["setup"]
     env:
       http_proxy: ${{ secrets.HTTP_PROXY }}
       https_proxy: ${{ secrets.HTTPS_PROXY }}
@@ -51,15 +58,11 @@ jobs:
       ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD}}
     needs: [ "build-test" ]
     steps:
-      - uses: actions/setup-go@v2
-        with:
-          go-version: '1.22.5'
-
       - name: Push Installer
         run: make push-artifact
 
   cleanup-images-bins:
-    runs-on: [ self-hosted ]
+    runs-on: [ ubuntu-20.04 ]
     needs: [ "build-test", "artifact-installer" ]
     steps:
       - name: Clean generated binaries.

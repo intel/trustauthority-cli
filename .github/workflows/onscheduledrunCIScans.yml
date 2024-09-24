@@ -5,17 +5,19 @@ on:
     # scheduled to poll every saturday.
      - cron: '0 9 * * 6'
 
+permissions: read-all
+
 jobs:
-  Trivy:
+  setup:
     runs-on: [ self-hosted, taas ]
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2.7.0
         with:
           fetch-depth: 0
 
       - name: Checkout Golang
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@93397bea11091df50f3d7e59dc26a7711a8bcfbe # v4.1.0
         with:
           go-version: '1.22.5'
 
@@ -23,7 +25,11 @@ jobs:
         id: step_build
         run: |
           make installer
-          
+
+  Trivy:
+    runs-on: [ self-hosted, taas ]
+    needs: ["setup"]
+    steps:
       - name: Run Trivy vulnerability scanner
         uses: intel-innersource/frameworks.actions.trivy@main
         with:
@@ -35,27 +41,31 @@ jobs:
           TRIVY_SEVERITY: 'CRITICAL,HIGH,MEDIUM,LOW'
   McAfee:
     runs-on: [ self-hosted, taas ]
+    needs: ["setup"]
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Checkout Golang
-        uses: actions/setup-go@v2
-        with:
-          go-version: '1.22.3'
-
-      - name: Build code
-        id: step_build
-        run: |
-          make installer
-
       -  name: McAfee Scan for Code + Binary.
          uses: intel-innersource/frameworks.devops.github.actions.mcafee@main
+
+  bdba-scan:
+    runs-on: [ self-hosted, taas ]
+    needs: ["setup"]
+    env:
+      http_proxy: ${{ secrets.HTTP_PROXY }}
+      https_proxy: ${{ secrets.HTTPS_PROXY }}
+      no_proxy: ${{ secrets.NO_PROXY }}
+    steps:
+      - name: BDBA Scan
+        uses: intel-innersource/frameworks.devops.github.actions.bdba@main
+        with:
+          username: ${{ secrets.BDBA_USERNAME }}
+          password: ${{ secrets.BDBA_PASSWORD }}
+          group: ${{ secrets.BDBA_GROUP_ID }}
+          scan_path: ./out
+          report_path: artifacts/trustauthority-cli/bdba
         
   CheckMarx:
     runs-on: [ self-hosted, taas ]
+    needs: ["setup"]
     steps:
       - name: CheckMarx Scan
         uses: intel-innersource/frameworks.devops.github.actions.checkmarx@main
