@@ -100,9 +100,17 @@ func SetupConfig(envFilePath string) error {
 		return err
 	}
 
-	configValues.TrustAuthorityApiKey = viper.GetString(constants.TrustAuthApiKeyEnvVar)
-	if err := validation.ValidateTrustAuthorityAPIKey(configValues.TrustAuthorityApiKey); err != nil {
-		return errors.Wrap(err, "Invalid API Key provided")
+	if len(strings.TrimSpace(viper.GetString(constants.TrustAuthApiKeyEnvVar))) != 0 {
+		configValues.TrustAuthorityApiKey = viper.GetString(constants.TrustAuthApiKeyEnvVar)
+		if err = validation.ValidateTrustAuthorityAPIKey(configValues.TrustAuthorityApiKey); err != nil {
+			// check if jwt token is passed instead of api-key (packaged software use-case)
+			if err = validation.ValidateTrustAuthorityJwt(configValues.TrustAuthorityApiKey); err != nil {
+				return errors.New("Invalid Trust Authority Api key, API key should be a base64 encoded string or a JWT")
+			}
+		}
+	} else {
+		return errors.New("Trust Authority API Key needs to be provided in configuration")
+
 	}
 
 	logLevel, err := log.ParseLevel(viper.GetString(constants.Loglevel))

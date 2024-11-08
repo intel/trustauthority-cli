@@ -7,6 +7,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"intel/tac/v1/config"
@@ -64,10 +65,12 @@ func Execute() {
 		//API key is not needed for generating policy JWT or setting up config, API key check is skipped for these 2 commands
 		if ok := cmdListWithNoApiKey[cmd.Name()]; !ok {
 			apiKey = configValues.TrustAuthorityApiKey
-			if err := validation.ValidateTrustAuthorityAPIKey(apiKey); err != nil {
-				return err
+			if err = validation.ValidateTrustAuthorityAPIKey(configValues.TrustAuthorityApiKey); err != nil {
+				// check if jwt token is passed instead of api-key (packaged software use-case)
+				if err = validation.ValidateTrustAuthorityJwt(configValues.TrustAuthorityApiKey); err != nil {
+					return errors.New("Invalid Trust Authority Api key, API key should be a base64 encoded string or a JWT")
+				}
 			}
-
 			if configValues.TrustAuthorityBaseUrl != "" {
 				err = validation.ValidateURL(configValues.TrustAuthorityBaseUrl)
 				if err != nil {

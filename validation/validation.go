@@ -7,6 +7,7 @@ package validation
 
 import (
 	"fmt"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"intel/tac/v1/constants"
@@ -75,6 +76,18 @@ func ValidateTrustAuthorityAPIKey(apiKey string) error {
 	}
 	if !apiKeyRegex.MatchString(apiKey) {
 		return errors.New("Invalid API key found in configuration file. Please update it with a valid API key.")
+	}
+	return nil
+}
+
+func ValidateTrustAuthorityJwt(tokenString string) error {
+	if strings.TrimSpace(tokenString) == "" {
+		return errors.Errorf("%s config variable needs to be set with a proper API Key before using CLI", constants.TrustAuthApiKeyEnvVar)
+	}
+	// Parse the token
+	_, _, err := new(jwt.Parser).ParseUnverified(tokenString, jwt.MapClaims{})
+	if err != nil {
+		return errors.Wrap(err, "Invalid JWT format found in configuration file. Please update it with a valid JWT.")
 	}
 	return nil
 }
