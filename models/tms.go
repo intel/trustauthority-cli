@@ -30,7 +30,7 @@ type (
 		Name           string                    `json:"name"`
 		Permission     map[string]PermissionAttr `json:"permissions,omitempty"`
 		Scope          string                    `json:"scope,omitempty"`
-		ServiceOfferId uuid.UUID                 `json:"service_offer_id,omitempty"`
+		ServiceOfferId *uuid.UUID                `json:"service_offer_id,omitempty"`
 	}
 
 	PermissionAttr struct {
