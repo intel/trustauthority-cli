@@ -7,7 +7,7 @@ package validation
 
 import (
 	"fmt"
-	"github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"intel/tac/v1/constants"

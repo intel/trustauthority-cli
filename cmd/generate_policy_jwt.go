@@ -8,7 +8,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/fatih/set"
-	"github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
