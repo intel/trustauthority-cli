@@ -146,7 +146,7 @@ trustauthorityctl list tenant-settings -q < request id >
 
 ##### Create Policy:
 trustauthorityctl create policy -q < request id > -n < name of policy > -t < policy type > -a < attestation type > -r < service offer id > -f < rego policy file path >
-Note: Policy file size should be <= 10KB
+Note: Policy file size should be <= 20KB
 
 ##### Get policies:
 trustauthorityctl list policy -q < request id >

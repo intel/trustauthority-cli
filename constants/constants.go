@@ -18,7 +18,7 @@ const (
 	ConfigFileExtension   = "yaml"
 	LogFilePath           = LogDir + "trustauthorityctl.log"
 	DefaultFilePermission = 0640
-	MaxPolicyFileSize     = 10240
+	MaxPolicyFileSize     = 20480
 	LinuxFilePathSize     = 4096
 	ExplicitCLIName       = "Intel Trust Authority CLI"
 )
