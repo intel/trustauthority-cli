@@ -156,18 +156,19 @@ type (
 
 	// Service - Service details response payload
 	Service struct {
-		ID                       uuid.UUID `json:"id"`
-		TenantId                 uuid.UUID `json:"tenant_id"`
-		ServiceOfferId           uuid.UUID `json:"service_offer_id"`
-		Name                     string    `json:"name"`
-		PlanId                   uuid.UUID `json:"plan_id"`
-		PlanName                 string    `json:"plan_name"`
-		Active                   bool      `json:"active"`
-		ExternalId               uuid.UUID `json:"-"`
-		CreatedAt                time.Time `json:"created_at"`
-		CreatorType              string    `json:"-"`
-		ServiceOfferPlanSourceId uuid.UUID `json:"-"`
-		DurationMonths           int       `json:"-"`
+		ID                       uuid.UUID              `json:"id"`
+		TenantId                 uuid.UUID              `json:"tenant_id"`
+		ServiceOfferId           uuid.UUID              `json:"service_offer_id"`
+		Name                     string                 `json:"name"`
+		PlanId                   uuid.UUID              `json:"plan_id"`
+		PlanName                 string                 `json:"plan_name"`
+		Active                   bool                   `json:"active"`
+		ExternalId               uuid.UUID              `json:"-"`
+		CreatedAt                time.Time              `json:"created_at"`
+		CreatorType              string                 `json:"-"`
+		ServiceOfferPlanSourceId uuid.UUID              `json:"-"`
+		DurationMonths           int                    `json:"-"`
+		Attributes               map[string]interface{} `json:"attributes"`
 	}
 
 	ServiceDetail struct {

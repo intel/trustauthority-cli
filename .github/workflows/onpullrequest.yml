@@ -8,14 +8,14 @@ permissions: read-all
 
 jobs:
  setup:
-    runs-on: [ ubuntu-20.04 ]
+    runs-on: [ self-hosted ]
     steps:
       - uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2.7.0
         with:
           fetch-depth: 0
 
  version-check:
-    runs-on: [ ubuntu-20.04 ]
+    runs-on: [ self-hosted ]
     needs: ["setup"]
     steps:
       - name: version-check
@@ -41,7 +41,7 @@ jobs:
           fi
           
  build-test:
-    runs-on: [ ubuntu-20.04 ]
+    runs-on: [ self-hosted ]
     needs: [ "version-check" ]
     env:
       http_proxy: ${{ secrets.HTTP_PROXY }}
@@ -73,7 +73,7 @@ jobs:
 
 
  cleanup-images-bins:
-    runs-on: [ ubuntu-20.04 ]
+    runs-on: [ self-hosted ]
     needs: [ "build-test" ]
     steps:
       - name: Clean generated binaries.
