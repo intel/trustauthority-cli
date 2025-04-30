@@ -172,15 +172,16 @@ type (
 	}
 
 	ServiceDetail struct {
-		ID                       uuid.UUID `json:"id"`
-		ServiceOfferId           uuid.UUID `json:"service_offer_id"`
-		ServiceOfferName         string    `json:"service_offer_name"`
-		Name                     string    `json:"name"`
-		CreatedAt                time.Time `json:"created_at"`
-		Active                   bool      `json:"active"`
-		PlanId                   uuid.UUID `json:"plan_id"`
-		PlanName                 string    `json:"plan_name"`
-		ServiceOfferPlanSourceId uuid.UUID `json:"-"`
+		ID                       uuid.UUID              `json:"id"`
+		ServiceOfferId           uuid.UUID              `json:"service_offer_id"`
+		ServiceOfferName         string                 `json:"service_offer_name"`
+		Name                     string                 `json:"name"`
+		CreatedAt                time.Time              `json:"created_at"`
+		Active                   bool                   `json:"active"`
+		PlanId                   uuid.UUID              `json:"plan_id"`
+		PlanName                 string                 `json:"plan_name"`
+		ServiceOfferPlanSourceId uuid.UUID              `json:"-"`
+		Attributes               map[string]interface{} `json:"attributes"`
 	}
 
 	// ApiClient - API Client details response payload
