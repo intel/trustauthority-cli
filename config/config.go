@@ -27,7 +27,10 @@ type Configuration struct {
 
 // this function sets the configuration file name and type
 func init() {
-	userHomeDir, _ := os.UserHomeDir()
+	userHomeDir, err := os.UserHomeDir()
+	if err != nil {
+		log.WithError(err).Fatal("Critical error: Unable to fetch user's home directory path.")
+	}
 	viper.SetConfigName(constants.ConfigFileName)
 	viper.SetConfigType(constants.ConfigFileExtension)
 	viper.AddConfigPath(userHomeDir + constants.ConfigDir)

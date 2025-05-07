@@ -54,22 +54,23 @@ func SendRequest(client *http.Client, req *http.Request) ([]byte, error) {
 				log.WithError(err).WithField(constants.HTTPHeaderKeyRequestId, req.Header.Get(constants.HTTPHeaderKeyRequestId)).Errorf("Failed to close response body")
 			}
 		}()
-	}
+		//Get the request and trace ID from response header
+		models.RespHeaderFields.RequestId = resp.Header.Get(constants.HTTPHeaderKeyRequestId)
+		models.RespHeaderFields.TraceId = resp.Header.Get(constants.HTTPHeaderKeyTraceId)
+		//create byte array of HTTP response body
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, errors.Wrap(err, "Error reading response")
+		}
 
-	//Get the request and trace ID from response header
-	models.RespHeaderFields.RequestId = resp.Header.Get(constants.HTTPHeaderKeyRequestId)
-	models.RespHeaderFields.TraceId = resp.Header.Get(constants.HTTPHeaderKeyTraceId)
-
-	//create byte array of HTTP response body
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, errors.Wrap(err, "Error reading response")
+		if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated && resp.StatusCode != http.StatusNoContent {
+			return nil, errors.Errorf("The call to %q returned %q. Error: %s", req.URL, resp.Status, body)
+		}
+		return body, nil
+	} else {
+		// When there is no response, return nil
+		return nil, nil
 	}
-
-	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated && resp.StatusCode != http.StatusNoContent {
-		return nil, errors.Errorf("The call to %q returned %q. Error: %s", req.URL, resp.Status, body)
-	}
-	return body, nil
 }
 
 func retryPolicy(ctx context.Context, resp *http.Response, err error) (bool, error) {

@@ -131,6 +131,9 @@ func updateApiClient(cmd *cobra.Command) (string, error) {
 	}
 
 	tagKeyValuesString, err := cmd.Flags().GetStringSlice(constants.TagKeyAndValuesParamName)
+	if err != nil {
+		return "", err
+	}
 
 	var tagIdValues []models.ApiClientTagIdValue
 	for _, tagIdValue := range tagKeyValuesString {
