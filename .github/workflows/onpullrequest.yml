@@ -7,17 +7,17 @@ on:
 permissions: read-all
 
 jobs:
-
- version-check:
-    runs-on: [ "innersource.prod.amr.dind" ]
+ setup:
+    runs-on: [ self-hosted ]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2.7.0
         with:
           fetch-depth: 0
 
-      - name: Setup build-essential
-        run: sudo -E apt update && sudo -E apt install build-essential -y
-
+ version-check:
+    runs-on: [ self-hosted ]
+    needs: ["setup"]
+    steps:
       - name: version-check
         run: |
           /bin/bash version-check.sh
@@ -27,14 +27,11 @@ jobs:
           fi
 
  security-file-check:
-    runs-on: [ "innersource.prod.amr.dind" ]
+    runs-on: [ self-hosted ]
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Setup build-essential
-        run: sudo -E apt update && sudo -E apt install build-essential -y
 
       - name: Check Security.md file
         run: |
@@ -44,7 +41,7 @@ jobs:
           fi
           
  build-test:
-    runs-on: [ "innersource.prod.amr.dind" ]
+    runs-on: [ self-hosted ]
     needs: [ "version-check" ]
     env:
       http_proxy: ${{ secrets.HTTP_PROXY }}
@@ -54,13 +51,6 @@ jobs:
       - uses: actions/setup-go@93397bea11091df50f3d7e59dc26a7711a8bcfbe # v4.1.0
         with:
           go-version: '1.23.8'
-
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup build-essential
-        run: sudo -E apt update && sudo -E apt install build-essential makeself -y
 
       - name: Style Checker
         run: |
@@ -83,14 +73,8 @@ jobs:
 
 
  cleanup-images-bins:
-   runs-on: [ "innersource.prod.amr.dind" ]
-   needs: [ "build-test" ]
-   steps:
-     - uses: actions/checkout@v4
-       with:
-         fetch-depth: 0
-     - name: Setup build-essential
-       run: sudo -E apt update && sudo -E apt install build-essential makeself make -y
-
-     - name: Clean generated binaries.
-       run: make clean
+    runs-on: [ self-hosted ]
+    needs: [ "build-test" ]
+    steps:
+      - name: Clean generated binaries.
+        run: make clean
