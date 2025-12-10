@@ -6,18 +6,19 @@
 package cmd
 
 import (
-	"github.com/spf13/viper"
-	"github.com/stretchr/testify/assert"
 	"intel/tac/v1/config"
 	"intel/tac/v1/constants"
-	"intel/tac/v1/test"
+
 	"testing"
+
+	"github.com/spf13/viper"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestListServicesCmd(t *testing.T) {
-	server := test.MockServer(t)
+	server := mockServer(t)
 	defer server.Close()
-	test.SetupMockConfiguration(server.URL, tempConfigFile)
+	setupMockConfiguration(server.URL, tempConfigFile)
 
 	tt := []struct {
 		args        []string
@@ -59,7 +60,7 @@ func TestListServicesCmd(t *testing.T) {
 }
 
 func TestListServicesTestCommandWithInvalidUrl(t *testing.T) {
-	test.SetupMockConfiguration("invalid url", tempConfigFile)
+	setupMockConfiguration("invalid url", tempConfigFile)
 	load, err := config.LoadConfiguration()
 	assert.NoError(t, err)
 
@@ -96,4 +97,78 @@ func TestListServicesTestCommandWithInvalidUrl(t *testing.T) {
 		}
 	}
 	viper.Set("trustauthority-url", load.TrustAuthorityBaseUrl)
+}
+
+func TestListServicesWithServiceId(t *testing.T) {
+	server := mockServer(t)
+	defer server.Close()
+	setupMockConfiguration(server.URL, tempConfigFile)
+
+	tt := []struct {
+		args        []string
+		wantErr     bool
+		description string
+	}{
+		{
+			args:        []string{constants.ListCmd, constants.ServiceCmd, "-r", "ae3d7720-08ab-421c-b8d4-1725c358f03e"},
+			wantErr:     false,
+			description: "List specific service by ID",
+		},
+	}
+
+	listCmd.AddCommand(getServicesCmd)
+	tenantCmd.AddCommand(listCmd)
+
+	for _, tc := range tt {
+		_, err := execute(t, tenantCmd, tc.args)
+
+		if tc.wantErr == true {
+			assert.Error(t, err)
+		} else {
+			assert.NoError(t, err)
+		}
+	}
+}
+
+func TestListServicesAllCases(t *testing.T) {
+	server := mockServer(t)
+	defer server.Close()
+	setupMockConfiguration(server.URL, tempConfigFile)
+
+	tt := []struct {
+		name        string
+		args        []string
+		wantErr     bool
+		description string
+	}{
+		{
+			name:        "List all services",
+			args:        []string{constants.ListCmd, constants.ServiceCmd},
+			wantErr:     false,
+			description: "Should list all services when no ID provided",
+		},
+		{
+			name:        "List service with valid UUID",
+			args:        []string{constants.ListCmd, constants.ServiceCmd, "-r", "ae3d7720-08ab-421c-b8d4-1725c358f03e"},
+			wantErr:     false,
+			description: "Should retrieve specific service",
+		},
+		{
+			name:        "List service with valid request ID",
+			args:        []string{constants.ListCmd, constants.ServiceCmd, "-q", "test-request-id"},
+			wantErr:     false,
+			description: "Should work with custom request ID",
+		},
+	}
+
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			_, err := execute(t, tenantCmd, tc.args)
+			if tc.wantErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
 }

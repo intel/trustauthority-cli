@@ -139,6 +139,7 @@ type (
 		ExternalId     string                `json:"-"`
 		PlanIds        []uuid.UUID           `json:"plan_ids"`
 		ProductType    constants.ProductType `json:"product_type"`
+		UpdatedAt      time.Time             `json:"updated_at"`
 	}
 
 	ProductPolicy struct {

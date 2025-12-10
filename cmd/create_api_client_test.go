@@ -11,13 +11,13 @@ import (
 	"github.com/stretchr/testify/assert"
 	"intel/tac/v1/config"
 	"intel/tac/v1/constants"
-	"intel/tac/v1/test"
+	
 	"testing"
 )
 
 func TestCreateApiClientCommandWithInvalidUrl(t *testing.T) {
-	server_r := test.MockServer(t)
-	test.SetupMockConfiguration(server_r.URL, tempConfigFile)
+	server_r := mockServer(t)
+	setupMockConfiguration(server_r.URL, tempConfigFile)
 	load, err := config.LoadConfiguration()
 	assert.NoError(t, err)
 
@@ -59,8 +59,8 @@ func TestCreateApiClientCommandWithInvalidUrl(t *testing.T) {
 }
 
 func TestCreateApiClientCmd(t *testing.T) {
-	server := test.MockServer(t)
-	test.SetupMockConfiguration(server.URL, tempConfigFile)
+	server := mockServer(t)
+	setupMockConfiguration(server.URL, tempConfigFile)
 
 	tt := []struct {
 		args        []string

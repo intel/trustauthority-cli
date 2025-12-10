@@ -3,21 +3,23 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-package test
+package cmd
 
 import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
-	"gopkg.in/yaml.v3"
-	"intel/tac/v1/config"
-	"intel/tac/v1/models"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
+
+	"intel/tac/v1/config"
+	"intel/tac/v1/models"
+
+	"github.com/gorilla/mux"
+	"gopkg.in/yaml.v3"
 )
 
 var (
@@ -103,6 +105,7 @@ var (
         "service_offer_id": "ae3d7720-08ab-421c-b8d4-1725c358f03e",
         "name": "Test Service"
     }]`
+
 	service = `{
         "id": "5cfb6af4-59ac-4a14-8b83-bd65b1e11777",
         "service_offer_id": "ae3d7720-08ab-421c-b8d4-1725c358f03e",
@@ -265,8 +268,8 @@ var (
 
 var idReg = fmt.Sprintf("{id:%s}", "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}")
 
-// MockServer for CLI unit testing
-func MockServer(t *testing.T) *httptest.Server {
+// mockServer creates a mock HTTP server for CLI unit testing
+func mockServer(t *testing.T) *httptest.Server {
 	policyIdExpr := fmt.Sprintf("%s%s", "/management/v1/policies/", idReg)
 	tenantUserExpr := fmt.Sprintf("%s", "/management/v1/users")
 	tenantUserIdExpr := fmt.Sprintf("%s%s", "/management/v1/users/", idReg)
@@ -279,7 +282,7 @@ func MockServer(t *testing.T) *httptest.Server {
 	apiClientPolicyExpr := fmt.Sprintf("%s%s%s%s%s", "/management/v1/services/", idReg, "/api-clients/", idReg, "/policies")
 	apiClientTagExpr := fmt.Sprintf("%s%s%s%s%s", "/management/v1/services/", idReg, "/api-clients/", idReg, "/tags")
 
-	serviceOfferExpr := fmt.Sprintf("/management/v1/service-offers")
+	serviceOfferExpr := "/management/v1/service-offers"
 
 	productExpr := fmt.Sprintf("%s%s%s", "/management/v1/service-offers/", idReg, "/products")
 
@@ -291,263 +294,185 @@ func MockServer(t *testing.T) *httptest.Server {
 
 	r := mux.NewRouter()
 
+	// Policy endpoints
 	r.HandleFunc("/management/v1/policies", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(policy))
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
+		_, _ = w.Write([]byte(policy))
 	}).Methods(http.MethodPost)
 
 	r.HandleFunc("/management/v1/policies", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(policyList))
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
+		_, _ = w.Write([]byte(policyList))
 	}).Methods(http.MethodGet)
 
 	r.HandleFunc(policyIdExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(policy))
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
+		_, _ = w.Write([]byte(policy))
 	}).Methods(http.MethodGet)
 
 	r.HandleFunc(policyIdExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write(nil)
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
+		_, _ = w.Write(nil)
 	}).Methods(http.MethodDelete)
 
 	r.HandleFunc(policyIdExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(policy))
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
+		_, _ = w.Write([]byte(policy))
 	}).Methods(http.MethodPut)
 
+	// User endpoints
 	r.HandleFunc(tenantUserExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(user))
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
+		_, _ = w.Write([]byte(user))
 	}).Methods(http.MethodPost)
 
 	r.HandleFunc(tenantUserExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(userList))
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
+		_, _ = w.Write([]byte(userList))
 	}).Methods(http.MethodGet)
 
 	r.HandleFunc(tenantUserIdExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write(nil)
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
+		_, _ = w.Write(nil)
 	}).Methods(http.MethodDelete)
 
 	r.HandleFunc(tenantUserIdExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(user))
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
+		_, _ = w.Write([]byte(user))
 	}).Methods(http.MethodPut)
 
+	// API Client endpoints
 	r.HandleFunc(apiClientExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(apiClientDetails))
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
+		_, _ = w.Write([]byte(apiClientDetails))
 	}).Methods(http.MethodPost)
 
 	r.HandleFunc(apiClientIdExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(apiClient))
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
+		_, _ = w.Write([]byte(apiClient))
 	}).Methods(http.MethodPut)
 
 	r.HandleFunc(apiClientExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(apiClientList))
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
+		_, _ = w.Write([]byte(apiClientList))
 	}).Methods(http.MethodGet)
 
 	r.HandleFunc(apiClientIdExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(apiClientDetails))
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
+		_, _ = w.Write([]byte(apiClientDetails))
 	}).Methods(http.MethodGet)
 
 	r.HandleFunc(apiClientIdExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write(nil)
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
+		_, _ = w.Write(nil)
 	}).Methods(http.MethodDelete)
 
 	r.HandleFunc(apiClientPolicyExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(policyIds))
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
+		_, _ = w.Write([]byte(policyIds))
 	}).Methods(http.MethodGet)
 
 	r.HandleFunc(apiClientTagExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(tagsValues))
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
+		_, _ = w.Write([]byte(tagsValues))
 	}).Methods(http.MethodGet)
 
+	// Service endpoints
 	r.HandleFunc(serviceExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(serviceList))
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
+		_, _ = w.Write([]byte(serviceList))
 	}).Methods(http.MethodGet)
 
 	r.HandleFunc(serviceIdExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(service))
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
+		_, _ = w.Write([]byte(service))
 	}).Methods(http.MethodGet)
 
 	r.HandleFunc(serviceOfferExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(serviceOfferList))
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
+		_, _ = w.Write([]byte(serviceOfferList))
 	}).Methods(http.MethodGet)
 
 	r.HandleFunc(productExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(productList))
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
+		_, _ = w.Write([]byte(productList))
 	}).Methods(http.MethodGet)
 
+	// Tag endpoints
 	r.HandleFunc(tenantTagsExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Set("Accept", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(tag))
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
+		_, _ = w.Write([]byte(tag))
 	}).Methods(http.MethodPost)
 
 	r.HandleFunc(tenantTagsExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(tagList))
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
+		_, _ = w.Write([]byte(tagList))
 	}).Methods(http.MethodGet)
 
 	r.HandleFunc(tenantTagIdExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(tagList))
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
+		_, _ = w.Write([]byte(tagList))
 	}).Methods(http.MethodDelete)
 
+	// Plan endpoints
 	r.HandleFunc(planExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(plans))
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
+		_, _ = w.Write([]byte(plans))
 	}).Methods(http.MethodGet)
 
 	r.HandleFunc(planIdExpr, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(planProducts))
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
+		_, _ = w.Write([]byte(planProducts))
 	}).Methods(http.MethodGet)
 
+	// Tenant settings endpoints
 	r.HandleFunc("/management/v1/tenants/settings", func(w http.ResponseWriter, r *http.Request) {
 		request, _ := io.ReadAll(r.Body)
 		dec := json.NewDecoder(bytes.NewReader(request))
 		dec.DisallowUnknownFields()
 		var settings models.AttestationFailureEmail
-		err := dec.Decode(&settings)
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to decode data")
-		}
+		_ = dec.Decode(&settings)
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err = w.Write(request)
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
+		_, _ = w.Write(request)
 	}).Methods(http.MethodPut)
 
 	r.HandleFunc("/management/v1/tenants/settings", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
-		_, err := w.Write([]byte(tenantSettings))
-		if err != nil {
-			t.Log("test/test_utility:mockServer(): Unable to write data")
-		}
+		_, _ = w.Write([]byte(tenantSettings))
 	}).Methods(http.MethodGet)
 
 	return httptest.NewServer(r)
 }
 
-// SetupMockConfiguration setting up mock CLI configurations
-func SetupMockConfiguration(serverUrl string, configFile *os.File) *config.Configuration {
-
+// setupMockConfiguration sets up mock CLI configurations for testing
+func setupMockConfiguration(serverUrl string, configFile *os.File) {
 	c := &config.Configuration{
 		TrustAuthorityBaseUrl: serverUrl,
 	}
@@ -559,6 +484,4 @@ func SetupMockConfiguration(serverUrl string, configFile *os.File) *config.Confi
 			fmt.Println(err.Error())
 		}
 	}
-
-	return c
 }

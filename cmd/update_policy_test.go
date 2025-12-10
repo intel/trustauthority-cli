@@ -10,15 +10,15 @@ import (
 	"github.com/stretchr/testify/assert"
 	"intel/tac/v1/config"
 	"intel/tac/v1/constants"
-	"intel/tac/v1/test"
+	
 	"os"
 	"testing"
 )
 
 func TestUpdatePolicyCmd(t *testing.T) {
-	server := test.MockServer(t)
+	server := mockServer(t)
 	defer server.Close()
-	test.SetupMockConfiguration(server.URL, tempConfigFile)
+	setupMockConfiguration(server.URL, tempConfigFile)
 	GenerateInvalidPolicyFile(t, tempPolicyFile)
 	tt := []struct {
 		args        []string
@@ -92,7 +92,7 @@ func TestUpdatePolicyCmd(t *testing.T) {
 }
 
 func TestUpdatePolicyCommandWithInvalidUrl(t *testing.T) {
-	test.SetupMockConfiguration("invalid url", tempConfigFile)
+	setupMockConfiguration("invalid url", tempConfigFile)
 	load, err := config.LoadConfiguration()
 	assert.NoError(t, err)
 

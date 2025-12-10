@@ -13,7 +13,7 @@ The make, makeself, and golang packages are required before installing the Intel
    apt -y install make makeself
    ```
 2. Installing golang.
-    - Supported golang version is 1.23.12
+    - Supported golang version is 1.25.3
     - To install golang, follow the instructions at the following link:https://go.dev/doc/install
 
 3. Add the local binary path, `$HOME/.local/bin/`, to your PATH environment variable if not already present.
@@ -28,12 +28,17 @@ Follow the steps below to build the Intel Trust Authority CLI.
    `cd trustauthority-cli and run "make installer"`
 4. Copy the binary installer trustauthorityctl-{version}.bin to the system where it needs to be deployed.
 5. Create an env file trustauthorityctl.env in your home directory and add the following mandatory contents:<br>
-   a. TRUSTAUTHORITY_URL=< URL for Intel Trust Authority > <br>
+   a. TRUSTAUTHORITY_URL="https://api.trustauthority.intel.com" <br>
    b. TRUSTAUTHORITY_API_KEY="< Management API Key of the Tenant >" <br>
 6. To install the CLI to your system, run the following command:
    `./trustauthorityctl-{version}.bin`
 7. To use the CLI, follow this syntax:
    `trustauthorityctl < command > < resource >`
+
+> [!NOTE]
+> If you are in the European Union (EU) region, use the following Intel Trust Authority API URL:
+>
+> TRUSTAUTHORITY_URL="https://api.eu.trustauthority.intel.com" 
 
 ### Directory structure
 

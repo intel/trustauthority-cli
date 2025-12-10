@@ -7,20 +7,20 @@ package validation
 
 import (
 	"fmt"
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	"intel/tac/v1/constants"
 	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 var (
-	stringReg = regexp.MustCompile("(^[a-zA-Z0-9_ \\/.-]*$)")
-	emailReg  = regexp.MustCompile(`^[a-zA-Z0-9.!#$%&'*+\/=?^_'{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$`)
+	emailReg = regexp.MustCompile(`^[a-zA-Z0-9.!#$%&'*+\/=?^_'{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$`)
 	// Regex to validate TA API key. Key should contain characters between a-z, A-Z, 0-9, +, /, =, _, -
 	// and should be of size between 30 and 128
 	apiKeyRegex           = regexp.MustCompile(`^[A-Za-z0-9+/=_-]{30,250}$`)

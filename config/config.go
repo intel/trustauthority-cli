@@ -6,16 +6,17 @@
 package config
 
 import (
-	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
-	"gopkg.in/yaml.v3"
 	"intel/tac/v1/constants"
 	"intel/tac/v1/utils"
 	"intel/tac/v1/validation"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
+	"gopkg.in/yaml.v3"
 )
 
 type Configuration struct {
@@ -119,6 +120,7 @@ func SetupConfig(envFilePath string) error {
 	logLevel, err := log.ParseLevel(viper.GetString(constants.Loglevel))
 	if err != nil {
 		log.Warn("Invalid/No log level provided. Setting log level to info")
+		configValues.LogLevel = constants.DefaultLogLevel
 	} else {
 		configValues.LogLevel = logLevel.String()
 	}

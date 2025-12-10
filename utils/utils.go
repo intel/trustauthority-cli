@@ -13,9 +13,6 @@ import (
 	"encoding/base64"
 	"encoding/pem"
 	"fmt"
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	"intel/tac/v1/constants"
 	models2 "intel/tac/v1/internal/models"
 	"intel/tac/v1/validation"
@@ -24,6 +21,10 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 func ReadAnswerFileToEnv(filename string) error {
@@ -142,7 +143,7 @@ func CheckKeyFiles(privKeyFilePath, certificateFilePath string) (*rsa.PrivateKey
 	pubKeyBytesFromCert := publicKeyToBytes(cert.PublicKey.(*rsa.PublicKey))
 	pubKeyBytesFromPriv := publicKeyToBytes(&privKeyFinal.PublicKey)
 
-	if bytes.Compare(pubKeyBytesFromCert, pubKeyBytesFromPriv) != 0 {
+	if !bytes.Equal(pubKeyBytesFromCert, pubKeyBytesFromPriv) {
 		return nil, "", errors.New("Provided private key and certificate do not match")
 	}
 

@@ -8,9 +8,6 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/google/uuid"
-	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"intel/tac/v1/client/pms"
 	"intel/tac/v1/config"
 	"intel/tac/v1/constants"
@@ -21,6 +18,10 @@ import (
 	"net/url"
 	"os"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
 )
@@ -125,7 +126,7 @@ func createPolicy(cmd *cobra.Command) (string, error) {
 		return "", errors.Wrap(err, "Error reading policy file")
 	}
 
-	var policyCreateReq = models.PolicyRequest{models.CommonPolicy{
+	var policyCreateReq = models.PolicyRequest{CommonPolicy: models.CommonPolicy{
 		Policy:          string(policyBytes),
 		PolicyName:      policyName,
 		PolicyType:      policyType,

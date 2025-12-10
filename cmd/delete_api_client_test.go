@@ -10,12 +10,12 @@ import (
 	"github.com/stretchr/testify/assert"
 	"intel/tac/v1/config"
 	"intel/tac/v1/constants"
-	"intel/tac/v1/test"
+	
 	"testing"
 )
 
 func TestDeleteApiClientCommandWithInvalidUrl(t *testing.T) {
-	test.SetupMockConfiguration("invalid url", tempConfigFile)
+	setupMockConfiguration("invalid url", tempConfigFile)
 	load, err := config.LoadConfiguration()
 	assert.NoError(t, err)
 
@@ -55,9 +55,9 @@ func TestDeleteApiClientCommandWithInvalidUrl(t *testing.T) {
 	viper.Set("trustauthority-url", load.TrustAuthorityBaseUrl)
 }
 func TestDeleteApiClientCmd(t *testing.T) {
-	server := test.MockServer(t)
+	server := mockServer(t)
 	defer server.Close()
-	test.SetupMockConfiguration(server.URL, tempConfigFile)
+	setupMockConfiguration(server.URL, tempConfigFile)
 
 	tt := []struct {
 		args        []string

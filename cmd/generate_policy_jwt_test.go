@@ -11,13 +11,14 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
-	"github.com/stretchr/testify/assert"
 	"intel/tac/v1/constants"
-	"intel/tac/v1/test"
+	
 	"math/big"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 const (
@@ -26,11 +27,23 @@ const (
 )
 
 func TestGeneratePolicyJwtCmd(t *testing.T) {
-	server := test.MockServer(t)
+	server := mockServer(t)
 	defer server.Close()
-	test.SetupMockConfiguration(server.URL, tempConfigFile)
+	setupMockConfiguration(server.URL, tempConfigFile)
 
 	generateKeyPairForTests(t, keyFile, certFile)
+
+	// Cleanup function to remove generated .signed. files
+	defer func() {
+		files, _ := os.ReadDir("../test/resources")
+		for _, file := range files {
+			name := file.Name()
+			if !file.IsDir() && len(name) > 19 && name[:19] == "rego-policy.signed." {
+				os.Remove("../test/resources/" + name)
+			}
+		}
+	}()
+
 	tt := []struct {
 		args        []string
 		wantErr     bool
