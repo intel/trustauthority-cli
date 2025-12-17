@@ -156,7 +156,8 @@ var (
         "service_id": "5cfb6af4-59ac-4a14-8b83-bd65b1e11777",
         "product_id": "e169d34f-58ce-4717-9b3a-5c66abd33417",
         "status": "",
-        "name": "Test apiClient"
+        "name": "Test apiClient",
+		"version": "v1"
     }`
 
 	productList = `[
@@ -177,8 +178,8 @@ var (
             "989a3aee-dbd5-45d6-baa4-6a52cd0a4239",
             "5da43d7c-e1b5-4b9d-bcd2-0144ff9b3e51"
         ],
-        "product_type": "attestation"
-
+        "product_type": "attestation",
+		"updated_at": "2023-11-10T10:20:30Z"
     }]`
 
 	tag = `{

@@ -7,11 +7,14 @@ package models
 
 import (
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 	"intel/tac/v1/constants"
 	"time"
 )
 
 type ApiClientStatus string
+
+type Version string
 
 type (
 	//Tenant - Tenant details response payload
@@ -196,6 +199,10 @@ type (
 		CreatedAt         time.Time             `json:"created_at"`
 		ProductExternalId string                `json:"-"`
 		ProductType       constants.ProductType `json:"product_type"`
+		Version           Version               `json:"version"`
+		VariableKey       string                `json:"-"`
+		DeletedAt         gorm.DeletedAt        `json:"-"`
+		ExternalId        string                `json:"-"`
 	}
 
 	// UpdateApiClient - API Client details request to be updated
