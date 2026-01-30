@@ -8,15 +8,15 @@ package pms
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/google/uuid"
-	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"intel/tac/v1/client"
 	"intel/tac/v1/constants"
 	models2 "intel/tac/v1/internal/models"
 	"intel/tac/v1/models"
 	"net/http"
 	"net/url"
+
+	"github.com/google/uuid"
+	"github.com/pkg/errors"
 )
 
 type PmsClient interface {
@@ -25,6 +25,11 @@ type PmsClient interface {
 	GetPolicy(policyID uuid.UUID) (*models.PolicyResponse, error)
 	UpdatePolicy(request *models.PolicyUpdateRequest) (*models.PolicyResponse, error)
 	SearchPolicy() ([]models.PolicyResponse, error)
+	CreateRim(rimRequest *models.RimCreateRequest) (*models.SignedRimResponse, error)
+	DeleteRim(rimID uuid.UUID) error
+	GetRim(rimID uuid.UUID) (*models.SignedRimResponse, error)
+	UpdateRim(request *models.RimUpdateRequest) (*models.SignedRimResponse, error)
+	SearchRim(queryParams map[string]string) ([]models.SignedRimResponse, error)
 }
 
 // Client Details for PMS client
@@ -110,8 +115,6 @@ func (pc pmsClient) GetPolicy(policyID uuid.UUID) (*models.PolicyResponse, error
 		return nil, errors.Wrapf(err, "Invalid URL: %s", pc.BaseURL.String())
 	}
 
-	log.Debugf("PMS Request URL: %s", reqURL)
-
 	// Create a new request using http
 	req, err := http.NewRequest(http.MethodGet, reqURL.String(), nil)
 	if err != nil {
@@ -180,8 +183,6 @@ func (pc pmsClient) UpdatePolicy(request *models.PolicyUpdateRequest) (*models.P
 		return nil, errors.Wrapf(err, "Invalid URL: %s", pc.BaseURL.String())
 	}
 
-	log.Debugf("PMS Request URL: %s", reqURL)
-
 	// Create a new request using http
 	req, err := http.NewRequest(http.MethodPut, reqURL.String(), bytes.NewBuffer(reqBytes))
 	if err != nil {
@@ -206,4 +207,176 @@ func (pc pmsClient) UpdatePolicy(request *models.PolicyUpdateRequest) (*models.P
 		return nil, errors.Wrap(err, "Error unmarshalling response")
 	}
 	return &policyRes, nil
+}
+
+func (pc pmsClient) CreateRim(request *models.RimCreateRequest) (*models.SignedRimResponse, error) {
+	reqBytes, err := json.Marshal(request)
+	if err != nil {
+		return nil, errors.Wrap(err, " Error marshalling request")
+	}
+
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.RimApiEndpoint)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Invalid URL: %s", pc.BaseURL.String())
+	}
+
+	// Create a new request using http
+	req, err := http.NewRequest(http.MethodPost, reqURL.String(), bytes.NewBuffer(reqBytes))
+	if err != nil {
+		return nil, errors.Wrap(err, " Error forming request")
+	}
+	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
+	req.Header.Add(constants.HTTPHeaderKeyContentType, constants.HTTPMediaTypeJson)
+	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
+
+	response, err := client.SendRequest(pc.Client, req)
+	if err != nil {
+		return nil, errors.Wrap(err, "Error in response body")
+	}
+
+	// Parse response
+	var rimRes models.SignedRimResponse
+	dec := json.NewDecoder(bytes.NewReader(response))
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&rimRes)
+
+	if err != nil {
+		return nil, errors.Wrap(err, "Error unmarshalling response")
+	}
+	return &rimRes, nil
+}
+
+func (pc pmsClient) DeleteRim(rimID uuid.UUID) error {
+
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.RimApiEndpoint + "/" + rimID.String())
+	if err != nil {
+		return errors.Wrapf(err, "Invalid URL: %s", pc.BaseURL.String())
+	}
+
+	// Create a new request using http
+	req, err := http.NewRequest(http.MethodDelete, reqURL.String(), nil)
+	if err != nil {
+		return errors.Wrap(err, " Error forming request")
+	}
+	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
+
+	_, err = client.SendRequest(pc.Client, req)
+	if err != nil {
+		return errors.Wrap(err, "Error in response body")
+	}
+	return nil
+}
+
+func (pc pmsClient) GetRim(rimID uuid.UUID) (*models.SignedRimResponse, error) {
+
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.RimApiEndpoint + "/" + rimID.String())
+	if err != nil {
+		return nil, errors.Wrapf(err, "Invalid URL: %s", pc.BaseURL.String())
+	}
+
+	// Create a new request using http
+	req, err := http.NewRequest(http.MethodGet, reqURL.String(), nil)
+	if err != nil {
+		return nil, errors.Wrap(err, " Error forming request")
+	}
+	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
+	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
+
+	response, err := client.SendRequest(pc.Client, req)
+	if err != nil {
+		return nil, errors.Wrap(err, "Error in response body")
+	}
+
+	// Parse response
+	var rimRes models.SignedRimResponse
+	dec := json.NewDecoder(bytes.NewReader(response))
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&rimRes)
+	if err != nil {
+		return nil, errors.Wrap(err, "Error unmarshalling rim response")
+	}
+	return &rimRes, nil
+}
+
+func (pc pmsClient) SearchRim(queryParams map[string]string) ([]models.SignedRimResponse, error) {
+
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.RimApiEndpoint)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Invalid URL: %s", pc.BaseURL.String())
+	}
+
+	// Add query parameters if provided
+	if len(queryParams) > 0 {
+		q := reqURL.Query()
+		for key, value := range queryParams {
+			if value != "" {
+				q.Add(key, value)
+			}
+		}
+		reqURL.RawQuery = q.Encode()
+	}
+
+	// Create a new request using http
+	req, err := http.NewRequest(http.MethodGet, reqURL.String(), nil)
+	if err != nil {
+		return nil, errors.Wrap(err, " Error forming request")
+	}
+	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
+	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
+
+	response, err := client.SendRequest(pc.Client, req)
+	if err != nil {
+		return nil, errors.Wrap(err, "Error in response body")
+	}
+
+	// Parse response
+	var rimRes []models.SignedRimResponse
+	dec := json.NewDecoder(bytes.NewReader(response))
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&rimRes)
+	if err != nil {
+		return nil, errors.Wrap(err, "Error unmarshalling response")
+	}
+	return rimRes, nil
+}
+
+func (pc pmsClient) UpdateRim(request *models.RimUpdateRequest) (*models.SignedRimResponse, error) {
+	reqBytes, err := json.Marshal(request)
+	if err != nil {
+		return nil, errors.Wrap(err, " Error marshalling rim update request")
+	}
+
+	reqURL, err := url.Parse(pc.BaseURL.String() + constants.RimApiEndpoint + "/" + request.Id.String())
+	if err != nil {
+		return nil, errors.Wrapf(err, "Invalid URL: %s", pc.BaseURL.String())
+	}
+
+	// Create a new request using http
+	req, err := http.NewRequest(http.MethodPut, reqURL.String(), bytes.NewBuffer(reqBytes))
+	if err != nil {
+		return nil, errors.Wrap(err, " Error forming request")
+	}
+	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
+	req.Header.Add(constants.HTTPHeaderKeyContentType, constants.HTTPMediaTypeJson)
+	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
+	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
+
+	response, err := client.SendRequest(pc.Client, req)
+	if err != nil {
+		return nil, errors.Wrap(err, "Error in response body")
+	}
+
+	// Parse response
+	var rimRes models.SignedRimResponse
+	dec := json.NewDecoder(bytes.NewReader(response))
+	dec.DisallowUnknownFields()
+	err = dec.Decode(&rimRes)
+	if err != nil {
+		return nil, errors.Wrap(err, "Error unmarshalling response")
+	}
+	return &rimRes, nil
 }

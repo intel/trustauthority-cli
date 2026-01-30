@@ -7,23 +7,25 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/fatih/set"
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
-	"github.com/spf13/cobra"
 	"intel/tac/v1/constants"
 	"intel/tac/v1/models"
 	"intel/tac/v1/utils"
 	"intel/tac/v1/validation"
 	"os"
+
+	"github.com/fatih/set"
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
 )
 
 // createPolicyJwtCmd represents the createPolicyJwtCmd command
 var createPolicyJwtCmd = &cobra.Command{
-	Use:   constants.PolicyJwtCmd,
-	Short: "Generates signed/unsigned JWT for the Rego policy provided",
-	Long:  ``,
+	Use:     constants.PolicyJwtCmd,
+	Aliases: []string{constants.JwtCmd},
+	Short:   "Generates signed/unsigned JWT for the Rego policy/RIM provided",
+	Long:    ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("create policy-jwt called")
 		err := generatePolicyJwt(cmd)
@@ -38,7 +40,7 @@ var createPolicyJwtCmd = &cobra.Command{
 func init() {
 	createCmd.AddCommand(createPolicyJwtCmd)
 
-	createPolicyJwtCmd.Flags().StringP(constants.PolicyFileParamName, "f", "", "Path of the file containing the rego policy to be uploaded")
+	createPolicyJwtCmd.Flags().StringP(constants.PolicyFileParamName, "f", "", "Path of the file containing the rego policy/rim to be uploaded")
 	createPolicyJwtCmd.Flags().BoolP(constants.SignObjectParamName, "s", false, "Determines if the JWT needs to be signed. Generates a JWS when this parameter is set")
 	createPolicyJwtCmd.Flags().StringP(constants.PrivateKeyFileParamName, "p", "", "Path of the file containing the private key to be used to sign the policy. To be used only if -s (sign) parameter is set, else it is ignored")
 	createPolicyJwtCmd.Flags().StringP(constants.CertificateFileParamName, "c", "", "Path of the file containing the certificate to be added to the JWT. To be used only if -s (sign) parameter is set, else it is ignored")

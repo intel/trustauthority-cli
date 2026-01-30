@@ -8,9 +8,6 @@ package client
 import (
 	"context"
 	"fmt"
-	rClient "github.com/hashicorp/go-retryablehttp"
-	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"intel/tac/v1/constants"
 	"intel/tac/v1/internal/models"
 	"io"
@@ -18,6 +15,10 @@ import (
 	"net/url"
 	"strings"
 	"time"
+
+	rClient "github.com/hashicorp/go-retryablehttp"
+	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 var (

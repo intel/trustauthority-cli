@@ -8,9 +8,6 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/google/uuid"
-	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"intel/tac/v1/client/pms"
 	"intel/tac/v1/config"
 	"intel/tac/v1/constants"
@@ -21,6 +18,10 @@ import (
 	"net/url"
 	"os"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
 )
@@ -47,7 +48,7 @@ func init() {
 
 	updatePolicyCmd.Flags().StringP(constants.PolicyIdParamName, "i", "", "Id of the policy to be updated")
 	updatePolicyCmd.Flags().StringP(constants.PolicyNameParamName, "n", "", "Name of the policy to be updated")
-	updatePolicyCmd.Flags().StringP(constants.PolicyFileParamName, "f", "", "Path of the file containing the rego policy to be uploaded. The file size should be <= 10 KB")
+	updatePolicyCmd.Flags().StringP(constants.PolicyFileParamName, "f", "", "Path of the file containing the rego policy to be uploaded. The file size should be <= 20 KB")
 	updatePolicyCmd.Flags().StringP(constants.RequestIdParamName, "q", "", "Request ID to be associated with the specific request. This is optional.")
 	updatePolicyCmd.MarkFlagRequired(constants.PolicyIdParamName)
 }

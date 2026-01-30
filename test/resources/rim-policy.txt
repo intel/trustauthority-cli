@@ -1,0 +1,16 @@
+{
+        "measurements": [
+            {
+                "index": 0,
+                "value": "d412a4f07ef83892a5915fb2ab584be31e186e5a4f95ab5f6950fd4eb8694d7c"
+            },
+            {
+                "index": 1,
+                "value": "bab91f200038076ac25f87de0ca67472443c2ebe17ed9ba95314e609038f51ab"
+            }
+        ],
+        "metadata": {
+            "version": "1.0",
+            "type": "reference"
+        }
+}

@@ -6,6 +6,7 @@
 package validation
 
 import (
+	"encoding/json"
 	"fmt"
 	"intel/tac/v1/constants"
 	"net/url"
@@ -152,6 +153,34 @@ func ValidateURL(baseURL string) error {
 	if baseUrl.Scheme != constants.HTTPScheme {
 		return errors.New("Invalid Trust Authority base URL, URL scheme must be https")
 	}
+	return nil
+}
+
+// ValidateRimContent validates that the content is either valid JSON or valid JWT (signed/unsigned)
+func ValidateRimContent(content string) error {
+	if content == "" {
+		return errors.New("RIM content cannot be empty")
+	}
+
+	// First check if it's valid JSON
+	if json.Valid([]byte(content)) {
+		return nil
+	}
+
+	// If not JSON, check if it's a valid JWT format
+	// JWT has format: header.payload.signature (3 parts separated by dots)
+	// For unsigned JWT: header.payload. (ends with dot, no signature)
+	parts := strings.Split(content, ".")
+	if len(parts) < 2 || len(parts) > 3 {
+		return errors.New("RIM content must be either valid JSON or valid JWT format")
+	}
+
+	// Try to parse as JWT without verification to validate structure
+	_, _, err := new(jwt.Parser).ParseUnverified(content, jwt.MapClaims{})
+	if err != nil {
+		return errors.Wrap(err, "RIM content is not valid JSON or JWT format")
+	}
+
 	return nil
 }
 

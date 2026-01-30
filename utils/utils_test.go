@@ -480,3 +480,28 @@ func TestPublicKeyToBytesWithNilKey(t *testing.T) {
 	assert.NotNil(t, block, "publicKeyToBytes() returned invalid PEM for valid key")
 	assert.Equal(t, "PUBLIC KEY", block.Type, "publicKeyToBytes() PEM block type is not 'PUBLIC KEY' for valid key")
 }
+
+func TestPrintRequestAndTraceId(t *testing.T) {
+	// Test with both request ID and trace ID
+	t.Run("With both IDs", func(t *testing.T) {
+		// Arrange - capture stdout
+		old := os.Stdout
+		r, w, _ := os.Pipe()
+		os.Stdout = w
+
+		// Act - just call the function to verify it doesn't panic
+		// It reads from global state which may be empty in tests
+		PrintRequestAndTraceId()
+
+		// Restore stdout
+		w.Close()
+		os.Stdout = old
+
+		// Read captured output
+		var buf bytes.Buffer
+		io.Copy(&buf, r)
+
+		// The function may not print anything if the global state is empty
+		// which is fine - we're just ensuring it doesn't panic
+	})
+}

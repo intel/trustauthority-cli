@@ -13,7 +13,7 @@ The make, makeself, and golang packages are required before installing the Intel
    apt -y install make makeself
    ```
 2. Installing golang.
-    - Supported golang version is 1.25.3
+    - Supported golang version is 1.25.5
     - To install golang, follow the instructions at the following link:https://go.dev/doc/install
 
 3. Add the local binary path, `$HOME/.local/bin/`, to your PATH environment variable if not already present.
@@ -149,6 +149,54 @@ trustauthorityctl update tenant-settings -q < request id > -d
 ##### List Tenant Settings:
 trustauthorityctl list tenant-settings -q < request id >
 
+##### Create a RIM:
+trustauthorityctl create rim -q < request id > -n < RIM name > -f < RIM content file path >
+
+Examples:
+- Create RIM with plain JSON content:
+  `trustauthorityctl create rim -n "acme.rims.mrtd" -f ./rim-content.json`
+- Create RIM with signed JWT content:
+  `trustauthorityctl create rim -n "public.acme.rim.signed" -f ./rim-signed.txt`
+
+Note: 
+- RIM file size should be <= 20KB
+- RIM name format: Use dot-separated namespaced names (e.g., "acme.rims.mrtd")
+- Public RIMs: Prefix with "public." (e.g., "public.acme.rims.mrtd") to make them accessible across tenants
+- Content can be either plain JSON or signed JWT format
+
+##### List all RIMs:
+trustauthorityctl list rim -q < request id >
+
+##### Get specific RIM by ID:
+trustauthorityctl list rim -q < request id > -r < RIM id >
+
+##### Search RIMs by name:
+trustauthorityctl list rim -q < request id > -n < RIM name >
+
+##### Update a RIM:
+trustauthorityctl update rim -q < request id > -r < RIM id > -f < RIM content file path > -d < description >
+
+Examples:
+- Update RIM with plain JSON content:
+  `trustauthorityctl update rim -r "1722b479-cbba-4f10-9ac8-c21dff5bf8db" -f ./new-rim-content.json`
+- Update RIM with signed JWT content:
+  `trustauthorityctl update rim -r "1722b479-cbba-4f10-9ac8-c21dff5bf8db" -f ./rim-signed.txt`
+- Update RIM description only:
+  `trustauthorityctl update rim -r "1722b479-cbba-4f10-9ac8-c21dff5bf8db" -d "Updated description"`
+- Update both content and description:
+  `trustauthorityctl update rim -r "1722b479-cbba-4f10-9ac8-c21dff5bf8db" -f ./new-rim-content.json -d "Updated"`
+
+Note: 
+- You can update content, description, or both. At least one field must be provided.
+- Content can be either plain JSON or signed JWT format (same as create rim)
+- File size should be <= 20KB
+
+##### Delete a RIM:
+trustauthorityctl delete rim -q < request id > -r < RIM id >
+
+Example:
+`trustauthorityctl delete rim -r "1722b479-cbba-4f10-9ac8-c21dff5bf8db"`
+
 ##### Create Policy:
 trustauthorityctl create policy -q < request id > -n < name of policy > -t < policy type > -a < attestation type > -r < service offer id > -f < rego policy file path >
 Note: Policy file size should be <= 20KB
@@ -164,7 +212,7 @@ trustauthorityctl delete policy -q < request id > -p < policy id >
 
 ##### Update policy:
 trustauthorityctl update policy -q < request id > -i < policy id > -n < name of policy > -f < rego policy file path >
-Note: Policy file size should be <= 10KB
+Note: Policy file size should be <= 20KB
 
 -  Sample rego policy for create/update policy command:
 
@@ -179,11 +227,11 @@ matches_sgx_policy = true
 }
 ```
 
-### Create Policy JWT
-trustauthorityctl create policy-jwt -q < request id > -f < rego policy file path > -p < signing key path > -c < cert path > -a < algorithm > -s
+### Create Policy JWT (Also works for RIM content)
+trustauthorityctl create policy-jwt -q < request id > -f < rego policy or RIM content file path > -p < signing key path > -c < cert path > -a < algorithm > -s
 
 #### Prerequisites:
-Create a self-signed key and certificate for policy JWT token creation:
+Create a self-signed key and certificate for policy/RIM JWT token creation:
 - Generate key and cert files for -algorithm (PS384 | RS384) (Recommend)
 ```
 openssl req -x509 -nodes -days 365 -newkey rsa:3072 -keyout ta-jwt.key -out ta-jwt.crt
@@ -193,12 +241,30 @@ openssl req -x509 -nodes -days 365 -newkey rsa:3072 -keyout ta-jwt.key -out ta-j
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ta-jwt.key -out ta-jwt.crt
 ```
 
+#### Usage Examples:
+1. Create signed JWT for a rego policy:
+   ```bash
+   trustauthorityctl create policy-jwt -f ./my-policy.rego -p ./ta-jwt.key -c ./ta-jwt.crt -a PS384 --sign
+   ```
+
+2. Create signed JWT for RIM content:
+   ```bash
+   trustauthorityctl create policy-jwt -f ./rim-content.json -p ./ta-jwt.key -c ./ta-jwt.crt -a PS384 --sign
+   ```
+
+3. Create unsigned JWT (algorithm=none):
+   ```bash
+   trustauthorityctl create policy-jwt -f ./my-policy.rego
+   ```
+
 #### Notes:
-1. The signed policy token could be self-verified at jwt.io.
-2. The output file name of this command is the input policy file name suffixed with the ".signed.current_timestamp.txt" extension.
-3. The policy payload for Trust Authority uses the rego format, which is different from Azure MAA.
-4. Supported signing algorithms are "RS256", "PS256", "RS384", "PS384", and the default algorithm is PS384.
-5. The signing algorithm needs to match the certificate algorithm.
+1. The signed policy/RIM token can be self-verified at jwt.io.
+2. The output file name of this command is the input file name suffixed with the ".signed.current_timestamp.txt" extension.
+3. For policies: The payload uses the rego format, which is different from Azure MAA.
+4. For RIMs: The payload should be valid JSON containing RIM measurements and metadata.
+5. Supported signing algorithms are "RS256", "PS256", "RS384", "PS384", and the default algorithm is PS384.
+6. The signing algorithm needs to match the certificate algorithm.
+7. The generated JWT can be used directly when creating or updating policies/RIMs.
 
 
 #### References:

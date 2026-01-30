@@ -408,3 +408,86 @@ func TestValidateSizeLargeFile(t *testing.T) {
 	// Assert
 	assert.NoError(t, err, "ValidateSize() error = %v for small file", err)
 }
+
+func TestValidateRimContent(t *testing.T) {
+	// Arrange
+	tests := []struct {
+		name    string
+		content string
+		wantErr bool
+	}{
+		{
+			name:    "Valid JSON object",
+			content: `{"measurements":[{"index":0,"value":"abc123"}],"metadata":{"version":"1.0"}}`,
+			wantErr: false,
+		},
+		{
+			name:    "Valid JSON array",
+			content: `[{"index":0,"value":"abc123"}]`,
+			wantErr: false,
+		},
+		{
+			name:    "Valid signed JWT (HS256)",
+			content: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZWFzdXJlbWVudHMiOlt7ImluZGV4IjowLCJ2YWx1ZSI6ImFiYzEyMyJ9XX0.signature",
+			wantErr: false,
+		},
+		{
+			name:    "Valid signed JWT (PS384)",
+			content: "eyJhbGciOiJQUzM4NCIsInR5cCI6IkpXVCJ9.eyJtZWFzdXJlbWVudHMiOlt7ImluZGV4IjowfV19.sig",
+			wantErr: false,
+		},
+		{
+			name:    "Valid unsigned JWT (alg=none)",
+			content: "eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJtZWFzdXJlbWVudHMiOltdfQ.",
+			wantErr: false,
+		},
+		{
+			name:    "Empty content",
+			content: "",
+			wantErr: true,
+		},
+		{
+			name:    "Invalid - plain text",
+			content: "this is not json or jwt",
+			wantErr: true,
+		},
+		{
+			name:    "Invalid - single part",
+			content: "onlyonepart",
+			wantErr: true,
+		},
+		{
+			name:    "Invalid - too many parts",
+			content: "part1.part2.part3.part4",
+			wantErr: true,
+		},
+		{
+			name:    "Invalid - malformed JWT",
+			content: "not-base64.also-not-base64.signature",
+			wantErr: true,
+		},
+		{
+			name:    "Invalid JSON",
+			content: `{"measurements": invalid}`,
+			wantErr: true,
+		},
+		{
+			name:    "Whitespace only",
+			content: "   ",
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Act
+			err := ValidateRimContent(tt.content)
+			// Assert
+			if tt.wantErr {
+				assert.Error(t, err, "ValidateRimContent() should return error for: %s", tt.name)
+			} else {
+				assert.NoError(t, err, "ValidateRimContent() should not return error for: %s", tt.name)
+			}
+		})
+	}
+}

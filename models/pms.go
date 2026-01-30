@@ -6,9 +6,11 @@
 package models
 
 import (
+	"encoding/json"
+	"time"
+
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
-	"time"
 )
 
 // PolicyRequest struct defines the policy
@@ -56,4 +58,52 @@ type PolicyUpdateRequest struct {
 type PolicyClaims struct {
 	AttestationPolicy string `json:"AttestationPolicy"`
 	jwt.RegisteredClaims
+}
+
+type CommonRim struct {
+	Id           uuid.UUID       `json:"id"`
+	Content      json.RawMessage `json:"content,omitempty"`
+	TenantId     uuid.UUID       `json:"-"`
+	Name         string          `json:"name"`
+	Description  string          `json:"description,omitempty"`
+	Public       bool            `json:"public"`
+	PublicDomain string          `json:"-"` // Internal field, not exposed in API response
+}
+
+type RimCreateRequest struct {
+	Id             uuid.UUID       `json:"-"`
+	Content        json.RawMessage `json:"content"`
+	TenantId       uuid.UUID       `json:"-"`
+	Name           string          `json:"name"`
+	Description    string          `json:"description,omitempty"`
+	Public         bool            `json:"-"` // Determined from name, not from request
+	PublicDomain   string          `json:"-"` // Extracted from name if public
+	JWT            string          `json:"-"`
+	Hash           string          `json:"-"`
+	UserId         uuid.UUID       `json:"-"`
+	SubscriptionId uuid.UUID       `json:"-"`
+}
+
+type RimUpdateRequest struct {
+	Id             uuid.UUID       `json:"-"`
+	Content        json.RawMessage `json:"content"`
+	TenantId       uuid.UUID       `json:"-"`
+	Description    string          `json:"description,omitempty"`
+	JWT            string          `json:"-"`
+	Hash           string          `json:"-"`
+	UserId         uuid.UUID       `json:"-"`
+	SubscriptionId uuid.UUID       `json:"-"`
+}
+type SignedRimResponse struct {
+	CommonRim
+	CreatorId      *uuid.UUID `json:"creator_id"`
+	UpdaterId      *uuid.UUID `json:"updater_id"`
+	Deleted        bool       `json:"deleted"`
+	CreatedAt      time.Time  `json:"created_time"`
+	UpdatedAt      time.Time  `json:"modified_time"`
+	JWT            string     `json:"jwt,omitempty"`
+	Hash           string     `json:"hash,omitempty"`
+	Signature      string     `json:"signature,omitempty"`
+	Version        string     `json:"version"`
+	SignedByTenant bool       `json:"signed_by_tenant"`
 }

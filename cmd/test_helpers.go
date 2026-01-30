@@ -265,6 +265,33 @@ var (
 	tenantSettings = `{
 			"attest_failure_email" : "dummy@email.com"
 	}`
+
+	rim = `{
+		"id": "a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5c6",
+		"name": "test.rim",
+		"content": {"measurements": [{"index": 0, "value": "d412a4f07ef83892a5915fb2ab584be31e186e5a4f95ab5f6950fd4eb8694d7c"}]},
+		"description": "Test RIM",
+		"public": false,
+		"creator_id": "cbb41ee7-e2d2-4b3e-b9f1-37f686f65b34",
+		"updater_id": "cbb41ee7-e2d2-4b3e-b9f1-37f686f65b34",
+		"deleted": false,
+		"created_time": "2023-11-03T12:15:38.181923+05:30",
+		"modified_time": "2023-11-03T12:18:11.324105+05:30",
+		"jwt": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
+		"hash": "abc123",
+		"signature": "signature123",
+		"version": "v1",
+		"signed_by_tenant": false
+	}`
+
+	rimList = `[{
+		"id": "a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5c6",
+		"name": "test.rim",
+		"content": {"measurements": []},
+		"public": false,
+		"created_time": "2023-11-03T12:15:38.181923+05:30",
+		"version": "v1"
+	}]`
 )
 
 var idReg = fmt.Sprintf("{id:%s}", "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}")
@@ -468,6 +495,37 @@ func mockServer(t *testing.T) *httptest.Server {
 		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
 		_, _ = w.Write([]byte(tenantSettings))
 	}).Methods(http.MethodGet)
+
+	// RIM endpoints
+	r.HandleFunc("/management/v1/rims", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
+		w.WriteHeader(http.StatusCreated)
+		_, _ = w.Write([]byte(rim))
+	}).Methods(http.MethodPost)
+
+	r.HandleFunc("/management/v1/rims", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
+		_, _ = w.Write([]byte(rimList))
+	}).Methods(http.MethodGet)
+
+	r.HandleFunc("/management/v1/rims/{id}", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
+		_, _ = w.Write([]byte(rim))
+	}).Methods(http.MethodGet)
+
+	r.HandleFunc("/management/v1/rims/{id}", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
+		_, _ = w.Write([]byte(rim))
+	}).Methods(http.MethodPut)
+
+	r.HandleFunc("/management/v1/rims/{id}", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
+		w.WriteHeader(http.StatusNoContent)
+	}).Methods(http.MethodDelete)
 
 	return httptest.NewServer(r)
 }
