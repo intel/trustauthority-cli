@@ -111,7 +111,7 @@ func TestCreateRimWithInvalidFilePath(t *testing.T) {
 	_, err := execute(t, tenantCmd, args)
 
 	// Assert
-	assert.ErrorContains(t, err, "Unsafe symlink detected in path")
+	assert.ErrorContains(t, err, "File does not exist")
 }
 
 func TestCreateRimWithInvalidJSON(t *testing.T) {
@@ -148,7 +148,58 @@ func TestCreateRimWithInvalidRequestId(t *testing.T) {
 	assert.ErrorContains(t, err, "Request ID should be at most 128 characters long and "+
 		"should contain only alphanumeric characters, _, space, - or /")
 }
+func TestCreateRimWithInvalidName(t *testing.T) {
+	// Arrange
+	setupCreateRimTest(t)
+	tmpFile, err := os.CreateTemp("", "test-rim-*.json")
+	if err != nil {
+		t.Fatalf("Failed to create temp file: %v", err)
+	}
+	defer os.Remove(tmpFile.Name())
 
+	_, err = tmpFile.WriteString(`{"test": "data"}`)
+	assert.NoError(t, err)
+	tmpFile.Close()
+
+	testCases := []struct {
+		name        string
+		rimName     string
+		expectedErr string
+	}{
+		{
+			name:        "Name with special characters",
+			rimName:     "$$$$$a$gbccc",
+			expectedErr: "RIM name is invalid",
+		},
+		{
+			name:        "Name with spaces",
+			rimName:     "test rim name",
+			expectedErr: "RIM name is invalid",
+		},
+		{
+			name:        "Name starting with special character",
+			rimName:     "-testrim",
+			expectedErr: "RIM name is invalid",
+		},
+		{
+			name:        "Name ending with special character",
+			rimName:     "testrim-",
+			expectedErr: "RIM name is invalid",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			args := []string{constants.CreateCmd, constants.RimCmd, "-n", tc.rimName, "-f", tmpFile.Name()}
+
+			// Act
+			_, err := execute(t, tenantCmd, args)
+
+			// Assert
+			assert.ErrorContains(t, err, tc.expectedErr)
+		})
+	}
+}
 func TestCreateRimWithInvalidUrl(t *testing.T) {
 	// Arrange
 	setupCreateRimTest(t)

@@ -67,7 +67,7 @@ func TestUpdateRimWithNoParams(t *testing.T) {
 	_, err := execute(t, tenantCmd, args)
 
 	// Assert
-	assert.ErrorContains(t, err, "required flag(s) \"rim-content-file\", \"rim-id\" not set")
+	assert.ErrorContains(t, err, "required flag(s) \"rim-id\" not set")
 }
 
 func TestUpdateRimWithInvalidUUID(t *testing.T) {
@@ -92,7 +92,24 @@ func TestUpdateRimWithNoContentFile(t *testing.T) {
 	_, err := execute(t, tenantCmd, args)
 
 	// Assert
-	assert.ErrorContains(t, err, "required flag(s) \"rim-content-file\" not set")
+	assert.ErrorContains(t, err, "At least one of description or content file path must be provided")
+}
+
+func TestUpdateRimWithOnlyDescription(t *testing.T) {
+	// Arrange
+	setupUpdateRimTest(t)
+	server := mockServer(t)
+	defer server.Close()
+	setupMockConfiguration(server.URL, tempConfigFile)
+
+	validUUID := "e1e4424b-85cc-41bb-b295-7a24c3e8a8aa"
+	args := []string{constants.UpdateCmd, constants.RimCmd, "-r", validUUID, "-d", "Updated description"}
+
+	// Act
+	_, err := execute(t, tenantCmd, args)
+
+	// Assert
+	assert.NoError(t, err)
 }
 
 func TestUpdateRimWithInvalidFilePath(t *testing.T) {
@@ -104,7 +121,7 @@ func TestUpdateRimWithInvalidFilePath(t *testing.T) {
 	_, err := execute(t, tenantCmd, args)
 
 	// Assert
-	assert.ErrorContains(t, err, "Unsafe symlink detected in path")
+	assert.ErrorContains(t, err, "File does not exist")
 }
 
 func TestUpdateRimWithInvalidJSON(t *testing.T) {

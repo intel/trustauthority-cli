@@ -53,6 +53,7 @@ const (
 	DisableNotificationParamName     = "disable-notification"
 	RimIdParamName                   = "rim-id"
 	RimNameParamName                 = "rim-name"
+	RimDescriptionParamName          = "rim-description"
 	RimContentFileParamName          = "rim-content-file"
 	IncludeOwnPrivateParamName       = "include-own-private"
 	IncludeOwnPublicParamName        = "include-own-public"

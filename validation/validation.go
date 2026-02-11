@@ -29,6 +29,7 @@ var (
 	tagReg                = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9\-\_]{1,62}[a-zA-Z0-9]$`)
 	tagValueReg           = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9\-\_]{1,62}[a-zA-Z0-9]$`)
 	policyNameRegex       = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9_-]{1,62}[a-zA-Z0-9]$`)
+	rimNameRegex          = regexp.MustCompile(`^[a-zA-Z0-9](?:[a-zA-Z0-9_.-]{0,126}[a-zA-Z0-9])?$`)
 	requestIdRegex        = regexp.MustCompile(`^[a-zA-Z0-9_ \/.-]{1,128}$`)
 	//max length of file name to be allowed in 255 bytes and characters allowed are a-z, A-Z, 0-9, _, ., -
 	fileNameRegex = regexp.MustCompile(`^[a-zA-Z0-9_. -]{1,255}$`)
@@ -50,6 +51,15 @@ func ValidatePath(path string) (string, error) {
 	if err := checkFilePathForInvalidChars(cleanedPath); err != nil {
 		return "", err
 	}
+
+	// Check if file exists first
+	if _, err := os.Stat(cleanedPath); err != nil {
+		if os.IsNotExist(err) {
+			return "", fmt.Errorf("File does not exist: %s", cleanedPath)
+		}
+		return "", fmt.Errorf("Error accessing file: %v", err)
+	}
+
 	r, err := filepath.EvalSymlinks(cleanedPath)
 	if err != nil {
 		return "", fmt.Errorf("Unsafe symlink detected in path")
@@ -133,6 +143,21 @@ func ValidatePolicyName(policyName string) error {
 	if !policyNameRegex.Match([]byte(policyName)) {
 		return errors.New("Policy name is invalid. Policy name should be alpha numeric and have minimum 3 characters with no spaces between words (" +
 			"use \"_\" or \"-\" as separators) and should not be more than 64 characters")
+	}
+	return nil
+}
+
+func ValidateRimName(rimName string) error {
+	if strings.TrimSpace(rimName) == "" {
+		return errors.New("RIM name cannot be empty")
+	}
+	if len(rimName) > 128 {
+		return errors.New("RIM name exceeds maximum length of 128 characters")
+	}
+	if !rimNameRegex.Match([]byte(rimName)) {
+		return errors.New("RIM name is invalid. Name must be 1-128 characters, start and end with alphanumeric, " +
+			"and may contain alphanumeric, dots, hyphens, and underscores. Use dots for namespaced names " +
+			"(e.g., acme.rims.mrtd or public.acme.rims.certificates). No spaces allowed.")
 	}
 	return nil
 }

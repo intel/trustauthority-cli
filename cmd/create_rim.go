@@ -29,8 +29,8 @@ import (
 // createRimCmd represents the createRim command
 var createRimCmd = &cobra.Command{
 	Use:   constants.RimCmd,
-	Short: "Create a new RIM",
-	Long:  ``,
+	Short: "Create a new RIM with JSON or JWT content",
+	Long:  `Create a new Reference Integrity Manifest (RIM) using either plain JSON or signed JWT format`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("create rim called")
 		response, err := createRim(cmd)
@@ -47,7 +47,8 @@ func init() {
 	createCmd.AddCommand(createRimCmd)
 
 	createRimCmd.Flags().StringP(constants.RimNameParamName, "n", "", "Name of the RIM to be created")
-	createRimCmd.Flags().StringP(constants.RimContentFileParamName, "f", "", "Path of the file containing the RIM content in JSON format. The file size should be <= 20 KB")
+	createRimCmd.Flags().StringP(constants.RimDescriptionParamName, "d", "", "Description of the RIM (optional)")
+	createRimCmd.Flags().StringP(constants.RimContentFileParamName, "f", "", "Path of the file containing the RIM content in JSON or JWT format. The file size should be <= 20 KB")
 	createRimCmd.Flags().StringP(constants.RequestIdParamName, "q", "", "Request ID to be associated with the specific request. This is optional.")
 	createRimCmd.MarkFlagRequired(constants.RimNameParamName)
 	createRimCmd.MarkFlagRequired(constants.RimContentFileParamName)
@@ -72,6 +73,15 @@ func createRim(cmd *cobra.Command) (string, error) {
 	}
 
 	rimName, err := cmd.Flags().GetString(constants.RimNameParamName)
+	if err != nil {
+		return "", err
+	}
+
+	if err := validation.ValidateRimName(rimName); err != nil {
+		return "", err
+	}
+
+	rimDescription, err := cmd.Flags().GetString(constants.RimDescriptionParamName)
 	if err != nil {
 		return "", err
 	}
@@ -121,8 +131,9 @@ func createRim(cmd *cobra.Command) (string, error) {
 	}
 
 	var rimCreateReq = models.RimCreateRequest{
-		Name:    rimName,
-		Content: contentForRequest,
+		Name:        rimName,
+		Description: rimDescription,
+		Content:     contentForRequest,
 	}
 
 	pmsClient := pms.NewPmsClient(client, pmsUrl, apiKey)

@@ -30,8 +30,8 @@ import (
 // updateRimCmd represents the updateRim command
 var updateRimCmd = &cobra.Command{
 	Use:   constants.RimCmd,
-	Short: "Update an existing RIM",
-	Long:  ``,
+	Short: "Update an existing RIM with JSON or JWT content",
+	Long:  `Update an existing Reference Integrity Manifest (RIM) using either plain JSON or signed JWT format`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		log.Info("update rim called")
 		response, err := updateRim(cmd)
@@ -48,10 +48,10 @@ func init() {
 	updateCmd.AddCommand(updateRimCmd)
 
 	updateRimCmd.Flags().StringP(constants.RimIdParamName, "r", "", "ID of the RIM to be updated")
-	updateRimCmd.Flags().StringP(constants.RimContentFileParamName, "f", "", "Path of the file containing the RIM content in JSON format. The file size should be <= 20 KB")
+	updateRimCmd.Flags().StringP(constants.RimDescriptionParamName, "d", "", "Description of the RIM (optional)")
+	updateRimCmd.Flags().StringP(constants.RimContentFileParamName, "f", "", "Path of the file containing the RIM content in JSON or JWT format. The file size should be <= 20 KB")
 	updateRimCmd.Flags().StringP(constants.RequestIdParamName, "q", "", "Request ID to be associated with the specific request. This is optional.")
 	updateRimCmd.MarkFlagRequired(constants.RimIdParamName)
-	updateRimCmd.MarkFlagRequired(constants.RimContentFileParamName)
 }
 
 func updateRim(cmd *cobra.Command) (string, error) {
@@ -82,13 +82,24 @@ func updateRim(cmd *cobra.Command) (string, error) {
 		return "", errors.Wrap(err, "Invalid RIM id provided")
 	}
 
+	rimDescription, err := cmd.Flags().GetString(constants.RimDescriptionParamName)
+	if err != nil {
+		return "", err
+	}
+
 	rimContentFilePath, err := cmd.Flags().GetString(constants.RimContentFileParamName)
 	if err != nil {
 		return "", err
 	}
 
+	// Validate that at least one of description or content file path is provided
+	if rimDescription == "" && rimContentFilePath == "" {
+		return "", errors.New("At least one of description or content file path must be provided")
+	}
+
 	var rimUpdateReq = models.RimUpdateRequest{
-		Id: rimId,
+		Id:          rimId,
+		Description: rimDescription,
 	}
 
 	// Update content if file path provided
