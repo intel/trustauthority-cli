@@ -3,7 +3,7 @@
 
 module intel/tac/v1
 
-go 1.25.5
+go 1.25.7
 
 require (
 	github.com/fatih/set v0.2.1
