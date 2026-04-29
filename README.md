@@ -227,11 +227,20 @@ matches_sgx_policy = true
 }
 ```
 
-### Create Policy JWT (Also works for RIM content)
-trustauthorityctl create policy-jwt -q < request id > -f < rego policy or RIM content file path > -p < signing key path > -c < cert path > -a < algorithm > -s
+### Create JWT (Also works for RIM content)
+
+> [!IMPORTANT]
+> **Command renamed:** `create jwt` replaces `create policy-jwt`.
+> The old name `policy-jwt` remains available as a deprecated alias for backward compatibility but will be removed in a future release.
+
+> **Migrate now:** replace `trustauthorityctl create policy-jwt` with `trustauthorityctl create jwt` in all scripts and workflows.
+
+```
+trustauthorityctl create jwt -q < request id > -f < rego policy or RIM content file path > -p < signing key path > -c < cert path > -a < algorithm > -s
+```
 
 #### Prerequisites:
-Create a self-signed key and certificate for policy/RIM JWT token creation:
+Create a self-signed key and certificate for JWT token creation:
 - Generate key and cert files for -algorithm (PS384 | RS384) (Recommend)
 ```
 openssl req -x509 -nodes -days 365 -newkey rsa:3072 -keyout ta-jwt.key -out ta-jwt.crt
@@ -244,18 +253,24 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ta-jwt.key -out ta-j
 #### Usage Examples:
 1. Create signed JWT for a rego policy:
    ```bash
-   trustauthorityctl create policy-jwt -f ./my-policy.rego -p ./ta-jwt.key -c ./ta-jwt.crt -a PS384 --sign
+   trustauthorityctl create jwt -f ./my-policy.rego -p ./ta-jwt.key -c ./ta-jwt.crt -a PS384 --sign
    ```
 
 2. Create signed JWT for RIM content:
    ```bash
-   trustauthorityctl create policy-jwt -f ./rim-content.json -p ./ta-jwt.key -c ./ta-jwt.crt -a PS384 --sign
+   trustauthorityctl create jwt -f ./rim-content.json -p ./ta-jwt.key -c ./ta-jwt.crt -a PS384 --sign
    ```
 
 3. Create unsigned JWT (algorithm=none):
    ```bash
-   trustauthorityctl create policy-jwt -f ./my-policy.rego
+   trustauthorityctl create jwt -f ./my-policy.rego
    ```
+
+> [!NOTE]
+> **Deprecated alias:** The following form still works but is deprecated — update your scripts to use `create jwt`.
+> ```bash
+> trustauthorityctl create policy-jwt -f ./my-policy.rego -p ./ta-jwt.key -c ./ta-jwt.crt -a PS384 --sign
+> ```
 
 #### Notes:
 1. The signed policy/RIM token can be self-verified at jwt.io.

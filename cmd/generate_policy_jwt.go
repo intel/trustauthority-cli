@@ -22,12 +22,12 @@ import (
 
 // createPolicyJwtCmd represents the createPolicyJwtCmd command
 var createPolicyJwtCmd = &cobra.Command{
-	Use:     constants.PolicyJwtCmd,
-	Aliases: []string{constants.JwtCmd},
+	Use:     constants.JwtCmd,
+	Aliases: []string{constants.PolicyJwtCmd},
 	Short:   "Generates signed/unsigned JWT for the Rego policy/RIM provided",
 	Long:    ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		log.Info("create policy-jwt called")
+		log.Info("create jwt/policy-jwt called")
 		err := generatePolicyJwt(cmd)
 		if err != nil {
 			return err
