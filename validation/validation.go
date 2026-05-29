@@ -29,8 +29,12 @@ var (
 	tagReg                = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9\-\_]{1,62}[a-zA-Z0-9]$`)
 	tagValueReg           = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9\-\_]{1,62}[a-zA-Z0-9]$`)
 	policyNameRegex       = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9_-]{1,62}[a-zA-Z0-9]$`)
-	rimNameRegex          = regexp.MustCompile(`^[a-zA-Z0-9](?:[a-zA-Z0-9_.]{0,126}[a-zA-Z0-9])?$`)
-	requestIdRegex        = regexp.MustCompile(`^[a-zA-Z0-9_ \/.-]{1,128}$`)
+	rimNameRegex          = regexp.MustCompile(`^[a-zA-Z](?:[a-zA-Z0-9_.]{1,126}[a-zA-Z0-9])?$`)
+	// segmentIdentifierRegex validates each segment as a valid identifier
+	// Must start with letter (a-z, A-Z), followed by letters, numbers, or underscores
+	// Cannot start with underscore or number, hyphens not allowed
+	rimSegmentIdentifierRegex = regexp.MustCompile(`^[a-zA-Z][a-zA-Z0-9_]*$`)
+	requestIdRegex            = regexp.MustCompile(`^[a-zA-Z0-9_ \/.-]{1,128}$`)
 	//max length of file name to be allowed in 255 bytes and characters allowed are a-z, A-Z, 0-9, _, ., -
 	fileNameRegex = regexp.MustCompile(`^[a-zA-Z0-9_. -]{1,255}$`)
 	//in file path, characters allowed are a-z, A-Z, 0-9, _, ., -, \, /, :
@@ -151,14 +155,41 @@ func ValidateRimName(rimName string) error {
 	if strings.TrimSpace(rimName) == "" {
 		return errors.New("RIM name cannot be empty")
 	}
-	if len(rimName) > 128 {
-		return errors.New("RIM name exceeds maximum length of 128 characters")
+	if len(rimName) < constants.MinRimNameLength {
+		return errors.Errorf("RIM name must be at least %d characters", constants.MinRimNameLength)
 	}
-	if !rimNameRegex.Match([]byte(rimName)) {
-		return errors.New("RIM name is invalid. Name must be 1-128 characters, start and end with alphanumeric, " +
-			"and may contain alphanumeric, dots, and underscores. Use dots for namespaced names " +
-			"(e.g., acme.rims.mrtd or public.acme.rims.certificates). No spaces or hyphens allowed.")
+	if len(rimName) > constants.MaxRimNameLength {
+		return errors.Errorf("RIM name exceeds maximum length of %d characters", constants.MaxRimNameLength)
 	}
+
+	// Basic format check: overall pattern validation
+	if !rimNameRegex.MatchString(rimName) {
+		return errors.New("RIM name is invalid. Name must be 3-128 characters, start with a letter (a-z, A-Z), " +
+			"end with alphanumeric (a-z, A-Z, 0-9), and may contain letters, numbers, dots, and underscores. " +
+			"Use dots for namespaced names (e.g., acme.rims.mrtd or public.acme.rims.certificates). " +
+			"No spaces, hyphens, or special characters allowed. Cannot end with dot or underscore.")
+	}
+
+	// Split by dots and validate namespace segments
+	segments := strings.Split(rimName, ".")
+	if len(segments) > constants.MaxNamespaceSegments {
+		return errors.Errorf("RIM name has too many namespace segments. Maximum allowed is %d segments, found %d",
+			constants.MaxNamespaceSegments, len(segments))
+	}
+
+	// Validate each segment as a valid identifier
+	// Each segment must start with a letter (not underscore or number)
+	// to ensure it can be used as a code identifier
+	for i, segment := range segments {
+		if !rimSegmentIdentifierRegex.MatchString(segment) {
+			return errors.Errorf("RIM name segment '%s' at position %d is invalid. Each segment must be a valid identifier: "+
+				"start with a letter (a-z, A-Z), followed by letters, numbers, or underscores. "+
+				"Segments cannot start with a number or underscore, and hyphens are not allowed. "+
+				"(e.g., 'public.acme.1.rims' is invalid, use 'public.acme.v1.rims' instead)",
+				segment, i+1)
+		}
+	}
+
 	return nil
 }
 

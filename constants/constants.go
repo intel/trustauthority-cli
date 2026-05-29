@@ -105,6 +105,9 @@ const (
 	ApiClientStatusCancelled = "Cancelled"
 	TenantAdminRole          = "Tenant Admin"
 	UserRole                 = "User"
+	MinRimNameLength         = 3
+	MaxRimNameLength         = 128
+	MaxNamespaceSegments     = 10
 
 	PS384       = "PS384"
 	RS256       = "RS256"
