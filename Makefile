@@ -8,7 +8,7 @@ PROXY_EXISTS := $(shell if [[ "${https_proxy}" || "${http_proxy}" || "${no_proxy
 
 trustauthorityctl:
 	mkdir -p out/
-	 env GOOS=linux CGO_CPPFLAGS="-D_FORTIFY_SOURCE=2" go build -buildmode=pie \
+	 env GOOS=linux CGO_CPPFLAGS="-D_FORTIFY_SOURCE=2" CGO_CFLAGS="-O2 -g -fstack-protector-strong" go build -buildmode=pie \
         -ldflags "-X intel/tac/v1/utils.BuildDate=${BUILDDATE} -X intel/tac/v1/utils.Version=${VERSION} -X intel/tac/v1/utils.GitHash=${GITCOMMIT} -linkmode=external -s -extldflags '-Wl,-z,relro,-z,now'"\
         -o out/trustauthorityctl
 
