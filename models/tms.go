@@ -6,10 +6,11 @@
 package models
 
 import (
-	"github.com/google/uuid"
-	"gorm.io/gorm"
 	"intel/tac/v1/constants"
 	"time"
+
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type ApiClientStatus string
@@ -165,7 +166,14 @@ type (
 		ServiceOfferId           uuid.UUID              `json:"service_offer_id"`
 		Name                     string                 `json:"name"`
 		PlanId                   uuid.UUID              `json:"plan_id"`
+		SupportPlanId            uuid.UUID              `json:"support_plan_id"`
 		PlanName                 string                 `json:"plan_name"`
+		SupportPlanName          string                 `json:"support_plan_name"`
+		UsagePlanId              uuid.UUID              `json:"usage_plan_id"`
+		Quota                    int                    `json:"quota"`
+		MaxKey                   int                    `json:"max_key"`
+		MaxTenantAdmin           int                    `json:"max_tenant_admin"`
+		MaxTenantUser            int                    `json:"max_tenant_user"`
 		Active                   bool                   `json:"active"`
 		ExternalId               uuid.UUID              `json:"-"`
 		CreatedAt                time.Time              `json:"created_at"`
@@ -183,7 +191,14 @@ type (
 		CreatedAt                time.Time              `json:"created_at"`
 		Active                   bool                   `json:"active"`
 		PlanId                   uuid.UUID              `json:"plan_id"`
+		SupportPlanId            uuid.UUID              `json:"support_plan_id"`
 		PlanName                 string                 `json:"plan_name"`
+		SupportPlanName          string                 `json:"support_plan_name"`
+		UsagePlanId              uuid.UUID              `json:"usage_plan_id"`
+		Quota                    int                    `json:"quota"`
+		MaxKey                   int                    `json:"max_key"`
+		MaxTenantAdmin           int                    `json:"max_tenant_admin"`
+		MaxTenantUser            int                    `json:"max_tenant_user"`
 		ServiceOfferPlanSourceId uuid.UUID              `json:"-"`
 		Attributes               map[string]interface{} `json:"attributes"`
 	}
