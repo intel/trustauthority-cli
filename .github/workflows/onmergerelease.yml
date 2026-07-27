@@ -12,7 +12,22 @@ permissions: read-all
 
 jobs:
   setup:
-    runs-on: [ self-hosted ]
+    runs-on: ubuntu-latest
+    outputs:
+      runner: ${{ steps.step1.outputs.runner }}
+    steps:
+      - name: Check repository
+        id: step1
+        run: |
+          if [ "${{ github.repository }}" == 'intel/trustauthority-cli' ]; then
+            echo "runner=ubuntu-latest" >> $GITHUB_OUTPUT
+          else
+            echo "runner=self-hosted" >> $GITHUB_OUTPUT
+          fi
+
+  build-test:
+    runs-on: ${{ needs.setup.outputs.runner }}
+    needs: [ setup ]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -22,14 +37,6 @@ jobs:
         with:
           go-version: '1.26.5'
 
-  build-test:
-    runs-on: [ self-hosted ]
-    needs: ["setup"]
-    env:
-      http_proxy: ${{ secrets.HTTP_PROXY }}
-      https_proxy: ${{ secrets.HTTPS_PROXY }}
-      no_proxy: ${{ secrets.NO_PROXY }}
-    steps:
       - name: Style Checker
         run: |
           if [ $(make go-fmt | tail -n 1 | grep gofmt | wc -l)  -eq 0 ]; then
@@ -47,8 +54,9 @@ jobs:
           fi
 
   artifact-installer:
-    runs-on: [ self-hosted ]
-    needs: ["setup","build-test"]
+    if: github.repository != 'intel/trustauthority-cli'
+    runs-on: ${{ needs.setup.outputs.runner }}
+    needs: [ setup, build-test ]
     env:
       http_proxy: ${{ secrets.HTTP_PROXY }}
       https_proxy: ${{ secrets.HTTPS_PROXY }}
@@ -59,10 +67,3 @@ jobs:
     steps:
       - name: Push Installer
         run: make push-artifact
-
-  cleanup-images-bins:
-    runs-on: [ self-hosted ]
-    needs: [ "build-test", "artifact-installer" ]
-    steps:
-      - name: Clean generated binaries.
-        run: make clean

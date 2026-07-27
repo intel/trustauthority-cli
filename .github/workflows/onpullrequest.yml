@@ -8,14 +8,22 @@ permissions: read-all
 
 jobs:
  setup:
-    runs-on: [ self-hosted ]
+    runs-on: ubuntu-latest
+    outputs:
+      runner: ${{ steps.step1.outputs.runner }}
     steps:
-      - uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2.7.0
-        with:
-          fetch-depth: 0
+      - name: Check repository
+        id: step1
+        run: |
+          if [ "${{ github.repository }}" == 'intel/trustauthority-cli' ]; then
+            echo "runner=ubuntu-latest" >> $GITHUB_OUTPUT
+          else
+            echo "runner=self-hosted" >> $GITHUB_OUTPUT
+          fi
 
  version-check:
-    runs-on: [ self-hosted ]
+    needs: [ setup ]
+    runs-on: ${{ needs.setup.outputs.runner }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -30,7 +38,8 @@ jobs:
           fi
 
  security-file-check:
-    runs-on: [ self-hosted ]
+    needs: [ setup ]
+    runs-on: ${{ needs.setup.outputs.runner }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -44,13 +53,13 @@ jobs:
           fi
           
  build-test:
-    runs-on: [ self-hosted ]
-    needs: [ "version-check" ]
-    env:
-      http_proxy: ${{ secrets.HTTP_PROXY }}
-      https_proxy: ${{ secrets.HTTPS_PROXY }}
-      no_proxy: ${{ secrets.NO_PROXY }}
+    runs-on: ${{ needs.setup.outputs.runner }}
+    needs: [ setup, version-check ]
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - uses: actions/setup-go@93397bea11091df50f3d7e59dc26a7711a8bcfbe # v4.1.0
         with:
           go-version: '1.26.5'
@@ -73,11 +82,3 @@ jobs:
 
       - name: Build Installer
         run: make installer
-
-
- cleanup-images-bins:
-    runs-on: [ self-hosted ]
-    needs: [ "build-test" ]
-    steps:
-      - name: Clean generated binaries.
-        run: make clean
