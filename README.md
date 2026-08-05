@@ -95,18 +95,6 @@ trustauthorityctl delete user -q < request id > -u < user id >
 ##### Delete Tag:
 trustauthorityctl delete tag -q < request id > -t < tag id >
 
-##### Get Service Offers:
-trustauthorityctl list serviceOffer
-
-##### Get Plans:
-trustauthorityctl list plan -q < request id > -r < service offer id >
-
-##### Get Plan By Id:
-trustauthorityctl list plan -q < request id > -r < service offer id > -p < plan id >
-
-##### Get Products:
-trustauthorityctl list product -q < request id > -r < service offer id >
-
 ##### Get Services:
 trustauthorityctl list service -q < request id >
 

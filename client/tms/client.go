@@ -30,10 +30,6 @@ type TmsClient interface {
 	GetServices() ([]models.Service, error)
 	RetrieveService(serviceId uuid.UUID) (*models.ServiceDetail, error)
 
-	GetProducts(serviceOfferId uuid.UUID) ([]models.Product, error)
-
-	GetServiceOffers() ([]models.ServiceOffer, error)
-
 	CreateUser(user *models.CreateTenantUser) (*models.TenantUser, error)
 	UpdateTenantUserRole(user *models.UpdateTenantUserRoles) (*models.TenantUser, error)
 	GetUsers() ([]models.TenantUser, error)
@@ -42,9 +38,6 @@ type TmsClient interface {
 	CreateTenantTag(request *models.TagCreate) (*models.Tag, error)
 	GetTenantTags() (*models.Tags, error)
 	DeleteTenantTag(tagId uuid.UUID) error
-
-	GetPlans(serviceOfferId uuid.UUID) ([]models.Plan, error)
-	RetrievePlan(serviceOfferId, planId uuid.UUID) (*models.PlanProducts, error)
 
 	UpdateTenantSettings(settings *models.AttestationFailureEmail) (*models.AttestationFailureEmail, error)
 	GetTenantSettings() (*models.AttestationFailureEmail, error)
@@ -483,68 +476,6 @@ func (pc tmsClient) RetrieveService(id uuid.UUID) (*models.ServiceDetail, error)
 	return retrieveServiceRes, nil
 }
 
-func (pc tmsClient) GetProducts(serviceOfferId uuid.UUID) ([]models.Product, error) {
-	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceOfferApiEndpoint + "/" + serviceOfferId.String() + constants.ProductApiEndpoint)
-	if err != nil {
-		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
-	}
-
-	// Create a new request using http
-	req, err := http.NewRequest(http.MethodGet, reqURL.String(), nil)
-	if err != nil {
-		return nil, errors.Wrap(err, "Error forming request")
-	}
-	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
-	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
-	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
-
-	response, err := client.SendRequest(pc.Client, req)
-	if err != nil {
-		return nil, errors.Wrap(err, "Error in response body")
-	}
-
-	// Parse response for validation
-	var searchProductsRes []models.Product
-	dec := json.NewDecoder(bytes.NewReader(response))
-	dec.DisallowUnknownFields()
-	err = dec.Decode(&searchProductsRes)
-	if err != nil {
-		return nil, errors.Wrap(err, "Error unmarshalling response")
-	}
-	return searchProductsRes, nil
-}
-
-func (pc tmsClient) GetServiceOffers() ([]models.ServiceOffer, error) {
-	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceOfferApiEndpoint)
-	if err != nil {
-		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
-	}
-
-	// Create a new request using http
-	req, err := http.NewRequest(http.MethodGet, reqURL.String(), nil)
-	if err != nil {
-		return nil, errors.Wrap(err, "Error forming request")
-	}
-	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
-	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
-	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
-
-	response, err := client.SendRequest(pc.Client, req)
-	if err != nil {
-		return nil, errors.Wrap(err, "Error in response body")
-	}
-
-	// Parse response for validation
-	var searchServiceOfferRes []models.ServiceOffer
-	dec := json.NewDecoder(bytes.NewReader(response))
-	dec.DisallowUnknownFields()
-	err = dec.Decode(&searchServiceOfferRes)
-	if err != nil {
-		return nil, errors.Wrap(err, "Error unmarshalling response")
-	}
-	return searchServiceOfferRes, nil
-}
-
 func (pc tmsClient) CreateTenantTag(request *models.TagCreate) (*models.Tag, error) {
 	reqURL, err := url.Parse(pc.BaseURL.String() + constants.TagApiEndpoint)
 	if err != nil {
@@ -633,70 +564,6 @@ func (pc tmsClient) DeleteTenantTag(tagId uuid.UUID) error {
 	}
 
 	return nil
-}
-
-func (pc tmsClient) GetPlans(serviceOfferId uuid.UUID) ([]models.Plan, error) {
-	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceOfferApiEndpoint + "/" + serviceOfferId.String() +
-		constants.PlanApiEndpoint)
-	if err != nil {
-		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
-	}
-
-	// Create a new request using http
-	req, err := http.NewRequest(http.MethodGet, reqURL.String(), nil)
-	if err != nil {
-		return nil, errors.Wrap(err, "Error forming request")
-	}
-	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
-	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
-	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
-
-	response, err := client.SendRequest(pc.Client, req)
-	if err != nil {
-		return nil, errors.Wrap(err, "Error in response body")
-	}
-
-	// Parse response for validation
-	var searchPlanRes []models.Plan
-	dec := json.NewDecoder(bytes.NewReader(response))
-	dec.DisallowUnknownFields()
-	err = dec.Decode(&searchPlanRes)
-	if err != nil {
-		return nil, errors.Wrap(err, "Error unmarshalling response")
-	}
-	return searchPlanRes, nil
-}
-
-func (pc tmsClient) RetrievePlan(serviceOfferId, planId uuid.UUID) (*models.PlanProducts, error) {
-	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceOfferApiEndpoint + "/" + serviceOfferId.String() +
-		constants.PlanApiEndpoint + "/" + planId.String())
-	if err != nil {
-		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
-	}
-
-	// Create a new request using http
-	req, err := http.NewRequest(http.MethodGet, reqURL.String(), nil)
-	if err != nil {
-		return nil, errors.Wrap(err, "Error forming request")
-	}
-	req.Header.Add(constants.HTTPHeaderKeyAccept, constants.HTTPMediaTypeJson)
-	req.Header.Add(constants.HTTPHeaderKeyApiKey, pc.ApiKey)
-	req.Header.Add(constants.HTTPHeaderKeyRequestId, models2.RespHeaderFields.RequestId)
-
-	response, err := client.SendRequest(pc.Client, req)
-	if err != nil {
-		return nil, errors.Wrap(err, "Error in response body")
-	}
-
-	// Parse response for validation
-	var retrievePlanRes models.PlanProducts
-	dec := json.NewDecoder(bytes.NewReader(response))
-	dec.DisallowUnknownFields()
-	err = dec.Decode(&retrievePlanRes)
-	if err != nil {
-		return nil, errors.Wrap(err, "Error unmarshalling response")
-	}
-	return &retrievePlanRes, nil
 }
 
 func (pc tmsClient) UpdateTenantSettings(request *models.AttestationFailureEmail) (*models.AttestationFailureEmail, error) {

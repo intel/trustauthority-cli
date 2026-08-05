@@ -205,48 +205,6 @@ func TestRetrieveService(t *testing.T) {
 	assert.NotNil(t, result)
 }
 
-func TestGetProducts(t *testing.T) {
-	// Arrange
-	serviceOfferID := uuid.New()
-
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		response := []models.Product{
-			{ID: uuid.New()},
-		}
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(response)
-	}))
-	defer server.Close()
-
-	baseURL, _ := url.Parse(server.URL)
-	// Act
-	client := NewTmsClient(http.DefaultClient, baseURL, "test-key")
-	result, err := client.GetProducts(serviceOfferID)
-	// Assert
-	assert.NoError(t, err)
-	assert.Len(t, result, 1)
-}
-
-func TestGetServiceOffers(t *testing.T) {
-	// Arrange
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		response := []models.ServiceOffer{
-			{ID: uuid.New(), Name: "Offer 1"},
-		}
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(response)
-	}))
-	defer server.Close()
-
-	baseURL, _ := url.Parse(server.URL)
-	client := NewTmsClient(http.DefaultClient, baseURL, "test-key")
-	// Act
-	result, err := client.GetServiceOffers()
-	// Assert
-	assert.NoError(t, err)
-	assert.Len(t, result, 1)
-}
-
 func TestCreateTenantTag(t *testing.T) {
 	// Arrange
 	tagID := uuid.New()
@@ -308,50 +266,6 @@ func TestDeleteTenantTag(t *testing.T) {
 	err := client.DeleteTenantTag(tagID)
 	// Assert
 	assert.NoError(t, err)
-}
-
-func TestGetPlans(t *testing.T) {
-	// Arrange
-	serviceOfferID := uuid.New()
-
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		response := []models.Plan{
-			{ID: uuid.New()},
-		}
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(response)
-	}))
-	defer server.Close()
-
-	baseURL, _ := url.Parse(server.URL)
-	client := NewTmsClient(http.DefaultClient, baseURL, "test-key")
-	// Act
-	result, err := client.GetPlans(serviceOfferID)
-	// Assert
-	assert.NoError(t, err)
-	assert.Len(t, result, 1)
-}
-func TestRetrievePlan(t *testing.T) {
-	// Arrange
-	serviceOfferID := uuid.New()
-	planID := uuid.New()
-
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		response := models.PlanProducts{
-			ID: planID,
-		}
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(response)
-	}))
-	defer server.Close()
-
-	baseURL, _ := url.Parse(server.URL)
-	client := NewTmsClient(http.DefaultClient, baseURL, "test-key")
-	// Act
-	result, err := client.RetrievePlan(serviceOfferID, planID)
-	// Assert
-	assert.NoError(t, err)
-	assert.NotNil(t, result)
 }
 
 func TestUpdateTenantSettings(t *testing.T) {
@@ -949,80 +863,6 @@ func TestRetrieveServiceInvalidJSON(t *testing.T) {
 	assert.Contains(t, err.Error(), "invalid character")
 }
 
-func TestGetProductsError(t *testing.T) {
-	// Arrange
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusInternalServerError)
-	}))
-	defer server.Close()
-
-	baseURL, _ := url.Parse(server.URL)
-	client := NewTmsClient(http.DefaultClient, baseURL, "test-key")
-
-	// Act
-	_, err := client.GetProducts(uuid.New())
-
-	// Assert
-	assert.NotNil(t, err)
-	assert.Contains(t, err.Error(), "500 Internal Server Error")
-}
-
-func TestGetProductsInvalidJSON(t *testing.T) {
-	// Arrange
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("[}"))
-	}))
-	defer server.Close()
-
-	baseURL, _ := url.Parse(server.URL)
-	client := NewTmsClient(http.DefaultClient, baseURL, "test-key")
-
-	// Act
-	_, err := client.GetProducts(uuid.New())
-
-	// Assert
-	assert.NotNil(t, err)
-	assert.Contains(t, err.Error(), "invalid character")
-}
-
-func TestGetServiceOffersError(t *testing.T) {
-	// Arrange
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusBadRequest)
-	}))
-	defer server.Close()
-
-	baseURL, _ := url.Parse(server.URL)
-	client := NewTmsClient(http.DefaultClient, baseURL, "test-key")
-
-	// Act
-	_, err := client.GetServiceOffers()
-
-	// Assert
-	assert.NotNil(t, err)
-	assert.Contains(t, err.Error(), "400 Bad Request")
-}
-
-func TestGetServiceOffersInvalidJSON(t *testing.T) {
-	// Arrange
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("[invalid"))
-	}))
-	defer server.Close()
-
-	baseURL, _ := url.Parse(server.URL)
-	client := NewTmsClient(http.DefaultClient, baseURL, "test-key")
-
-	// Act
-	_, err := client.GetServiceOffers()
-
-	// Assert
-	assert.NotNil(t, err)
-	assert.Contains(t, err.Error(), "invalid character")
-}
-
 func TestGetTenantTagsError(t *testing.T) {
 	// Arrange
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -1054,80 +894,6 @@ func TestGetTenantTagsInvalidJSON(t *testing.T) {
 
 	// Act
 	_, err := client.GetTenantTags()
-
-	// Assert
-	assert.NotNil(t, err)
-	assert.Contains(t, err.Error(), "invalid character")
-}
-
-func TestGetPlansError(t *testing.T) {
-	// Arrange
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusForbidden)
-	}))
-	defer server.Close()
-
-	baseURL, _ := url.Parse(server.URL)
-	client := NewTmsClient(http.DefaultClient, baseURL, "test-key")
-
-	// Act
-	_, err := client.GetPlans(uuid.New())
-
-	// Assert
-	assert.NotNil(t, err)
-	assert.Contains(t, err.Error(), "403 Forbidden")
-}
-
-func TestGetPlansInvalidJSON(t *testing.T) {
-	// Arrange
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("[[]]"))
-	}))
-	defer server.Close()
-
-	baseURL, _ := url.Parse(server.URL)
-	client := NewTmsClient(http.DefaultClient, baseURL, "test-key")
-
-	// Act
-	_, err := client.GetPlans(uuid.New())
-
-	// Assert
-	assert.NotNil(t, err)
-	assert.Contains(t, err.Error(), "Error unmarshalling response")
-}
-
-func TestRetrievePlanError(t *testing.T) {
-	// Arrange
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusNotFound)
-	}))
-	defer server.Close()
-
-	baseURL, _ := url.Parse(server.URL)
-	client := NewTmsClient(http.DefaultClient, baseURL, "test-key")
-
-	// Act
-	_, err := client.RetrievePlan(uuid.New(), uuid.New())
-
-	// Assert
-	assert.NotNil(t, err)
-	assert.Contains(t, err.Error(), "404 Not Found")
-}
-
-func TestRetrievePlanInvalidJSON(t *testing.T) {
-	// Arrange
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("}{"))
-	}))
-	defer server.Close()
-
-	baseURL, _ := url.Parse(server.URL)
-	client := NewTmsClient(http.DefaultClient, baseURL, "test-key")
-
-	// Act
-	_, err := client.RetrievePlan(uuid.New(), uuid.New())
 
 	// Assert
 	assert.NotNil(t, err)
