@@ -13,7 +13,7 @@ The make, makeself, and golang packages are required before installing the Intel
    apt -y install make makeself
    ```
 2. Installing golang.
-    - Supported golang version is 1.26.5
+    - Supported golang version is 1.26.6
     - To install golang, follow the instructions at the following link:https://go.dev/doc/install
 
 3. Add the local binary path, `$HOME/.local/bin/`, to your PATH environment variable if not already present.
@@ -102,10 +102,12 @@ trustauthorityctl list service -q < request id >
 trustauthorityctl list service -q < request id > -r < service Id >
 
 ##### Create Api Client:
-trustauthorityctl create apiClient -q < request id > -r < service id > -p < product id > -n < api client name > -i "comma separated policy Ids" -v "tag-key1:tag-value1,tag-key2:tag-value2"
+trustauthorityctl create apiClient -q < request id > -r < service id > -p < usage plan id > -n < api client name > -i "comma separated policy Ids" -v "tag-key1:tag-value1,tag-key2:tag-value2"
 
 ##### Update Api Client:
-trustauthorityctl update apiClient -q < request id > -r < service id > -p < product id > -c < api client id > -i "comma separated policy Ids" -v "tag-key1:tag-value1,tag-key2:tag-value2" -s < Active/Inactive/Cancelled >
+trustauthorityctl update apiClient -q < request id > -r < service id > -p < usage plan id > -c < api client id > -i "comma separated policy Ids" -v "tag-key1:tag-value1,tag-key2:tag-value2" -s < Active/Inactive/Cancelled >
+
+##### Note: The usage plan ID can be fetched using the "<b>Get Services</b>" or "<b>Get Service by ID</b>" command.
 
 ##### Get Api Clients:
 trustauthorityctl list apiClient -q < request id > -r < service id >
