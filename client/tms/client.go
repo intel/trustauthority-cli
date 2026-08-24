@@ -8,14 +8,15 @@ package tms
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/google/uuid"
-	"github.com/pkg/errors"
 	"intel/tac/v1/client"
 	"intel/tac/v1/constants"
 	models2 "intel/tac/v1/internal/models"
 	"intel/tac/v1/models"
 	"net/http"
 	"net/url"
+
+	"github.com/google/uuid"
+	"github.com/pkg/errors"
 )
 
 type TmsClient interface {
@@ -27,7 +28,7 @@ type TmsClient interface {
 	GetApiClientTagValues(serviceId, apiClientId uuid.UUID) (*models.ApiClientTags, error)
 	DeleteApiClient(serviceId, apiClientId uuid.UUID) error
 
-	GetServices() ([]models.Service, error)
+	GetServices() ([]models.ServiceWithPlanLimits, error)
 	RetrieveService(serviceId uuid.UUID) (*models.ServiceDetail, error)
 
 	CreateUser(user *models.CreateTenantUser) (*models.TenantUser, error)
@@ -414,7 +415,7 @@ func (pc tmsClient) DeleteUser(userId uuid.UUID) error {
 	return nil
 }
 
-func (pc tmsClient) GetServices() ([]models.Service, error) {
+func (pc tmsClient) GetServices() ([]models.ServiceWithPlanLimits, error) {
 	reqURL, err := url.Parse(pc.BaseURL.String() + constants.ServiceApiEndpoint)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Invalid URL %s", pc.BaseURL.String())
@@ -435,7 +436,7 @@ func (pc tmsClient) GetServices() ([]models.Service, error) {
 	}
 
 	// Parse response for validation
-	var searchServiceRes []models.Service
+	var searchServiceRes []models.ServiceWithPlanLimits
 	dec := json.NewDecoder(bytes.NewReader(response))
 	dec.DisallowUnknownFields()
 	err = dec.Decode(&searchServiceRes)
