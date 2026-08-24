@@ -169,18 +169,24 @@ type (
 		SupportPlanId            uuid.UUID              `json:"support_plan_id"`
 		PlanName                 string                 `json:"plan_name"`
 		SupportPlanName          string                 `json:"support_plan_name"`
-		UsagePlanId              uuid.UUID              `json:"usage_plan_id"`
-		Quota                    int                    `json:"quota"`
-		MaxKey                   int                    `json:"max_key"`
-		MaxTenantAdmin           int                    `json:"max_tenant_admin"`
-		MaxTenantUser            int                    `json:"max_tenant_user"`
 		Active                   bool                   `json:"active"`
 		ExternalId               uuid.UUID              `json:"-"`
 		CreatedAt                time.Time              `json:"created_at"`
 		CreatorType              string                 `json:"-"`
 		ServiceOfferPlanSourceId uuid.UUID              `json:"-"`
-		DurationMonths           int                    `json:"-"`
-		Attributes               map[string]interface{} `json:"attributes"`
+		Attributes               map[string]interface{} `json:"attributes,omitempty" gorm:"type:json"`
+	}
+
+	// ServiceWithPlanLimits - Service enriched with usage plan and plan limits.
+	// Returned only by the list services and get service by id APIs.
+	ServiceWithPlanLimits struct {
+		Service
+		UsagePlanId    uuid.UUID `json:"usage_plan_id"`
+		Quota          int       `json:"quota"`
+		MaxKey         int       `json:"max_key"`
+		MaxTenantAdmin int       `json:"max_tenant_admin"`
+		MaxTenantUser  int       `json:"max_tenant_user"`
+		MaxPolicy      int       `json:"max_policy"`
 	}
 
 	ServiceDetail struct {
@@ -199,6 +205,7 @@ type (
 		MaxKey                   int                    `json:"max_key"`
 		MaxTenantAdmin           int                    `json:"max_tenant_admin"`
 		MaxTenantUser            int                    `json:"max_tenant_user"`
+		MaxPolicy                int                    `json:"max_policy"`
 		ServiceOfferPlanSourceId uuid.UUID              `json:"-"`
 		Attributes               map[string]interface{} `json:"attributes"`
 	}
